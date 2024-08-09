@@ -1,0 +1,60 @@
+{% load static %}
+{% load sass_tags %}
+
+
+<div class="col-sm-12">
+    <div class="card">
+      <div class="card-header pb-0 card-no-border">
+        <h3 class="mb-3">Registro de Predios</h3>
+      </div>
+      <div class="card-body">
+        <div class="dt-ext table-responsive theme-scrollbar">
+            <table class="display" id="basic-1">
+                <thead>
+              <tr>
+                <th>Clave Catastral</th>
+                <th>Contribuyente</th>
+                <th>Tipo de Persona</th>
+                <th>Colonia</th>
+                <th>Calle</th>
+                <th>Uso del Predio</th>
+                <th>Valor Catastral</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for predio in predios %}
+              <tr>
+                <td>{{ predio.clave_catastral }}</td>
+                <td>
+                  {{ predio.obtener_nombre }}
+          
+                  {% if predio.contribuyente.mc %}
+                  <p>
+                    {{ predio.nombre_mc|default_if_none:""|upper }} {{ predio.ApellidoP_mc|default_if_none:""|upper }} {{ predio.ApellidoM_mc|default_if_none:""|upper }}
+                  </p>
+                  {% endif %}
+                
+                </td>
+                <td>{{ predio.contribuyente.get_tipoPersona_display }}</td>
+                <td>{{ predio.colonia|upper }}</td>
+                <td>{{ predio.calle|upper }}</td>
+
+                <td>{{ predio.get_uso_predio_display|upper }}</td>
+                <td>{{ predio.valor_catastral }}</td>
+                <td>
+                  <ul class="action">
+                    <li class="edit"><a href="{% url "actualizarPredio" predio.id%}"><i class="icon-pencil-alt"></i></a></li>
+                    <li class="delete"><a href="#" data-id="{{ predio.id }}" onclick="confirmDelete(this);"><i class="icon-trash"></i></a></li>
+                  </ul>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  

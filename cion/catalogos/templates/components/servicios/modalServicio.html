@@ -1,0 +1,117 @@
+{% load static %}
+{% load sass_tags %}
+<style>
+    .checkbox-group {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* Dos columnas */
+        gap: 20px;
+        width: 100%; /* Asegurar que ocupen todo el espacio disponible */
+    }
+    
+    .checkbox-group label {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        font-size: 16px; /* Tamaño del texto */
+        width: 100%; /* Asegurar que el label ocupe todo el espacio disponible */
+    }
+    
+    .checkbox-group input[type="checkbox"] {
+        width: 25px; /* Ancho del checkbox aumentado */
+        height: 25px; /* Alto del checkbox aumentado */
+        margin-right: 10px; /* Espacio entre el checkbox y el label */
+        border-radius: 50%; /* Hacer los checkboxes redondos */
+        appearance: none; /* Eliminar el estilo predeterminado del checkbox */
+        border: 2px solid #007bff; /* Añadir un borde personalizado */
+        outline: none; /* Eliminar el outline */
+        cursor: pointer; /* Añadir un cursor pointer */
+        align-items: center; /* Centrar verticalmente */
+        justify-content: center; /* Centrar horizontalmente */
+    }
+    .checkbox-group input[type="checkbox"]:checked::before {
+        margin-left: 21px;
+        content: '\2714'; /* Usar un checkmark unicode */
+        font-size: 18px; /* Tamaño del checkmark */
+        color: rgb(4, 72, 228); /* Color del checkmark */
+    }
+</style>
+    
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="modal fade" id="modalServicio" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content dark-sign-up">
+                        <div class="modal-body social-profile text-start">
+                            <div class="modal-toggle-wrapper">
+                                <h3 class="text text-secondary">
+                                    Registrar Servicio de Municipio
+                                </h3>
+                                <p class="text text-secondary">Complete la información a continuación para continuar.</p>
+                                <form class="row g-3 needs-validation custom-input" id="servicioMunicipioForm" method="post" action="{% url 'tablaServicios' %}">
+                                    {% csrf_token %}
+                                    <div class="col-md-12">
+                                        {{ form.clave.label_tag }}
+                                        {{ form.clave }}
+                                    </div>
+                                    <div class="col-md-12" style="display: none;">
+                                        {{ form.municipio.label_tag }}
+                                        {{ form.municipio }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ form.concepto.label_tag }}
+                                        {{ form.concepto }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ form.monto.label_tag }}
+                                        {{ form.monto }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ form.area.label_tag }}
+                                        {{ form.area }}
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-primary" type="submit">Guardar</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal" id="cancelButton">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#modalServicio').on('hidden.bs.modal', function () {
+            // Limpiar los campos del formulario
+            document.querySelector('#id_clave').value = '';
+            document.querySelector('#id_municipio').value = '';
+            document.querySelector('#id_concepto').value = '';
+            document.querySelector('#id_monto').value = '';
+            document.querySelector('#id_area').value = '';
+
+
+            // Resetear la acción del formulario
+            document.querySelector('#servicioMunicipioForm2').action = '';
+        });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Obtener todos los campos de texto que deseas convertir a mayúsculas
+      const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+  
+      // Función para convertir texto a mayúsculas
+      const convertirAMayusculas = function (event) {
+        const campo = event.target;
+        campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+      };
+  
+      // Agregar evento de escucha a cada campo de texto
+      camposTexto.forEach(function (campo) {
+        campo.addEventListener('input', convertirAMayusculas);
+      });
+    });
+  </script>

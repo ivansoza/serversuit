@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/date-picker.css' %}">
+
+{% endblock %}    
+
+{% block content %}
+{% include 'general/loader.html' %}
+
+{% include 'components/miniTarjetas.html' %}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- {% include 'components/grafica.html' %} -->
+        <!-- {% include 'components/miniTarjetasHome.html' %} -->
+    </div>
+</div>
+{% endblock content %}
+

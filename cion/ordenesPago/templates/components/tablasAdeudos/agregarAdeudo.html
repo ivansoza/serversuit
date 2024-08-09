@@ -1,0 +1,31 @@
+{% load static %}
+{% load sass_tags %}
+<style>
+
+</style>
+    
+<!-- Contenedor para la tarjeta de datos de usuario -->
+<div class="container-fluid">
+    <div class="row">
+        <div >
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fa fa-file-text fa-4x"  style="color: {{ personalizacion.color_primario_a }};"></i>
+                    <p></p>
+                    <h4 class="card-title">Oficialía de Partes</h4>
+                    <a href="{% url "oficialia_de_partes" %}" class="btn btn-primary mt-3">Ver más</a>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

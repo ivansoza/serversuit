@@ -1,0 +1,139 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="modal fade" id="modalFormRespuesta" tabindex="-1" role="dialog" aria-labelledby="exampleModallogin" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h3 class="text text-secondary">
+                                Respuesta
+                            </h3>
+                            <p class="text text-secondary">Complete la información a continuación para continuar.</p>
+                            <form class="needs-validation custom-input" id="resForm" method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="hidden" name="odp" id="form-odp" value="">
+                                <div class="mb-3">
+                                    {{ form.usuario.label_tag }}
+                                    {{ form.usuario }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.archivo.label_tag }}
+                                    {{ form.archivo }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.fecha_inicio.label_tag }}
+                                    {{ form.fecha_inicio }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ form.observaciones.label_tag }}
+                                    {{ form.observaciones }}
+                                </div>
+                                <div class="mb-3">
+                                    <label for="file-preview">Vista previa del archivo:</label>
+                                    <div id="file-preview" style="display: none;"></div>
+                                </div>
+                                <button class="btn btn-success-new" type="submit">Guardar respuesta</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Obtener todos los campos de texto que deseas convertir a mayúsculas
+      const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+  
+      // Función para convertir texto a mayúsculas
+      const convertirAMayusculas = function (event) {
+        const campo = event.target;
+        campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+      };
+  
+      // Agregar evento de escucha a cada campo de texto
+      camposTexto.forEach(function (campo) {
+        campo.addEventListener('input', convertirAMayusculas);
+      });
+    });
+  </script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener todos los enlaces para abrir el modal
+        const openModalBtns = document.querySelectorAll('.open-modal');
+
+        openModalBtns.forEach(function (button) {
+            button.addEventListener('click', function (event) {
+                event.preventDefault(); // Evitar el comportamiento predeterminado del enlace
+
+                // Obtener el ID del registro
+                const recordId = button.getAttribute('data-id');
+
+                // Seleccionar el formulario en el modal
+                const modalForm = document.querySelector('#modalFormRespuesta form');
+
+                // Asignar el ID al campo oculto
+                const odpField = modalForm.querySelector('input[name="odp"]');
+                odpField.value = recordId;
+
+                // Mostrar el modal
+                $('#modalFormRespuesta').modal('show');
+            });
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener el campo de entrada de archivo y el área de vista previa
+        const fileInput = document.querySelector('input[name="archivo"]');
+        const filePreview = document.getElementById('file-preview');
+
+        fileInput.addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileReader = new FileReader();
+
+                fileReader.onload = function (e) {
+                    const fileType = file.type;
+
+                    // Limpiar el área de vista previa
+                    filePreview.innerHTML = '';
+
+                    if (fileType.startsWith('image/')) {
+                        // Mostrar imagen
+                        const img = document.createElement('img');
+                        img.src = e.target.result;
+                        img.style.maxWidth = '100%';
+                        img.style.height = 'auto';
+                        filePreview.appendChild(img);
+                    } else if (fileType === 'application/pdf') {
+                        // Mostrar PDF
+                        const iframe = document.createElement('iframe');
+                        iframe.src = e.target.result;
+                        iframe.style.width = '100%';
+                        iframe.style.height = '350px';
+                        iframe.frameBorder = '0';
+                        filePreview.appendChild(iframe);
+                    } else {
+                        // Mostrar mensaje para otros tipos de archivos
+                        filePreview.textContent = 'Vista previa no disponible para este tipo de archivo.';
+                    }
+
+                    // Mostrar el área de vista previa
+                    filePreview.style.display = 'block';
+                };
+
+                // Leer el archivo como una URL de datos
+                fileReader.readAsDataURL(file);
+            } else {
+                // Ocultar el área de vista previa si no hay archivo
+                filePreview.style.display = 'none';
+            }
+        });
+    });
+</script>

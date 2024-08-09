@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+
+{% block content %}
+
+<div class="container-fluid">
+    {% include 'components/personalizacion/alertas.html' %}  
+
+    {% include 'components/configuracion/my-profile.html' %}
+    {% include 'components/configuracion/cards.html' %}
+
+</div>
+
+{% endblock %}

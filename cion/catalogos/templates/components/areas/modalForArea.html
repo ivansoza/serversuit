@@ -1,0 +1,51 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="modal fade" id="modalArea2" tabindex="-1" role="dialog" aria-labelledby="exampleModallogin" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h3 class="text text-secondary">
+                                Registrar Área de Municipio
+                            </h3>
+                            <p class="text text-secondary">Complete la información a continuación para continuar.</p>
+                            <form class="needs-validation custom-input" id="areasForm" method="post" action="{% url 'tablaArea' %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    {{ areas_form.Area.label_tag }}
+                                    {{ areas_form.Area }}
+                                </div>
+                                <div class="mb-3" style='display:none'>
+                                    {{ areas_form.municipios_visibles.label_tag }}
+                                    {{ areas_form.municipios_visibles }}
+                                </div>
+                                <button class="btn btn-primary" type="submit">Guardar Área</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Obtener todos los campos de texto que deseas convertir a mayúsculas
+      const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+  
+      // Función para convertir texto a mayúsculas
+      const convertirAMayusculas = function (event) {
+        const campo = event.target;
+        campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+      };
+  
+      // Agregar evento de escucha a cada campo de texto
+      camposTexto.forEach(function (campo) {
+        campo.addEventListener('input', convertirAMayusculas);
+      });
+    });
+  </script>

@@ -1,0 +1,594 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block content %}
+
+<style>
+    .welcome-section {
+        position: relative;
+        text-align: left;
+        /* Alineación del texto a la izquierda */
+        color: white;
+        height: 50vh;
+        background-image: url('{% if fondo_url %}{{ fondo_url }}{% else %}{% static "assets/images/malinche.jpg" %}{% endif %}');
+        
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        /* Añadir padding para separar el texto de los bordes */
+    }
+
+    .welcome-content {
+        background-color: rgba(0, 0, 0, 0.5);
+        /* Fondo semitransparente */
+        padding: 20px;
+        /* Padding dentro del marco */
+        max-width: 1100px;
+        /* Limitar el ancho del contenido */
+        text-align: center;
+        /* Centrar el texto */
+    }
+
+    .welcome-content h1,
+    .welcome-content h2,
+    .welcome-content p {
+        color: white;
+    }
+
+    .welcome-content::after {
+        content: '';
+        position: absolute;
+        bottom: -2px;
+        /* Alineado con el borde inferior */
+        left: 0;
+        right: 0;
+        height: 2px;
+        /* Altura del borde */
+        background: linear-gradient(to right, white, transparent 50%, white);
+    }
+
+
+    /* Ajustar el ancho de los contenedores */
+    .container-wide {
+        max-width: 90%;
+    }
+
+    .map-section,
+    .mission-vision-section {
+        padding: 20px;
+    }
+
+    #map {
+        width: 100%;
+        height: 350px;
+    }
+
+    .contact-info {
+        background-color: #ffffff;
+        /* Fondo blanco para la sección de contactos */
+        padding: 15px;
+    }
+
+    /* Eliminar márgenes y hacer que las columnas se vean como un solo contenedor */
+    .row.no-gutters {
+        margin-right: 0;
+        margin-left: 0;
+    }
+
+    .row.no-gutters>[class*='col-'] {
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    /* Ajustes para vista en dispositivos móviles */
+    @media (max-width: 767px) {
+
+        .map-section,
+        .mission-vision-section {
+            margin-bottom: 20px;
+        }
+
+        .welcome-section {
+            height: 60vh;
+            /* Ajustar altura en pantallas pequeñas */
+        }
+
+        .welcome-content {
+            padding: 10px;
+        }
+
+        .map-section,
+        .mission-vision-section {
+            padding: 10px;
+        }
+
+        .mission-vision-section .col-md-6 {
+            width: 100%;
+            text-align: center;
+            /* Centrar el texto en pantallas pequeñas */
+        }
+
+        .contact-info {
+            margin-bottom: 20px;
+            /* Agregar margen inferior en pantallas pequeñas */
+        }
+    }
+
+
+    .line {
+        width: 100%;
+        height: 3px;
+        /* Ajusta el grosor de la línea según sea necesario */
+        background-color: #17202A;
+        margin-top: 20px;
+        /* Ajusta según sea necesario */
+        position: relative;
+    }
+
+    .line::before {
+        content: "";
+        width: 200px;
+        /* Ajusta el ancho del espacio en blanco */
+        height: 3px;
+        /* Ajusta el grosor del espacio en blanco */
+        background-color: #F7F7F7;
+        /* Color del fondo para crear el espacio en blanco */
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .contact-card {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .icon-wrapper {
+        display: inline-block;
+        width: 50px;
+        height: 50px;
+        background-color: rgba(0, 0, 0, 0.1);
+        /* Fondo redondo translúcido */
+        color: rgba(0, 0, 0, 0.7);
+        /* Color fuerte para el ícono */
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 10px;
+        /* Espacio entre el ícono y el texto */
+        font-size: 1.5rem;
+        transition: transform 0.3s, background-color 0.3s, color 0.3s;
+        flex-shrink: 0;
+        /* Para mantener el tamaño fijo del ícono */
+    }
+
+    .contact-card:hover .icon-wrapper {
+        transform: translateY(-10px);
+    }
+
+    .contact-item p {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.5;
+        /* Para mantener el mismo espaciado entre líneas */
+    }
+
+    /* Cambios de color para diferentes íconos */
+    .contact-item:nth-child(2) .icon-wrapper {
+        background-color: rgba(70, 130, 180, 0.1);
+        /* Color translúcido */
+        color: rgba(70, 130, 180, 1);
+        /* Color fuerte */
+    }
+
+    .contact-item:nth-child(5) .icon-wrapper {
+        background-color: rgba(34, 139, 34, 0.1);
+        /* Color translúcido */
+        color: rgba(34, 139, 34, 1);
+        /* Color fuerte */
+    }
+
+    .contact-item:nth-child(8) .icon-wrapper {
+        background-color: rgba(220, 20, 60, 0.1);
+        /* Color translúcido */
+        color: rgba(220, 20, 60, 1);
+        /* Color fuerte */
+    }
+
+    /* Estilo responsive */
+    @media (max-width: 767px) {
+        .contact-card {
+            padding: 15px;
+        }
+
+        .contact-item {
+            margin-bottom: 15px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .icon-wrapper {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+
+        .contact-item p {
+            text-align: center;
+        }
+    }
+
+
+    .card {
+        transition: transform 0.2s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+        /* Desplazamiento hacia arriba al pasar el mouse */
+    }
+
+
+    .social-img-wrap1 {
+        display: inline-block;
+        padding: 2px;
+        position: relative;
+        width: 258px;  /* Ancho fijo para el contenedor de la imagen */
+        height: auto;  /* Altura automática para ajustar proporcionalmente */
+        overflow: hidden;  /* Oculta cualquier desbordamiento */
+    }
+    
+    .social-img1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;  /* Ajusta al ancho del contenedor padre */
+        height: auto;  /* Altura automática para mantener la relación de aspecto */
+    }
+    
+    .social-img1 img {
+        width: 100%;   /* Se ajusta al ancho del contenedor para mantener la relación de aspecto */
+        height: auto;  /* La altura se ajusta automáticamente para mantener la relación de aspecto */
+        object-fit: contain; /* Asegura que la imagen se ajuste dentro del área disponible sin recortar */
+    }
+    
+
+.map-container {
+    position: relative;
+    width: 100%; /* Establece la anchura al 100% del contenedor padre */
+    height: 350px; /* Altura fija de 350px */
+    overflow: hidden; /* Esconde cualquier parte del mapa que exceda el contenedor */
+}
+
+.map-container iframe,
+.map-container object,
+.map-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%; /* Establece la anchura al 100% del contenedor */
+    height: 100%; /* Establece la altura al 100% del contenedor para llenar los 350px de altura del padre */
+}
+
+
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<!-- Configurar AOS -->
+<script>
+    AOS.init({
+        duration: 800,  // Duración de la animación en milisegundos
+        once: true,     // Solo animar una vez por elemento
+        offset: 50      // Offset (en px) desde el borde superior de la ventana antes de que se active la animación
+    });
+</script>
+
+<div class="welcome-section" data-aos="fade-up">
+    <div class="welcome-content">
+        <h1>Bienvenido al sistema SuApGEM</h1>
+        <h1>Suite de Aplicaciones para Gobierno Electrónico Municipal</h1>
+        <h2>Municipio {{ pagina_inicio.municipio }} Tlaxcala</h2>
+        <br>
+        <p>Accede a trámites, servicios y reportes municipales de manera rápida y transparente, optimizando tu
+            experiencia con el gobierno local.</p>
+
+    </div>
+</div>
+<div class="container mt-5 container-wide" data-aos="fade-up">
+    {% comment %} <div class="col-md-12 text-center">
+        <img src="{{ logotipo_url }}" alt="" style="width: 20%;">
+        <div class="line"></div>
+    </div> {% endcomment %}
+
+    <div class="col-md-12 text-center">
+
+        <div class="social-img-wrap1"> 
+            <div class="social-img1">
+                
+                {% if personalizacion.logotipo_url %}
+                    <img class="img-fluid" src="{{ personalizacion.logotipo_url }}" alt="profile">
+                {% else %}
+                    <img class="img-fluid" src="{% static 'assets/images/logo/logoSUITE.png' %}" alt="default logo">
+                {% endif %}
+            </div>
+            
+            <div class="edit-icon">
+    
+            </div>
+        </div>
+
+        <div class="line"></div>
+
+    </div>
+</div>
+
+<!-- Sección de Ubicación y Misión/Visión -->
+<div class="container mt-5 container-wide">
+    <div class="row mission-vision-section" data-aos="fade-up">
+        <div class="col-md-6">
+            <h2 class="card-title">Misión</h2>
+
+            {% if pagina_inicio.mision  %}
+                <p>{{ pagina_inicio.mision }}</p>
+
+            {% else %}
+            <p><strong>Nota:</strong> Aquí va la misión de tu municipio.</p>
+
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h2 class="card-title">Visión</h2>
+            {% if pagina_inicio.vision %}
+            <p>{{ pagina_inicio.vision }}</p>
+
+            {% else %}
+            <p><strong>Nota:</strong> Aquí va la visión de tu municipio.</p>
+
+            {% endif %}
+        </div>
+    </div>
+</div>
+<!-- Sección de Accesos Rápidos -->
+<div class="container mt-5 container-wide">
+    <h2 class="card-title">Accesos Rápidos</h2>
+    <br>
+    <div class="row quick-access">
+        <!-- Tarjeta para Contribuyentes -->
+        <div class="col-md-2" data-aos="fade-up">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fa fa-users fa-4x"  style="color: {{ personalizacion.color_primario_a }};"></i>
+                    <p></p>
+                    <h4 class="card-title">Contribuyentes</h4>
+                    <a href="{% url "home_ctr" %}" class="btn btn-primary mt-3">Ver más</a>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tarjeta para Oficialía de Partes -->
+        <div class="col-md-2" data-aos="fade-up">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fa fa-file-text fa-4x"  style="color: {{ personalizacion.color_primario_a }};"></i>
+                    <p></p>
+                    <h4 class="card-title">Oficialía de Partes</h4>
+                    <a href="{% url "oficialia_de_partes" %}" class="btn btn-primary mt-3">Ver más</a>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tarjeta para Predio -->
+        <div class="col-md-2" data-aos="fade-up">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fa fa-home fa-4x"  style="color: {{ personalizacion.color_primario_a }};"></i>
+                    <p></p>
+                    <h4 class="card-title">Predio</h4>
+                    <a href="{% url "homePredio" %}" class="btn btn-primary mt-3">Ver más</a>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tarjeta para Agua -->
+        <div class="col-md-2" data-aos="fade-up">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fa fa-tint fa-4x"  style="color: {{ personalizacion.color_primario_a }};"></i>
+                    <p></p>
+                    <h4 class="card-title">Agua</h4>
+                    <a href="{% url "homeAgua" %}" class="btn btn-primary mt-3">Ver más</a>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tarjeta para Órdenes de Pago -->
+        <div class="col-md-2" data-aos="fade-up">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fa fa-list-alt fa-4x"  style="color: {{ personalizacion.color_primario_a }};"></i>
+                    <p></p>
+                    <h4 class="card-title">Órdenes de Pago</h4>
+                    <a href="{% url "homeAgua" %}" class="btn btn-primary mt-3">Ver más</a>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Tarjeta para Caja -->
+        <div class="col-md-2" data-aos="fade-up">
+            <div class="card text-center">
+                <div class="card-body">
+                    <i class="fa fa-money fa-4x" style="color: {{ personalizacion.color_primario_a }};"></i>
+                    <p></p>
+                    <h4 class="card-title">Caja</h4>
+                    <a href="{% url "homeAgua" %}" class="btn btn-primary mt-3">Ver más</a>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container mt-5 container-wide">
+    <div class="row mission-vision-section" data-aos="fade-up">
+        <div class="col-md-4">
+            <h2 class="card-title">Contactos</h2>
+            <div class="card card-body contact-card">
+                <br>
+                <div class="contact-item" data-aos="fade-up">
+                    <div class="icon-wrapper">
+                        <i class="fa fa-phone"></i>
+                    </div>
+                    {% if pagina_inicio.telefono %}
+                        <p><strong>Teléfono:</strong> <br>{{ pagina_inicio.telefono }}</p>
+                    {% else %}
+                        <p><strong>Teléfono:</strong> <br></p>
+                    {% endif %}
+                </div>
+                <br>
+                <br>
+                <div class="contact-item" data-aos="fade-up">
+                    <div class="icon-wrapper">
+                        <i class="fa fa-envelope"></i>
+                    </div>
+                    {% if pagina_inicio.email %}
+                        <p><strong>Email:</strong><br> {{ pagina_inicio.email }}</p>
+                    {% else %}
+                        <p><strong>Email:</strong><br></p>
+                    {% endif %}
+                </div>
+                <br>
+                <br>
+                <div class="contact-item" data-aos="fade-up">
+                    <div class="icon-wrapper">
+                        <i class="fa fa-map-marker"></i>
+                    </div>
+                    {% if pagina_inicio.direccion %}
+                        <p><strong>Dirección:</strong> <br>{{ pagina_inicio.direccion }}</p>
+                    {% else %}
+                        <p><strong>Dirección:</strong> <br></p>
+                    {% endif %}
+                </div>
+            </div>
+            
+        </div>
+        <div class="col-md-8">
+            <h2 class="card-title">Ubicación</h2>
+            <div id="map" class="map-container">
+                {% if pagina_inicio.mapa_html %}
+                    {{ pagina_inicio.mapa_html|safe }}
+                {% else %}
+
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15060.777014052024!2d-98.24576359621992!3d19.317375260742875!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x85cfd9944662e7af%3A0xec3995f131a71970!2sCentro%2C%20Tlaxcala%20de%20Xicoht%C3%A9ncatl%2C%20Tlax.!5e0!3m2!1ses!2smx!4v1722267183325!5m2!1ses!2smx" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>               
+
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if pagina_inicio.imagen_organigrama and pagina_inicio.imagen_organigrama.url %}
+    <div class="container mt-5 container-wide" data-aos="fade-up">
+        <h2 class="card-title">Organigrama</h2>
+        <div class="col-md-12 text-center">
+            <img src="{{ pagina_inicio.imagen_organigrama.url }}" alt="Imagen de organigrama" style="height: auto; width: 100%; max-width: 600px;">
+        </div>
+    </div>
+{% else %}
+<div class="container mt-3 container-wide" data-aos="fade-up">
+    <h2 class="card-title">Organigrama</h2>
+    <div class="col-md-12 text-center">
+        <img src="{% static 'assets/images/organigrama.png' %}" alt="Imagen de organigrama" style="height: auto; width: 100%; max-width: 600px;">
+    </div>
+</div>
+
+
+{% endif %}
+
+<br>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+{% endblock %}

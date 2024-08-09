@@ -1,0 +1,47 @@
+{% load static %}
+{% load sass_tags %}
+
+
+<style>
+    .alert-message-hide {
+  opacity: 0; /* Hacer la alerta completamente transparente */
+  transition: opacity 0.5s ease; /* Transición suave de la propiedad opacity */
+}
+
+</style>
+
+
+{% if messages %}
+<div class="row">
+  {% for message in messages %}
+  {% if message.tags == 'error' %}
+  <div class="alert alert-warning dark alert-dismissible fade show" role="alert" id="alert-message">
+    <i class="fa fa-exclamation-triangle"></i>
+    <p><strong>{{ message }}</strong></p>
+    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% else %}
+  <div class="alert alert-success dark alert-dismissible fade show" role="alert" id="alert-message">
+    <i class="fa fa-check-square"></i>
+    <p><strong>{{ message }}</strong></p>
+    <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+{% endfor %}
+
+</div>
+
+<script>
+  // Cerrar la alerta automáticamente después de 5 segundos (5000 milisegundos)
+  setTimeout(function() {
+    var alertMessage = document.getElementById('alert-message');
+    if (alertMessage) {
+      alertMessage.classList.add('alert-message-hide'); // Agregar clase para animación de desaparición
+      setTimeout(function() {
+        alertMessage.remove(); // Eliminar la alerta después de la animación
+      }, 300); // Esperar 500ms después de la transición para eliminarla
+    }
+  }, 3000); // 5000 milisegundos = 5 segundos
+</script>
+
+{% endif %}

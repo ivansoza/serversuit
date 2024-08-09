@@ -1,0 +1,448 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<style>
+  /* Estilos para el ícono de PDF */
+  .icofont-file-pdf {
+    font-size: 19px; /* Tamaño del ícono */
+    color: #f00; /* Color del ícono (puedes cambiarlo según tu diseño) */
+  }
+  
+  .small-swal {
+    width: 300px !important;
+    height: auto !important;
+    font-size: 14px !important;
+  }
+
+  .info-btn {
+    cursor: pointer;
+  }
+  .file-preview-container {
+    position: relative;
+    margin-top: 15px;
+  }
+  
+  .preview-wrapper button {
+    position: relative;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+  }
+
+  /* Estilo para el botón de cancelar en el modal de SweetAlert2 */
+.swal2-popup .swal2-confirm {
+    background-color: green;
+    color: white;
+    border: none;
+}
+
+</style>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabla Oficialia de Partes</title>
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header pb-0 card-no-border">
+                <h3 class="mb-3">Tabla oficialia de partes</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <div class="table-responsive theme-scrollbar">
+                      <table id="your-table-id" class="display">
+                        <thead>
+                                <tr>
+                                    <th><strong>Folio</strong></th>
+                                    <th><strong>Tipo de Documento</strong></th>
+                                    <th><strong>Prioridad</strong></th>
+                                    <th><strong>Dependencia</strong></th>
+                                    <th><strong>Archivo</strong></th>
+                                    <th><strong>Tiempo restante</strong></th>
+                                    <th><strong>Requiere contestación</strong></th>
+                                    <th><strong>Opciones</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for registro in registros %}
+                                <tr>
+                                    <td class="data-folio">{{ registro.folio }}</td>
+                                    <td class="data-tipo_doc">{{ registro.tipo_doc }}</td>
+                                    <td class="data-prioridad">{{ registro.prioridad }}</td>
+                                    <td class="data-dependencia">{{ registro.dependencia }}</td>
+                                    <td>
+                                        {% if registro.archivo %}
+                                        <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal" data-file-url="{{ registro.archivo.url }}">
+                                            <i class="icofont icofont-file-pdf"></i>
+                                        </a>
+                                        {% else %}
+                                        <i class="icon-file text-muted"></i>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if registro.horas_asignadas %}
+                                        <div class="countdown" data-tiempo-restante="{{ registro.tiempo_restante }}" id="countdown-{{ registro.id }}"></div>
+                                        {% endif %}
+                                    </td>
+                                    <td class="data-contestacion text-center">
+                                        {% if registro.contestacion %}
+                                        <button class="btn btn-success">Si</button>
+                                        {% else %}
+                                        <button class="btn btn-danger">No</button>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <ul class="action">
+                                            <li class="edit">
+                                                <a href="#" class="edit-btn" data-bs-toggle="modal" data-bs-target="#editModal" data-id="{{ registro.pk }}">
+                                                    <i class="icon-pencil-alt" title="Editar" data-bs-toggle="tooltip" data-bs-placement="top"></i>
+                                                </a>
+                                            </li>
+                                            <li class="delete">
+                                                <a href="#" class="delete-btn" data-id="{{ registro.pk }}">
+                                                    <i class="icon-trash" title="Eliminar" data-bs-toggle="tooltip" data-bs-placement="top"></i>
+                                                </a>
+                                            </li>
+                                            <li class="info">
+                                                <a href="#" class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal{{ registro.pk }}" data-id="{{ registro.pk }}">
+                                                    <i class="icon-info" title="Información" data-bs-toggle="tooltip" data-bs-placement="top"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="8">No hay registros disponibles</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+
+{% for registro in registros %}
+<div class="modal fade" id="infoModal{{ registro.pk }}" tabindex="-1" aria-labelledby="infoModalLabel{{ registro.pk }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="infoModalLabel{{ registro.pk }}">Información Detallada</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Área:</strong> {{ registro.areas }}</p>
+            <p><strong>Tipo de documento:</strong> {{ registro.tipo_doc }}</p>
+            <p><strong>Procedencia:</strong> {{ registro.procedencia }}</p>
+            <p><strong>Prioridad:</strong> {{ registro.prioridad }}</p>
+            <p><strong>Dependencia:</strong> {{ registro.dependencia }}</p>
+            <p><strong>Recibido:</strong> {{ registro.recibio }}</p>
+            <p><strong>Observaciones:</strong> {{ registro.observaciones }}</p>
+            <p><strong>No. folio:</strong> {{ registro.folio }}</p>
+            <p><strong>Estado:</strong> {% if registro.status %}<span class="badge rounded-pill badge-success">Activo</span>{% else %}<span class="badge rounded-pill badge-danger">Inactivo</span>{% endif %}</p>
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <div class="col-md-12">
+                {% if registro.archivo %}
+                <p><strong>Archivo:</strong></p>
+                <a class="pdf" href="#" data-file-url="{{ registro.archivo.url }}" onclick="openFilePreview(event, '{{ registro.archivo.url }}', 'filePreviewContainer{{ registro.pk }}')">
+                  <i class="icofont icofont-file-pdf"></i> Archivo subido
+                </a>
+                <div id="filePreviewContainer{{ registro.pk }}"></div> <!-- Contenedor para la previsualización del archivo -->
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+
+<!-- Modal de Previsualización -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="previewModalLabel">Previsualizar Archivo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <iframe id="filePreview" src="" style="width: 100%; height: 80vh;" frameborder="0"></iframe>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+<!-- Modal de Edición -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="editModalLabel">Editar Registro</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editForm" method="post" action="" enctype="multipart/form-data" class="row g-3 needs-validation" novalidate>
+            {% csrf_token %}
+            <!-- Los campos del formulario se cargarán aquí por JavaScript -->
+          </form>
+        </div>    
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="submit" class="btn btn-primary" form="editForm">Guardar Cambios</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal de Eliminación -->
+  <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="deleteModalLabel">Eliminar Registro</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <form id="deleteForm" method="post" action="{% url 'eliminar_odp' 0 %}">
+            {% csrf_token %}
+            <input type="hidden" name="pk" id="pk_input">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">Eliminar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>  
+
+<!-- Scripts para manejar los modales -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- SweetAlert script -->
+<script>
+ 
+  $(document).ready(function() {
+    console.log('DataTables script is running');
+    $('#your-table-id').DataTable({
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.1/i18n/es-ES.json"
+        }
+    });
+});
+  </script>
+<script>
+  function openFilePreview(event, fileUrl, containerId) {
+    event.preventDefault(); // Evita la acción por defecto del enlace
+    
+    // Encuentra el contenedor para la previsualización
+    var container = document.getElementById(containerId);
+    
+    // Verifica si el contenedor ya tiene una previsualización
+    if (container.innerHTML === '') {
+      // Agrega un botón de cerrar y un iframe para previsualizar el archivo PDF
+      container.innerHTML = `
+        <div class="preview-wrapper">
+          <button type="button" class="btn btn-primary btn-sm" onclick="closeFilePreview('${containerId}')">Cerrar previsualizador</button>
+          <iframe src="${fileUrl}" width="100%" height="500px"></iframe>
+        </div>
+      `;
+    } else {
+      // Alternar visibilidad del iframe si ya está visible
+      container.innerHTML = ''; // Limpia el contenedor si ya tiene una previsualización
+    }
+  }
+
+  function closeFilePreview(containerId) {
+    var container = document.getElementById(containerId);
+    container.innerHTML = ''; // Limpia el contenedor para cerrar la previsualización
+  }
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Selecciona todos los botones de información
+    const infoButtons = document.querySelectorAll('.info-btn');
+  
+    infoButtons.forEach(button => {
+      button.addEventListener('click', function () {
+        // Obtén el ID del registro desde el atributo data-id
+        const recordId = this.getAttribute('data-id');
+  
+        // Aquí, deberías hacer una solicitud AJAX para obtener los detalles del registro.
+        // A continuación se muestra un ejemplo ficticio de cómo podrías hacerlo:
+        fetch(`/api/records/${recordId}/`)
+          .then(response => response.json())
+          .then(data => {
+            // Llena el modal con la información del registro
+            document.getElementById('info-folio').textContent = data.folio;
+            document.getElementById('info-tipo_doc').textContent = data.tipo_doc;
+            document.getElementById('info-prioridad').textContent = data.prioridad;
+            document.getElementById('info-dependencia').textContent = data.dependencia;
+            const archivoLink = document.getElementById('info-archivo');
+            archivoLink.href = data.archivo_url;
+            archivoLink.textContent = data.archivo_nombre;
+            document.getElementById('info-tiempo_restante').textContent = data.tiempo_restante;
+            document.getElementById('info-contestacion').textContent = data.contestacion ? 'Sí' : 'No';
+          })
+          .catch(error => console.error('Error:', error));
+      });
+    });
+  });
+  </script>
+  
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var countdowns = document.querySelectorAll('.countdown');
+        
+        countdowns.forEach(function(countdown) {
+            var tiempoRestante = parseInt(countdown.dataset.tiempoRestante);
+            var countdownElement = countdown;
+
+            function updateCountdown() {
+                var hours = Math.floor(tiempoRestante / 3600);
+                var minutes = Math.floor((tiempoRestante % 3600) / 60);
+                var seconds = tiempoRestante % 60;
+
+                countdownElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s";
+                
+                if (tiempoRestante > 0) {
+                    tiempoRestante--;
+                    setTimeout(updateCountdown, 1000);
+                } else {
+                    countdownElement.innerHTML = "Tiempo agotado";
+                }
+            }
+            
+            updateCountdown();
+        });
+    });
+</script>
+
+
+{% if messages %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            {% for message in messages %}
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '{{ message }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'small-swal'  // Clase personalizada para cambiar el tamaño
+                    }
+                });
+            {% endfor %}
+        });
+    </script>
+{% endif %}
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var previewModal = document.getElementById('previewModal');
+      previewModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget; // El botón que activó el modal
+        var fileUrl = button.getAttribute('data-file-url'); // Obtiene la URL del archivo
+        var iframe = previewModal.querySelector('#filePreview'); // Obtiene el iframe dentro del modal
+        iframe.src = fileUrl; // Establece el src del iframe a la URL del archivo
+      });
+    });
+  </script>
+  
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var editModal = document.getElementById('editModal');
+        editModal.addEventListener('show.bs.modal', function (event) {
+          var button = event.relatedTarget;
+          var id = button.getAttribute('data-id');
+          console.log('ID del registro:', id); // Verifica que el ID es correcto
+          var form = editModal.querySelector('#editForm');
+          
+          form.action = '{% url "editar_odp" 0 %}'.replace('0', id);
+          
+          fetch('{% url "obtener_formulario_edicion" 0 %}'.replace('0', id))
+            .then(response => response.text())
+            .then(html => {
+              form.innerHTML = html;
+              
+              var selectAreas = form.querySelector('#id_areas');
+              if (selectAreas) {
+                var selectedValues = selectAreas.getAttribute('data-selected-values');
+                if (selectedValues) {
+                  selectedValues = selectedValues.split(',');
+                  for (var i = 0; i < selectAreas.options.length; i++) {
+                    if (selectedValues.includes(selectAreas.options[i].value)) {
+                      selectAreas.options[i].selected = true;
+                    }
+                  }
+                }
+              }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+      });
+      
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+    // Configuración del modal de eliminación
+    document.querySelectorAll('.delete-btn').forEach(function(button) {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        const recordId = button.getAttribute('data-id');
+        Swal.fire({
+          title: '¿Estás seguro de que deseas eliminar este registro?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonText: 'Sí',
+          cancelButtonText: 'Cancelar',
+          customClass: {
+            cancelButton: 'swal1-confirm'  // Agrega la clase personalizada para el botón de cancelar
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            document.getElementById('deleteForm').action = `{% url 'eliminar_odp' 0 %}`.replace('0', recordId);
+            document.getElementById('pk_input').value = recordId;
+            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            deleteModal.show();
+          }
+        });
+      });
+    });
+  </script>
+  
+
+{% endblock %}

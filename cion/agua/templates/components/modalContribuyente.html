@@ -1,0 +1,42 @@
+{% load static %}
+{% load sass_tags %}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-4">
+            <!-- Botón para abrir el modal -->
+            <button type="button" id="openModalBtn" class="btn btn-primary" style="display:none;" data-bs-toggle="modal" data-bs-target="#exampleModalCenter1">Seleccionar Contribuyente</button>
+            
+            <!--Centered modal-->
+            <div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenter1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <h3 style="text-align: center; margin-top: 2px;" class="text text-secondary">Seleccione el Contribuyente</h3>
+                        <small style="text-align: center;">Se encontró más de un registro de contribuyente con el mismo RFC, seleccione el adecuado y proceda</small>
+
+                        <!-- Botón de redirección colocado aquí -->
+                        <div class="text-center my-3">
+                            <a href="{% url "registro_contribuyente" %}" class="btn btn-primary d-flex align-items-center" style="max-width: 300px; margin: 0 auto;">
+                                <i class="icofont icofont-contact-add" style="font-size: 1.5rem;"></i> <!-- Aumenta el tamaño del ícono -->
+                                <span class="ms-2">Registrar contribuyente</span> <!-- Espaciado entre ícono y texto -->
+                            </a> <!-- Botón de redirección -->
+                        </div>
+                        
+                        
+
+                        <div class="modal-body">
+                            <div class="modal-toggle-wrapper">
+                                <ul id="contribuyenteList" class="list-group"></ul>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

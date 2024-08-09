@@ -1,0 +1,122 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header pb-0 card-no-border">
+            <h3 class="mb-3">Lista de documentos recibidos</h3>
+        </div>
+        <div class="card-body">
+            <div class="dt-ext table-responsive theme-scrollbar">
+                <table class="display" id="show-hidden-row">
+                    <thead>
+                        <tr>
+                            <th>Folio</th>
+                            <th>Area</th>
+                            <th>Tipo de Documento</th>
+                            <th>Prioridad</th>
+                            <th>Dependencia</th>
+                            <th>Archivo</th>
+                            <th>Tiempo restante</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ofici in odp %}
+                        <tr>
+                            <td>{{ofici.folio_odp}}</td>
+                            <td>{{ofici.areas}}</td>
+                            <td>{{ofici.tipo_doc}}</td>
+                            <td>{{ofici.prioridad}}</td>
+                            <td>{{ofici.dependencia}}</td>
+                            <td style="text-align: center;">
+                                {% if ofici.archivo %}
+                                <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal"
+                                    data-file-url="{{ ofici.archivo.url }}">
+                                    <i class="fa fa-file-pdf-o" style="color: #00B7B6;"></i>
+                                </a>
+                                {% else %}
+                                <i class="icofont icofont-file-excel" style="color: red;"></i>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if ofici.horas_asignadas %}
+                                <div class="countdown" data-tiempo-restante="{{ ofici.get_tiempo_restante }}" id="countdown-{{ ofici.id }}"></div>
+                                {% else %}
+                                No reqiere contestación
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <ul class="action"> 
+                                    <li class="edit">
+                                        <a href="{% url 'editar_registro' ofici.pk %}"><i class="icon-pencil-alt"></i></a>
+                                    </li>
+                                    <li class="delete"><a href="#"><i class="icon-trash"></i></a></li>
+                                  </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal de Previsualización -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="previewModalLabel">Previsualizar Documento</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="filePreview" src="" frameborder="0" style="width: 100%; height: 650px;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var previewModal = document.getElementById('previewModal');
+        previewModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var fileUrl = button.getAttribute('data-file-url');
+            var iframe = previewModal.querySelector('#filePreview');
+            iframe.src = fileUrl;
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var countdowns = document.querySelectorAll('.countdown');
+        
+        countdowns.forEach(function(countdown) {
+            var tiempoRestante = parseInt(countdown.dataset.tiempoRestante);
+            var countdownElement = countdown;
+  
+            function updateCountdown() {
+                var hours = Math.floor(tiempoRestante / 3600);
+                var minutes = Math.floor((tiempoRestante % 3600) / 60);
+                var seconds = tiempoRestante % 60;
+  
+                countdownElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s";
+                
+                if (tiempoRestante > 0) {
+                    tiempoRestante--;
+                    setTimeout(updateCountdown, 1000);
+                } else {
+                    countdownElement.innerHTML = "TIEMPO AGOTADO";
+                }
+            }
+            
+            updateCountdown();
+        });
+    });
+</script>
+    

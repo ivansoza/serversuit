@@ -1,0 +1,559 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+<style>
+  .alert-link-custom {
+      color: #007bff; /* Azul estándar de Bootstrap */
+      text-decoration: underline; /* Subrayado */
+  }
+  
+  .alert-link-custom:hover {
+      color: #0056b3; /* Azul más oscuro al pasar el ratón sobre el enlace */
+  }
+  </style>
+{% include 'general/loader.html' %}
+{% include 'components/alertas.html' %}  {# Incluir el componente de alertas aquí #}
+{% include 'components/modal_ayuda.html' %}
+{% include 'components/modal_predio.html' %}
+{% include 'components/modalContribuyente.html' %}
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+  <div class="row">
+    {% if edit_mode %}
+      {% include 'components/formulario_editar.html' with form=form servicio=servicio %}
+    {% else %}
+      {% include 'components/formulario.html' with form=form %}
+    {% endif %}
+  </div>
+</div>
+<!-- Container-fluid Ends-->
+
+{% endblock %}
+
+{% block scriptcontent %}
+<script src="{% static 'assets/js/height-equal.js' %}"></script>
+<script src="{% static 'assets/js/alert.js' %}"></script>
+<script src="{% static 'assets/js/form-wizard/form-wizard.js' %}"></script>
+<script src="{% static 'assets/js/form-wizard/image-upload.js' %}"></script>
+<script src="{% static 'assets/js/height-equal.js' %}"></script>
+<script src="{% static 'assets/js/form-validation-custom.js' %}"></script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Manejar el paso al siguiente tab
+    document.getElementById('nextStep1').addEventListener('click', function() {
+      var nextTab = new bootstrap.Tab(document.getElementById('wizard-cart-tab'));
+      nextTab.show();
+    });
+
+    document.getElementById('nextStep2').addEventListener('click', function() {
+      var nextTab = new bootstrap.Tab(document.getElementById('wizard-banking-tab'));
+      nextTab.show();
+    });
+
+    // Manejar el paso al tab anterior
+    document.getElementById('previousStep2').addEventListener('click', function() {
+      var previousTab = new bootstrap.Tab(document.getElementById('wizard-contact-tab'));
+      previousTab.show();
+    });
+
+    document.getElementById('previousStep3').addEventListener('click', function() {
+      var previousTab = new bootstrap.Tab(document.getElementById('wizard-cart-tab'));
+      previousTab.show();
+    });
+
+    // Envío del formulario en la última pestaña
+    document.getElementById('submitForm').addEventListener('click', function() {
+      document.getElementById('form-wizard').submit();
+    });
+  });
+</script>
+
+<script>
+  // Manejo del clic en el botón de búsqueda
+  document.getElementById('consultarBtn').addEventListener('click', function() {
+    // Ocultar campos adicionales al iniciar la búsqueda
+    document.getElementById('nombreAdi').style.display = 'none';
+    document.getElementById('nombreMCContainer').style.display = 'none';
+    document.getElementById('apellidoPMCContainer').style.display = 'none';
+    document.getElementById('apellidoMMCContainer').style.display = 'none';
+    document.getElementById('contribuyentePersonaMoral').style.display = 'none';
+    document.getElementById('contribuyenteTipoPersona').style.display = 'none';
+
+    var consulta = document.getElementById('consultaRFCorCURP').value;
+    fetch(`/agua/buscar_contribuyente/?consulta=${consulta}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la solicitud');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (!data.mensaje && Array.isArray(data) && data.length > 0) {
+          showAlert('No se encontró ningún contribuyente con los datos proporcionados', 'danger');
+        } else if (data.contribuyentes.length === 1) {
+          // Procesar contribuyente único
+          const contribuyente = data.contribuyentes[0];
+    
+          // Restablecer todos los campos
+          document.getElementById('validationContribuyente').value = '';
+          document.getElementById('validationRFC').value = '';
+          document.getElementById('validationHomoclave').value = '';
+          document.getElementById('validationCurp').value = '';
+          document.getElementById('validationNombre').value = '';
+          document.getElementById('validationApellidoP').value = '';
+          document.getElementById('validationApellidoM').value = '';
+          document.getElementById('validationRazonSocial').value = '';
+          document.getElementById('validationNombreMC').value = '';
+          document.getElementById('validationApellidoPMC').value = '';
+          document.getElementById('validationApellidoMMC').value = '';
+          document.getElementById('validationTipoPersona').value = '';
+    
+          // Llenar los campos con los datos del contribuyente
+          document.getElementById('validationContribuyente').value = contribuyente.id;
+          document.getElementById('validationRFC').value = contribuyente.rfc;
+          document.getElementById('validationHomoclave').value = contribuyente.homoclave;
+          document.getElementById('validationCurp').value = contribuyente.curp;
+          document.getElementById('validationNombre').value = contribuyente.nombre;
+          document.getElementById('validationApellidoP').value = contribuyente.ApellidoP;
+          document.getElementById('validationApellidoM').value = contribuyente.ApellidoM;
+          document.getElementById('validationRazonSocial').value = contribuyente.razonSocial;
+          document.getElementById('validationTipoPersona').value = contribuyente.tipoPersona;
+          document.getElementById('validationTelefono').value = contribuyente.telefono;
+          document.getElementById('validationEmail').value = contribuyente.email;
+          Ejemplo1(contribuyente.id)
+
+          // Mostrar u ocultar campos dependiendo del tipo de persona
+          if (contribuyente.tipoPersona === 'PM') {
+            document.getElementById('nombre').style.display = 'none';
+            document.getElementById('apellidoPa').style.display = 'none';
+            document.getElementById('apellidoMa').style.display = 'none';
+            document.getElementById('contriCURP').style.display = 'none';
+            document.getElementById('contribuyentePersonaMoral').style.display = 'block';
+          } else {
+            document.getElementById('nombre').style.display = 'block';
+            document.getElementById('apellidoPa').style.display = 'block';
+            document.getElementById('apellidoMa').style.display = 'block';
+            document.getElementById('contriCURP').style.display = 'block';
+            document.getElementById('contribuyentePersonaMoral').style.display = 'none';
+          }
+    
+          // Mostrar campos de bienes mancomunados si aplica
+          if (contribuyente.mc) {
+            document.getElementById('nombreAdi').style.display = 'block';
+            document.getElementById('nombreMCContainer').style.display = 'block';
+            document.getElementById('apellidoPMCContainer').style.display = 'block';
+            document.getElementById('apellidoMMCContainer').style.display = 'block';
+            document.getElementById('validationNombreMC').value = contribuyente.nombre_mc;
+            document.getElementById('validationApellidoPMC').value = contribuyente.ApellidoP_mc;
+            document.getElementById('validationApellidoMMC').value = contribuyente.ApellidoM_mc;
+          }
+        } else if (data.contribuyentes.length > 1) {
+          // Procesar múltiples contribuyentes
+          const contribuyenteList = document.getElementById('contribuyenteList');
+          contribuyenteList.innerHTML = '';
+          data.contribuyentes.forEach(contribuyente => {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item list-group-item-action';
+            listItem.innerHTML = `
+              <div>
+                <strong>${contribuyente.nombre} ${contribuyente.ApellidoP} ${contribuyente.ApellidoM} ${contribuyente.mc ? ` y ${contribuyente.nombre_mc} ${contribuyente.ApellidoP_mc} ${contribuyente.ApellidoM_mc} <i class="fa fa-users"></i>` : '<i class="fa fa-user"></i>'}<br>
+                <small>RFC: ${contribuyente.rfc}${contribuyente.homoclave}</small><br>
+                <small>CURP: ${contribuyente.curp}</small><br>
+                <small>Email: ${contribuyente.email}</small><br>
+                <small>Teléfono: ${contribuyente.telefono}</small>
+              </div>
+            `;
+            listItem.addEventListener('click', () => {
+              // Rellenar los campos del contribuyente seleccionado
+              document.getElementById('validationContribuyente').value = '';
+              document.getElementById('validationRFC').value = '';
+              document.getElementById('validationHomoclave').value = '';
+              document.getElementById('validationCurp').value = '';
+              document.getElementById('validationNombre').value = '';
+              document.getElementById('validationApellidoP').value = '';
+              document.getElementById('validationApellidoM').value = '';
+              document.getElementById('validationRazonSocial').value = '';
+              document.getElementById('validationNombreMC').value = '';
+              document.getElementById('validationApellidoPMC').value = '';
+              document.getElementById('validationApellidoMMC').value = '';
+              document.getElementById('validationTipoPersona').value = '';
+    
+              // Llenar los campos con los datos del contribuyente
+              document.getElementById('validationContribuyente').value = contribuyente.id;
+              document.getElementById('validationRFC').value = contribuyente.rfc;
+              document.getElementById('validationHomoclave').value = contribuyente.homoclave;
+              document.getElementById('validationCurp').value = contribuyente.curp;
+              document.getElementById('validationNombre').value = contribuyente.nombre;
+              document.getElementById('validationApellidoP').value = contribuyente.ApellidoP;
+              document.getElementById('validationApellidoM').value = contribuyente.ApellidoM;
+              document.getElementById('validationRazonSocial').value = contribuyente.razonSocial;
+              document.getElementById('validationTipoPersona').value = contribuyente.tipoPersona;
+              document.getElementById('validationTelefono').value = contribuyente.telefono;
+              document.getElementById('validationEmail').value = contribuyente.email;
+  
+              Ejemplo1(contribuyente.id)
+              // Mostrar u ocultar campos dependiendo del tipo de persona
+              if (contribuyente.tipoPersona === 'PM') {
+                document.getElementById('nombre').style.display = 'none';
+                document.getElementById('apellidoPa').style.display = 'none';
+                document.getElementById('apellidoMa').style.display = 'none';
+                document.getElementById('contriCURP').style.display = 'none';
+                document.getElementById('contribuyentePersonaMoral').style.display = 'block';
+              } else {
+                document.getElementById('nombre').style.display = 'block';
+                document.getElementById('apellidoPa').style.display = 'block';
+                document.getElementById('apellidoMa').style.display = 'block';
+                document.getElementById('contriCURP').style.display = 'block';
+                document.getElementById('contribuyentePersonaMoral').style.display = 'none';
+              }
+    
+              // Mostrar campos de bienes mancomunados si aplica
+              if (contribuyente.mc) {
+                document.getElementById('nombreAdi').style.display = 'block';
+                document.getElementById('nombreMCContainer').style.display = 'block';
+                document.getElementById('apellidoPMCContainer').style.display = 'block';
+                document.getElementById('apellidoMMCContainer').style.display = 'block';
+                document.getElementById('validationNombreMC').value = contribuyente.nombre_mc;
+                document.getElementById('validationApellidoPMC').value = contribuyente.ApellidoP_mc;
+                document.getElementById('validationApellidoMMC').value = contribuyente.ApellidoM_mc;
+              }
+
+              var modal = bootstrap.Modal.getInstance(document.getElementById('exampleModalCenter1'));
+              modal.hide();
+            });
+            contribuyenteList.appendChild(listItem);
+          });
+          $('#exampleModalCenter1').modal('show');  // Mostrar el modal con la lista
+        }
+      })
+      .catch(error => {
+        showAlert('No se encontró ningún contribuyente con los datos proporcionados. <a href="/contribuyente/registro/" class="alert-link-custom">Registre al contribuyente aquí</a>', 'danger');
+      });
+  });
+</script>
+<script>
+  // Manejo del clic en el botón de búsqueda
+  document.getElementById('consultaRFCorCURP').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault(); // Evitar que el formulario se envíe
+
+    // Ocultar campos adicionales al iniciar la búsqueda
+    document.getElementById('nombreAdi').style.display = 'none';
+    document.getElementById('nombreMCContainer').style.display = 'none';
+    document.getElementById('apellidoPMCContainer').style.display = 'none';
+    document.getElementById('apellidoMMCContainer').style.display = 'none';
+    document.getElementById('contribuyentePersonaMoral').style.display = 'none';
+    document.getElementById('contribuyenteTipoPersona').style.display = 'none';
+
+    var consulta = document.getElementById('consultaRFCorCURP').value;
+    fetch(`/agua/buscar_contribuyente/?consulta=${consulta}`)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la solicitud');
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (!data.mensaje && Array.isArray(data) && data.length > 0) {
+          showAlert('No se encontró ningún contribuyente con los datos proporcionados', 'danger');
+        } else if (data.contribuyentes.length === 1) {
+          // Procesar contribuyente único
+          const contribuyente = data.contribuyentes[0];
+    
+          // Restablecer todos los campos
+          document.getElementById('validationContribuyente').value = '';
+          document.getElementById('validationRFC').value = '';
+          document.getElementById('validationHomoclave').value = '';
+          document.getElementById('validationCurp').value = '';
+          document.getElementById('validationNombre').value = '';
+          document.getElementById('validationApellidoP').value = '';
+          document.getElementById('validationApellidoM').value = '';
+          document.getElementById('validationRazonSocial').value = '';
+          document.getElementById('validationNombreMC').value = '';
+          document.getElementById('validationApellidoPMC').value = '';
+          document.getElementById('validationApellidoMMC').value = '';
+          document.getElementById('validationTipoPersona').value = '';
+    
+          // Llenar los campos con los datos del contribuyente
+          document.getElementById('validationContribuyente').value = contribuyente.id;
+          document.getElementById('validationRFC').value = contribuyente.rfc;
+          document.getElementById('validationHomoclave').value = contribuyente.homoclave;
+          document.getElementById('validationCurp').value = contribuyente.curp;
+          document.getElementById('validationNombre').value = contribuyente.nombre;
+          document.getElementById('validationApellidoP').value = contribuyente.ApellidoP;
+          document.getElementById('validationApellidoM').value = contribuyente.ApellidoM;
+          document.getElementById('validationRazonSocial').value = contribuyente.razonSocial;
+          document.getElementById('validationTipoPersona').value = contribuyente.tipoPersona;
+          document.getElementById('validationTelefono').value = contribuyente.telefono;
+          document.getElementById('validationEmail').value = contribuyente.email;
+          Ejemplo1(contribuyente.id)
+
+          // Mostrar u ocultar campos dependiendo del tipo de persona
+          if (contribuyente.tipoPersona === 'PM') {
+            document.getElementById('nombre').style.display = 'none';
+            document.getElementById('apellidoPa').style.display = 'none';
+            document.getElementById('apellidoMa').style.display = 'none';
+            document.getElementById('contriCURP').style.display = 'none';
+            document.getElementById('contribuyentePersonaMoral').style.display = 'block';
+          } else {
+            document.getElementById('nombre').style.display = 'block';
+            document.getElementById('apellidoPa').style.display = 'block';
+            document.getElementById('apellidoMa').style.display = 'block';
+            document.getElementById('contriCURP').style.display = 'block';
+            document.getElementById('contribuyentePersonaMoral').style.display = 'none';
+          }
+    
+          // Mostrar campos de bienes mancomunados si aplica
+          if (contribuyente.mc) {
+            document.getElementById('nombreAdi').style.display = 'block';
+            document.getElementById('nombreMCContainer').style.display = 'block';
+            document.getElementById('apellidoPMCContainer').style.display = 'block';
+            document.getElementById('apellidoMMCContainer').style.display = 'block';
+            document.getElementById('validationNombreMC').value = contribuyente.nombre_mc;
+            document.getElementById('validationApellidoPMC').value = contribuyente.ApellidoP_mc;
+            document.getElementById('validationApellidoMMC').value = contribuyente.ApellidoM_mc;
+          }
+          Ejemplo1(contribuyente.id)
+
+        } else if (data.contribuyentes.length > 1) {
+          // Procesar múltiples contribuyentes
+          const contribuyenteList = document.getElementById('contribuyenteList');
+          contribuyenteList.innerHTML = '';
+          data.contribuyentes.forEach(contribuyente => {
+            const listItem = document.createElement('li');
+            listItem.className = 'list-group-item list-group-item-action';
+            listItem.innerHTML = `
+              <div>
+                <strong>${contribuyente.nombre} ${contribuyente.ApellidoP} ${contribuyente.ApellidoM} ${contribuyente.mc ? ` y ${contribuyente.nombre_mc} ${contribuyente.ApellidoP_mc} ${contribuyente.ApellidoM_mc} <i class="fa fa-users"></i>` : '<i class="fa fa-user"></i>'}<br>
+                <small>RFC: ${contribuyente.rfc}${contribuyente.homoclave}</small><br>
+                <small>CURP: ${contribuyente.curp}</small><br>
+                <small>Email: ${contribuyente.email}</small><br>
+                <small>Teléfono: ${contribuyente.telefono}</small>
+              </div>
+            `;
+            listItem.addEventListener('click', () => {
+              // Rellenar los campos del contribuyente seleccionado
+              document.getElementById('validationContribuyente').value = '';
+              document.getElementById('validationRFC').value = '';
+              document.getElementById('validationHomoclave').value = '';
+              document.getElementById('validationCurp').value = '';
+              document.getElementById('validationNombre').value = '';
+              document.getElementById('validationApellidoP').value = '';
+              document.getElementById('validationApellidoM').value = '';
+              document.getElementById('validationRazonSocial').value = '';
+              document.getElementById('validationNombreMC').value = '';
+              document.getElementById('validationApellidoPMC').value = '';
+              document.getElementById('validationApellidoMMC').value = '';
+              document.getElementById('validationTipoPersona').value = '';
+    
+              // Llenar los campos con los datos del contribuyente
+              document.getElementById('validationContribuyente').value = contribuyente.id;
+              document.getElementById('validationRFC').value = contribuyente.rfc;
+              document.getElementById('validationHomoclave').value = contribuyente.homoclave;
+              document.getElementById('validationCurp').value = contribuyente.curp;
+              document.getElementById('validationNombre').value = contribuyente.nombre;
+              document.getElementById('validationApellidoP').value = contribuyente.ApellidoP;
+              document.getElementById('validationApellidoM').value = contribuyente.ApellidoM;
+              document.getElementById('validationRazonSocial').value = contribuyente.razonSocial;
+              document.getElementById('validationTipoPersona').value = contribuyente.tipoPersona;
+              document.getElementById('validationTelefono').value = contribuyente.telefono;
+              document.getElementById('validationEmail').value = contribuyente.email;
+  
+              Ejemplo1(contribuyente.id)
+              // Mostrar u ocultar campos dependiendo del tipo de persona
+              if (contribuyente.tipoPersona === 'PM') {
+                document.getElementById('nombre').style.display = 'none';
+                document.getElementById('apellidoPa').style.display = 'none';
+                document.getElementById('apellidoMa').style.display = 'none';
+                document.getElementById('contriCURP').style.display = 'none';
+                document.getElementById('contribuyentePersonaMoral').style.display = 'block';
+              } else {
+                document.getElementById('nombre').style.display = 'block';
+                document.getElementById('apellidoPa').style.display = 'block';
+                document.getElementById('apellidoMa').style.display = 'block';
+                document.getElementById('contriCURP').style.display = 'block';
+                document.getElementById('contribuyentePersonaMoral').style.display = 'none';
+              }
+    
+              // Mostrar campos de bienes mancomunados si aplica
+              if (contribuyente.mc) {
+                document.getElementById('nombreAdi').style.display = 'block';
+                document.getElementById('nombreMCContainer').style.display = 'block';
+                document.getElementById('apellidoPMCContainer').style.display = 'block';
+                document.getElementById('apellidoMMCContainer').style.display = 'block';
+                document.getElementById('validationNombreMC').value = contribuyente.nombre_mc;
+                document.getElementById('validationApellidoPMC').value = contribuyente.ApellidoP_mc;
+                document.getElementById('validationApellidoMMC').value = contribuyente.ApellidoM_mc;
+              }
+
+              var modal = bootstrap.Modal.getInstance(document.getElementById('exampleModalCenter1'));
+              modal.hide();
+            });
+            contribuyenteList.appendChild(listItem);
+          });
+          $('#exampleModalCenter1').modal('show');  // Mostrar el modal con la lista
+        }
+      })
+      .catch(error => {
+        showAlert('No se encontró ningún contribuyente con los datos proporcionados. <a href="/contribuyente/registro/" class="alert-link-custom">Registre al contribuyente aquí</a>', 'danger');
+      });
+    }
+  });
+</script>
+
+<script>
+  
+   function Ejemplo1(idContribuyente) {
+    var contribuyenteId = idContribuyente;
+  
+    if (contribuyenteId) {
+      fetch(`/agua/obtener_predios/?contribuyente_id=${contribuyenteId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la solicitud de predios');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Datos recibidos:', data);
+          if (data.error) {
+            showAlert(data.error, 'danger');  // Mostrar alerta de error
+          } else {
+            var selectPredios = document.getElementById('selectPredios');
+            selectPredios.innerHTML = '<option value="">Seleccione un predio</option>';  // Limpiar opciones existentes
+            data.predios.forEach(predio => {
+              var option = document.createElement('option');
+              option.value = predio.id;
+              option.text = `
+              ${predio.descripcion ? `Clave catastral: ${predio.descripcion}` : ''}
+              ${predio.calle ? `, Calle: ${predio.calle}` : ''}
+              ${predio.exte ? `, No. exterior: ${predio.exte}` : ''}
+              ${predio.inte ? `, No. interior: ${predio.inte}` : ''}
+              ${predio.municipio ? `, Municipio: ${predio.municipio}` : ''}
+            `.trim().replace(/,\s*$/, ''); // Eliminar la coma final si está presente
+                      selectPredios.add(option);
+            });
+          }
+        })
+        .catch(error => {
+          showAlert('Hubo un problema con la solicitud de predios: ' + error.message, 'danger');
+        });
+    } else {
+      // Limpiar el campo de predios si no se ha seleccionado un contribuyente
+      document.getElementById('selectPredios').innerHTML = '<option value="">Seleccione un predio</option>';
+    }
+  };
+  
+</script>
+
+<script>
+  function cargarDatosPredio(predioId) {
+    if (predioId) {
+      fetch(`/agua/obtener_predio_detalle/?predio_id=${predioId}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error en la solicitud de detalle del predio');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Datos del predio:', data);
+          if (data.error) {
+            showAlert(data.error, 'danger');  // Mostrar alerta de error
+          } else {
+            document.getElementById('validationClaveCatastral').value = data.claveCatastral || '';
+            document.getElementById('validationPredio').value = data.predio || '';
+            document.getElementById('validationEstado').value = data.estado || '';
+            document.getElementById('validationCodigoPostal').value = data.codigo_postal || '';
+            document.getElementById('validationMunicipioP').value = data.municipio_predio || '';
+            document.getElementById('validationColonia').value = data.colonia || '';
+            document.getElementById('validationCalle').value = data.calle || '';
+            document.getElementById('validationNumeroExterior').value = data.numero_exterior || '';
+            document.getElementById('validationNumeroInterior').value = data.numero_interior || '';
+            document.getElementById('validationSuperficieTotal').value = data.superficie_total || '';
+            document.getElementById('validationSuperficieConstruida').value = data.superficie_construida || '';
+            document.getElementById('validationUsoPredio').value = data.uso_predio || '';
+            document.getElementById('validationValorCatastral').value = data.valor_catastral || '';
+
+            // Añade aquí el resto de campos del formulario
+          }
+        })
+        .catch(error => {
+          showAlert('Hubo un problema con la solicitud de detalle del predio: ' + error.message, 'danger');
+        });
+    }
+  }
+
+  document.getElementById('selectPredios').addEventListener('change', function() {
+    var predioId = this.value;
+    cargarDatosPredio(predioId);
+  });
+</script>
+
+
+<script>
+  function validateRFC() {
+    var input = document.getElementById('consultaRFCorCURP');
+    var feedback = document.querySelector('.valid-feedback');
+    var btn = document.getElementById('consultarBtn');
+
+    // Verifica si la longitud del texto es 9 o 10
+    if (input.value.length >= 3 && input.value.length < 9) {
+        // Activa para razón social (longitud entre 3 y 8)
+        input.classList.add('is-valid');
+        input.classList.remove('is-invalid');
+        feedback.style.display = 'block';
+        feedback.innerText = 'Razón social posible. ¡Listo para consultar!';
+        btn.disabled = false;
+        btn.className = "btn btn-outline-primary";
+    }else if (input.value.length === 9) {
+        input.classList.add('is-valid');
+        input.classList.remove('is-invalid');
+        feedback.innerText = 'RFC para persona moral. ¡Listo para consultar!';
+        feedback.style.display = 'block'; // Muestra el mensaje de feedback positivo
+        btn.disabled = false;
+        btn.className = "btn btn-outline-primary"; // Cambia la clase para habilitado
+    } else if (input.value.length === 10) {
+        input.classList.add('is-valid');
+        input.classList.remove('is-invalid');
+        feedback.innerText = 'CURP para persona física. ¡Listo para consultar!';
+        feedback.style.display = 'block'; // Muestra el mensaje de feedback positivo
+        btn.disabled = false;
+        btn.className = "btn btn-outline-primary"; // Cambia la clase para habilitado
+    }else if (input.value.length > 10) {
+            // Nombres largos
+            input.classList.add('is-valid');
+            input.classList.remove('is-invalid');
+            feedback.style.display = 'block';
+            feedback.innerText = 'Nombre de persona: ' + input.value + '. ¡Listo para consultar!';
+            btn.disabled = false;
+            btn.className = "btn btn-outline-primary";
+    }else {
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+        feedback.style.display = 'none'; // Oculta el mensaje si no cumple los criterios
+        btn.disabled = true;
+        btn.className = "btn btn-outline-danger disabled"; // Mantiene o cambia la clase para deshabilitado
+    }
+}
+
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var inputRFC = document.getElementById('validationRFC');
+    inputRFC.oninput = function() {
+      validateRFC();
+      this.value = this.value.toUpperCase();
+    };
+  });
+</script>
+
+{% endblock %}

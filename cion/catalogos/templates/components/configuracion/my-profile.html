@@ -1,0 +1,33 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="edit-profile">
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+            <div class="card-header pb-0">
+                <h3 class="card-title mb-0">Mi Perfil</h3>
+                <div class="card-options"><a class="card-options-collapse" href="#" data-bs-toggle="card-collapse"><i class="fe fe-chevron-up"></i></a><a class="card-options-remove" href="#" data-bs-toggle="card-remove"><i class="fe fe-x"></i></a></div>
+            </div>
+            <div class="card-body">
+                <div class="row mb-2">
+                    <div class="profile-title">
+                    <div class="d-flex">                        
+                        <img class="img-70 rounded-circle" alt="" src="{{user_image_url_new}}">
+                        <div class="flex-grow-1">
+                        <h3 class="mb-1">{{user_full_name}}</h3>
+                        <p>{{user_name|upper}}</p>
+                        <p style="margin-top:-20px">{{user_email}}</p>
+
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+      
+
+

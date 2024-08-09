@@ -1,0 +1,57 @@
+{% load static %}
+{% load sass_tags %}
+
+<!-- Zero Configuration  Starts-->
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header pb-0 card-no-border">
+      <h3>Listado de Contribuyentes</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive theme-scrollbar">
+        <table class="display" id="basic-1">
+          <thead>
+            <tr>
+                <th>RFC</th>
+                <th>Nombre/Razon social</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in registros %}
+            <tr>
+              <td>{{ r.rfc }}{{r.homoclave|default_if_none:''}}</td>
+              <td>
+                {% if r.nombre %}
+                    {{r.nombre|default_if_none:''}} {{r.apellidoP|default_if_none:''}} {{r.apellidoM|default_if_none:''}}
+                    <br> 
+                    {% if r.nombre_mc %} Y
+                        {{ r.nombre_mc|default_if_none:'' }} {{ r.apellidoP_mc|default_if_none:'' }} {{ r.apellidoM_mc|default_if_none:'' }}
+                    {% endif %}
+                {% else %}
+                    {{ r.razonSocial }}
+                {% endif %}
+              </td>
+              <td>
+                {% if r.estado == True %}
+                    Activo 
+                {% else %}
+                    Inactivo
+                {% endif %}
+              </td>
+              <td>
+                <ul class="action"> 
+                    <li class="edit"> <a href="{% url 'editar_contribuyente' r.pk %}"><i class="icon-pencil-alt"></i></a></li>
+                    <li class="delete"><a href="#"><i class="icon-trash"></i></a></li>
+                </ul>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Zero Configuration  Ends-->

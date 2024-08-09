@@ -1,0 +1,570 @@
+{% load static %}
+{% load sass_tags %}
+
+<!DOCTYPE html>
+<html lang="en" dir="{{layout}}">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cion admin is super flexible, powerful, clean &amp; modern responsive bootstrap 5 admin template with unlimited possibilities.">
+    <meta name="keywords" content="admin template, Cion admin template, dashboard template, flat admin template, responsive admin template, web app">
+    <meta name="author" content="pixelstrap">
+    <link rel="icon" href="{% static 'assets/images/favicon1.png' %}" type="image/x-icon">
+    <link rel="shortcut icon" href="{% static 'assets/images/favicon1.png' %}" type="image/x-icon">
+    <title>SuApGEM - Tlaxcala</title>
+
+    <!-- Google font-->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100;200;300;400;500;600;700;800;900&amp;family=Nunito+Sans:ital,opsz,wght@0,6..12,200;0,6..12,300;0,6..12,400;0,6..12,500;0,6..12,600;0,6..12,700;0,6..12,800;0,6..12,900;0,6..12,1000;1,6..12,200;1,6..12,300;1,6..12,400;1,6..12,500;1,6..12,600;1,6..12,700;1,6..12,800;1,6..12,900;1,6..12,1000&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/font-awesome.css' %}">
+    <!-- ico-font-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/icofont.css' %}">
+    <!-- Themify icon-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/themify.css' %}">
+    <!-- Flag icon-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/flag-icon.css' %}">
+    <!-- Feather icon-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/feather-icon.css' %}">
+    <!-- Plugins css start-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/slick.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/slick-theme.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/scrollbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/animate.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/prism.css' %}">
+    <!-- Plugins css Ends-->
+
+    {% block css %}  {% endblock %}
+
+    <!-- Bootstrap css-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/bootstrap.css' %}">
+    <!-- App css-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}?v1.4">
+    <link id="color" rel="stylesheet" href="{% static 'assets/css/color-1.css' %}" media="screen">
+    <!-- Responsive css-->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/responsive.css' %}">
+  </head>
+
+  <body> 
+
+
+  <style>
+
+    
+        :root {
+          --theme-default: 
+          {% if personalizacion.color_secundario %} 
+          {{personalizacion.color_secundario}};
+          {% else %}
+          #35bfbf;
+          {% endif %}
+
+          --theme-secondary: #FF6150;
+          --color-secondary: 
+          {% if personalizacion.color_primario_a %}
+          {{personalizacion.color_primario_a}};
+          {% else %}
+          #161c24;
+          {% endif %}
+          
+          --color-third:
+          {% if personalizacion.color_secundario_a %}
+          {{personalizacion.color_secundario_a}};
+          {% else %}
+          #35bfbf;
+          {% endif %}
+          
+
+          --sidebar-color:
+          {% if personalizacion.color_primario %}
+          {{personalizacion.color_primario}};
+
+          {% else %}
+          #222F3D;
+          {% endif %}
+          
+
+
+          --light-background: rgba(242, 243, 247, 0.7);
+          --body-font-color: #2F2F3B;
+          --chart-border: #ECF3FA;
+          --recent-chart-bg: #FCFCFD;
+          --light-bg: #F6F7F9;
+          --white: #fff;
+          --light2: #F5F6F9;
+          --sidebar-border: rgba(0, 0, 0, 0.1);
+          --chart-text-color: rgba(82, 82, 108, 0.8);
+          --recent-dashed-border: rgba(82, 82, 108, 0.3);
+          --chart-dashed-border: rgba(82, 82, 108, 0.2);
+          --chart-progress-light: rgba(82, 82, 108, 0.1);
+          --recent-box-bg: #F2F4F7;
+          --recent-border: rgba(97, 101, 122, 0.25);
+          --course-light-btn: #F2F3F7;
+          --course-bg: #F7F7F7;
+          --balance-profie-bg: #E0DFEF;
+          --view-grid-bg: #ECF3FA80;
+          --view-border-marker: #cfcdfc;
+          --bs-heading-color: #1F2F3E;
+          --fc-button-bg-color: var(--theme-default);
+          --fc-button-active-bg-color: var(--theme-default);
+          --fc-button-active-border-color: var(--theme-default);
+          --fc-button-border-color: var(--theme-default);
+          --fc-button-hover-bg-color: var(--theme-default);
+          --fc-button-hover-border-color: var(--theme-default);
+          --normal: #ECEAF3;
+          --normal-shadow: #D9D8E3;
+          --normal-mouth: #9795A4;
+          --normal-eye: #595861;
+          --active: #F8DA69;
+          --active-shadow: #F4B555;
+          --active-mouth: #F05136;
+          --active-eye: #313036;
+          --active-tear: #76b5e7;
+          --active-shadow-angry: #e94f1d;
+        }
+
+
+
+        body[class=dark-only] {
+          --light-background: rgba(31, 32, 40, 0.65);
+          --recent-chart-bg: #262932;
+          --light-bg: #1d1e26;
+          --white: #262932;
+          --sidebar-border: rgba(255, 255, 255, 0.1);
+          --light2: #1d1e26;
+          --chart-border: #374558;
+          --recent-box-bg: #1d1e26;
+          --recent-border: #374558;
+          --body-font-color: rgba(255, 255, 255, 0.6);
+          --course-light-btn: var(--light-bg);
+          --view-grid-bg: var(--light-bg);
+          --view-border-marker: #2c2c45d4;
+          --sidebar-color:#222F3D;
+          --color-secondary: #161c24;
+          --theme-default:#222F3D;
+
+        }
+
+        body.dark-only.modal-open {
+          --light-background: rgba(31, 32, 40, 0.65);
+          --recent-chart-bg: #262932;
+          --light-bg: #1d1e26;
+          --white: #262932;
+          --sidebar-border: rgba(255, 255, 255, 0.1);
+          --light2: #1d1e26;
+          --chart-border: #374558;
+          --recent-box-bg: #1d1e26;
+          --recent-border: #374558;
+          --body-font-color: rgba(255, 255, 255, 0.6);
+          --course-light-btn: var(--light-bg);
+          --view-grid-bg: var(--light-bg);
+          --view-border-marker: #2c2c45d4;
+          --sidebar-color:#222F3D;
+          --color-secondary: #161c24;
+        }
+
+
+
+        .page-wrapper .sidebar-wrapper .logo-wrapper {
+          padding: 15px 20px 25px 20px; /* Reduce el padding superior a 15px y aumenta el inferior a 25px */
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background-color: var(--sidebar-color) !important;
+          min-height: 100px;
+        }
+
+
+
+
+        .page-wrapper.compact-small .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .sidebar-list {
+          padding: 20px;
+          background-color:var(--sidebar-color) !important;
+        } 
+
+
+        @media (max-width: 768px) {
+          .page-wrapper.compact-small .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .sidebar-list {
+            padding: 15px;
+          }
+        }
+
+        .page-wrapper.compact-small .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .sidebar-list.active {
+          background-color: var(--color-secondary) !important; /* Nuevo color de fondo para el elemento activo */
+        }
+        
+
+        .page-wrapper.compact-sidebar .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+              -ms-flex-direction: column;
+                  flex-direction: column;
+          height: 100%;
+          background: var(--sidebar-color) !important;
+        }
+
+
+      
+
+        .badge-primary {
+          background-color: var(--theme-default) !important;
+        }
+        
+
+        .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links li a.active span {
+          color: var(--color-third) !important;
+        }
+
+
+
+        .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .sidebar-list .sidebar-link.active > span {
+            font-weight: 700; /* O cualquier valor que prefieras, como 600 o 700 */
+            font-size: 15px;
+        }
+
+
+
+
+        .page-wrapper .page-body-wrapper .page-title .breadcrumb .breadcrumb-item {
+          color: var(--theme-default) !important;
+          font-weight: 500;
+        }
+        
+
+        .page-wrapper .page-body-wrapper .page-title .breadcrumb .breadcrumb-item + .breadcrumb-item:before {
+          content: "/";
+          color: var(--theme-default) !important;
+        }
+
+        .page-wrapper .page-body-wrapper .page-title .breadcrumb .breadcrumb-item a svg {
+          width: 16px;
+          height: 16px;
+          stroke: var(--theme-default) !important;
+          vertical-align: text-top;
+        }
+
+        .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li > a.active {
+          background-color: var(--theme-default) !important;
+          -webkit-transition: all 0.3s ease;
+          transition: all 0.3s ease;
+        }
+
+
+        .page-wrapper .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li a.active svg.stroke-icon {
+            stroke: var(--color-third) !important;
+        }
+
+        .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li > a.active svg,
+        .page-wrapper.horizontal-wrapper .page-body-wrapper .sidebar-wrapper .sidebar-main .sidebar-links .simplebar-wrapper .simplebar-mask .simplebar-content-wrapper .simplebar-content > li > a.active span {
+          color: white !important;
+          -webkit-transition: all 0.3s ease;
+          transition: all 0.3s ease;
+        }
+
+        .loader-wrapper .loader {
+          display: block;
+          position: relative;
+          width: 100px;
+          height: 100px;
+          border-radius: 50%;
+          border: 4px solid transparent;
+          border-top-color: var(--sidebar-color) !important;
+          -webkit-animation: loader 2s linear infinite;
+          animation: loader 2s linear infinite;
+        }
+
+        .loader-wrapper .loader:before {
+          content: "";
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          right: 5px;
+          bottom: 5px;
+          border-radius: 50%;
+          border: 4px solid transparent;
+          border-top-color: var(--sidebar-color) !important;
+          -webkit-animation: loader 3s linear infinite;
+                  animation: loader 3s linear infinite;
+        }
+        .loader-wrapper .loader:after {
+          content: "";
+          position: absolute;
+          top: 15px;
+          left: 15px;
+          right: 15px;
+          bottom: 15px;
+          border-radius: 50%;
+          border: 4px solid transparent;
+          border-top-color:var(--sidebar-color) !important;
+          -webkit-animation: loader 1.5s linear infinite;
+                  animation: loader 1.5s linear infinite;
+        }
+
+
+        .page-wrapper.compact-sidebar .page-body-wrapper div.sidebar-wrapper .sidebar-main .sidebar-links li a.active {
+          color: #33BFBF;
+          border-radius: 6px;
+        }
+
+
+
+
+
+
+        .btn-success-new {
+          background-color: #408558 !important;
+          border-color: #408558 !important;
+          color:white;
+        }
+
+        .btn-success-new:hover {
+          background-color: #306547 !important;
+          border-color: #306547 !important;
+          color:white;
+          box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+
+
+        body.dark-only .custom-input .form-control,
+        body.dark-only .custom-input .form-select {
+          background-color: #15202b;
+          border-color: #15202b;
+          color: rgba(255, 255, 255, 0.727);
+        }
+
+        .page-wrapper .page-body-wrapper .page-title .row h3 small {
+          display: block;
+          font-size: 12px;
+          margin-bottom: 5px;
+          text-transform: none !important;  /* No capitalizar y asegurar que esta regla tenga prioridad */
+          color: #848789;
+        }
+        
+        .page-wrapper .page-body-wrapper .page-title .row h3 {
+          font-size: 20px;
+          margin-bottom: 0;
+          text-transform: none !important;  /* No capitalizar y asegurar que esta regla tenga prioridad */
+          color: #1F2F3E;
+          font-weight: 800;
+      }
+
+      .readonly-style {
+        background-color: #e9ecef; /* Color de fondo gris claro similar al de campos deshabilitados */
+        color: #495057; /* Color de texto más oscuro para mejor contraste */
+        cursor: not-allowed; /* Cambia el cursor para indicar que el campo no es editable */
+        pointer-events: none;
+
+    }
+    .readonly-select {
+      pointer-events: none;
+      background-color: #e9ecef;  /* Ajusta según el diseño que prefieras */
+  }
+
+
+    .btn-secondary-new {
+      background-color: #6E757C;
+      color: white;
+      transition: background-color 0.3s, color 0.3s; /* Suaviza la transición de los colores */
+    }
+
+    .btn-secondary-new:hover {
+      background-color: #575d63; /* Un poco más oscuro que el color de fondo original */
+      color: white;
+    }
+
+    .btn-success-new {
+      background-color: #40955e;
+      color: white;
+      transition: background-color 0.3s, color 0.3s; /* Suaviza la transición de los colores */
+    }
+
+    .btn-success-new:hover {
+      background-color: #2c6c42; /* Un poco más oscuro que el color de fondo original */
+      color: white;
+    }
+
+    .btn-success-new.disabled, .btn-success-new:disabled {
+      background-color: #a0b3a9; /* Un verde más claro y desaturado */
+      color: white;
+      cursor: not-allowed; /* Cambia el cursor para indicar que el botón está deshabilitado */
+    }
+
+
+    .btn-danger-new {
+      background-color: #DF5E47;
+      color: white;
+      transition: background-color 0.3s, color 0.3s; /* Suaviza la transición de los colores */
+    }
+
+    .btn-danger-new:hover {
+      background-color: #b84c39; /* Un poco más oscuro que el color de fondo original */
+      color: white;
+    }
+
+    .tap-top {
+      text-align: center;
+      cursor: pointer;
+      display: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      z-index: 5;
+      color: #fff;
+      background: var(--sidebar-color) !important;
+      border: none;
+      padding: 7px;
+      box-shadow: 0 0 10px var(--sidebar-color) !important;
+      opacity: 0.5;
+      transition: all 0.3s ease;
+      &:hover {
+        transition: all 0.3s ease;
+        opacity: 1;
+      }
+      svg {
+        width: 20px;
+      }
+    }
+
+  </style>
+    <!-- Loader starts-->
+    <div class="loader-wrapper">
+      <div class="loader"></div>
+    </div>
+    <!-- Loader ends-->
+    <!-- tap on top starts-->
+    <div class="tap-top"><i data-feather="chevrons-up"></i></div>
+    <!-- tap on tap ends-->
+
+    <!-- page-wrapper Start-->
+    <div class="page-wrapper " id="pageWrapper">
+        {% include 'layout/header.html' %}
+        
+        <!-- Page Body Start-->
+        <div class="page-body-wrapper horizontal-menu">
+          {% include 'layout/sidebar.html' %}
+          
+          <div class="page-body">
+            {% include 'layout/breadcrumb.html' %}
+
+            
+            {% block content %} 
+            
+            
+            
+            {% endblock content %}
+
+
+
+          </div>
+
+          {% include 'layout/footer.html' %}
+        
+        </div>
+    </div>
+
+    <!-- latest jquery-->
+    <script src="{% static 'assets/js/jquery.min.js' %}"></script>
+
+    {% comment %} <script src="{% static 'assets/js/theme-customizer/customizer.js' %}?v1.2"></script> {% endcomment %}
+
+    <!-- Bootstrap js-->
+    <script src="{% static 'assets/js/bootstrap/bootstrap.bundle.min.js' %}"></script>
+    <!-- feather icon js-->
+    <script src="{% static 'assets/js/icons/feather-icon/feather.min.js' %}"></script>
+    <script src="{% static 'assets/js/icons/feather-icon/feather-icon.js' %}"></script>
+    <!-- scrollbar js-->
+    <script src="{% static 'assets/js/scrollbar/simplebar.js' %}"></script>
+    <script src="{% static 'assets/js/scrollbar/custom.js' %}"></script>
+    <!-- Sidebar jquery-->
+    <script src="{% static 'assets/js/config.js' %}?v1.3331"></script>
+    <!-- Plugins JS start-->
+    <script src="{% static 'assets/js/sidebar-menu.js' %}?v1.132h2"></script>
+    <script src="{% static 'assets/js/slick/slick.min.js' %}"></script>
+    <script src="{% static 'assets/js/slick/slick.js' %}"></script>
+    <script src="{% static 'assets/js/header-slick.js' %}"></script>
+    <script src="{% static 'assets/js/prism/prism.min.js' %}"></script>
+    <script src="{% static 'assets/js/clipboard/clipboard.min.js' %}"></script>
+    <script src="{% static 'assets/js/custom-card/custom-card.js' %}"></script>
+    <script src="{% static 'assets/js/typeahead/handlebars.js' %}"></script>
+    <script src="{% static 'assets/js/typeahead/typeahead.bundle.js' %}"></script>
+    <script src="{% static 'assets/js/typeahead/typeahead.custom.js' %}"></script>
+    <script src="{% static 'assets/js/typeahead-search/handlebars.js' %}"></script>
+    <script src="{% static 'assets/js/typeahead-search/typeahead-custom.js' %}"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+
+    {% comment %} <script src="{% static 'assets/js/notify/index.js' %}"></script> {% endcomment %}
+
+    <!-- Plugins JS Ends-->
+    {% block extra_js %}
+   
+    {% endblock %}
+    
+    {% block scriptcontent %} {% endblock  %}
+
+    <!-- Theme js-->
+    <script src="{% static 'assets/js/script.js' %}"></script>
+
+    <script>
+      $("#basic-1").DataTable({
+        {% block filtro %}
+    
+        {% endblock filtro %}
+          paging: true,
+          lengthMenu: [5, 10, 25, 50, 100], // Cambiamos el menú de longitud para incluir 5 entradas
+          pageLength:10,
+          lengthChange :true,
+          autoWidth: true,
+          searching: true,
+          bInfo: true,
+          bSort: true,
+          {% block dom %}
+          dom: 'Bfrltip',
+          {% endblock dom %}
+          buttons:[
+            {% block datatable %}
+    
+            
+            {% endblock datatable %}        
+            
+            
+          ],
+          "language": {
+                      "sProcessing": "Procesando...",
+                      "sLengthMenu": "Mostrar _MENU_ Registros",
+                      "sZeroRecords": "No se encontraron resultados",
+                      "sEmptyTable": "Ningún dato disponible en esta tabla",
+                      "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                      "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                      "sInfoFiltered": "(filtrado de un total de _MAX_ Registros)",
+                      "sSearch": "Buscar:",
+                      "sInfoThousands": ",",
+                      "sLoadingRecords": "Cargando...",
+                      "oPaginate": {
+                          "sFirst": "Primero",
+                          "sLast": "Último",
+                          "sNext": "Siguiente",
+                          "sPrevious": "Anterior"
+                      },
+                      "oAria": {
+                          "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                          "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                      },
+                      "buttons": {
+                          "copy": "Copiar",
+                          "colvis": "Visibilidad"
+                      }
+                  },
+    
+      });
+      
+    </script>
+
+  </body>
+</html>

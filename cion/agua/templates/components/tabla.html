@@ -1,0 +1,56 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header pb-0 card-no-border">
+      <h3 class="mb-3">Cuentas de agua potable</h3>
+    </div>
+    <div class="card-body">
+      <div class="dt-ext table-responsive theme-scrollbar">
+        <table class="display" id="show-hidden-row">
+          <thead>
+            <tr>
+              <th>No. de Servicio</th>
+              <th>Tipo de Servicio</th>
+              <th>Fecha de Alta</th>
+              <th>Clave Catastral</th>
+              <th>Contribuyente o Razón social</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for servicio in servicios %}
+            <tr>
+              <td>{{ servicio.noServicio }}</td>
+              <td>{{ servicio.tipoServicio }}</td>
+              <td>{{ servicio.fecha_hora }}</td>
+              <td>{% if servicio.claveCatastral  %}{{ servicio.claveCatastral }}{% else %}---{% endif %}</td>
+              <td>
+                {% if servicio.nombre %}
+                {{ servicio.nombre }} {{ servicio.ApellidoP }} {{ servicio.ApellidoM }}
+                {% if servicio.nombre_mc %}
+                <p>
+                {{ servicio.nombre_mc }} {{ servicio.ApellidoP_mc }} {{ servicio.ApellidoM_mc }}
+                {% endif %}
+                {% else %}
+                {{servicio.razonSocial}}
+                {% endif %}
+              </td>
+              <td> 
+                <ul class="action"> 
+                  <li class="edit"> <a href="{% url 'editar_servicio' servicio.pk %}"><i class="icon-pencil-alt"></i></a></li>
+                  <li class="delete"><a href="#" data-id="{{ servicio.id }}" onclick="confirmDelete(this);"><i class="icon-trash"></i></a></li>
+                </ul>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  

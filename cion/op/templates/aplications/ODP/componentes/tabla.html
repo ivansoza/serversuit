@@ -1,0 +1,466 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+  <!-- Agrega los archivos de DataTables -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<style>
+  /* Estilos para el ícono de PDF */
+  .icofont-file-pdf {
+    font-size: 19px; /* Tamaño del ícono */
+    color: #f00; /* Color del ícono */
+  }
+  
+  /* Estilo general para todos los botones */
+  .btn-custom-size {
+    height: 40px; /* Altura del botón */
+    width: 40px; /* Ancho del botón */
+    padding: 0; /* Elimina el padding interno */
+    font-size: 16px; /* Tamaño del texto */
+    line-height: 40px; /* Alinea el texto verticalmente */
+    display: flex; /* Permite alinear el contenido */
+    justify-content: center; /* Centra el texto horizontalmente */
+    align-items: center; /* Centra el texto verticalmente */
+  }
+  
+  /* Estilo de los botones dentro de la tabla */
+  .table td .btn-custom-size {
+    margin: 5px; /* Espacio alrededor del botón */
+  }
+  
+  /* Colores de los íconos específicos */
+  .icon-info {
+    color: #ffc107; /* Color amarillo para el ícono de información */
+  }
+  
+  .icon-pencil-alt {
+    color: #007bff; /* Color azul para el ícono de editar */
+  }
+  
+  .icon-trash {
+    color: #dc3545; /* Color rojo para el ícono de eliminar */
+  }
+  
+  /* Ajustes para los iconos dentro de los botones */
+  .btn-custom-size i {
+    font-size: 20px; /* Tamaño del ícono */
+    margin: 0; /* Elimina el margen del ícono */
+  }
+  
+  </style>
+  
+  <!DOCTYPE html>
+  <html lang="es">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Tabla Oficialia de Partes</title>
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+  </head>
+  <body>
+      <div class="col-sm-12">
+          <div class="card">
+              <div class="card-header pb-0 card-no-border">
+                  <h3 class="mb-3">Tabla de registros por atender </h3>
+              </div>
+              <div class="card-body">
+                  {% if hay_nuevos_registros %}
+                      <div class="alert alert-warning" role="alert">
+                          Hay documentos nuevos por atender.
+                      </div>
+                  {% endif %}
+                  {% if mensaje %}
+                      <p>{{ mensaje }}</p>
+                  {% else %}
+                      {% for area, registros in registros_por_area.items %}
+                          {% if registros %}
+                          <h3 class="area-header">Área: {{ area }}</h3>
+  
+                          <div class="table-container">
+                              <div class="table-responsive theme-scrollbar">
+                                  <table class="table display" id="data-source-{{ forloop.counter }}" style="width:100%">
+                                      <thead>
+                                          <tr>
+                                              <th><strong>Tipo documento</strong></th>
+                                              <th><strong>Procedencia</strong></th>
+                                              <th><strong>Prioridad</strong></th>
+                                              <th><strong>Dependencia</strong></th>
+                                              <th><strong>Recibió</strong></th>
+                                              <th><strong>N.folio</strong></th>
+                                              <th><strong>Archivo</strong></th>
+                                              <th><strong>Tiempo restante</strong></th>
+                                              <th><strong>Opciones</strong></th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          {% for odp in registros %}
+                                              <tr>
+                                                  <td>{{ odp.tipo_doc }}</td>
+                                                  <td>{{ odp.procedencia }}</td>
+                                                  <td>{{ odp.prioridad }}</td>
+                                                  <td>{{ odp.dependencia }}</td>
+                                                  <td>{{ odp.recibio }}</td>
+                                                  <td>{{ odp.folio }}</td>
+                                                  <td>
+                                                      {% if odp.archivo %}
+                                                          <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal" data-file-url="{{ odp.archivo.url }}">
+                                                              <i class="icofont icofont-file-pdf"></i>
+                                                          </a>
+                                                      {% else %}
+                                                          <i class="icon-file text-muted"></i>
+                                                      {% endif %}
+                                                  </td>
+                                                  <td>
+                                                      {% if odp.horas_asignadas %}
+                                                      <div class="countdown" data-tiempo-restante="{{ odp.tiempo_restante }}" id="countdown-{{ odp.id }}"></div>
+                                                      {% endif %}
+                                                  </td>
+                                                  <td>
+                                                      <ul class="action">
+                                                          {% if odp.tiene_revision %}
+                                                              <button type="button" class="btn btn-primary btn-custom-size">Atendido</button>
+                                                          {% else %}
+                                                              <a href="#" data-bs-toggle="modal" data-bs-target="#atenderModal" data-id="{{ odp.pk }}">
+                                                                  <button type="button" class="btn btn-danger btn-custom-size">Atender</button>
+                                                              </a>
+                                                          {% endif %}
+                                                      </ul>
+                                                  </td>
+                                              </tr>
+                                          {% endfor %}
+                                      </tbody>
+                                  </table>
+                              </div>
+                          </div>
+                          {% endif %}
+                      {% endfor %}
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+  </body>
+  </html>
+  
+
+
+    <div class="modal fade" id="infoModal1" tabindex="-1" aria-labelledby="infoModalLabel1" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title" id="infoModalLabel1">Información Detallada</h3>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-md-6">
+                <p><strong>Tipo documento:</strong> <span id="tipo-doc"></span></p>
+                <p><strong>Procedencia:</strong> <span id="procedencia"></span></p>
+                <p><strong>Prioridad:</strong> <span id="prioridad"></span></p>
+                <p><strong>Dependencia:</strong> <span id="dependencia"></span></p>
+              </div>
+              <div class="col-md-6">
+                <p><strong>Recibió:</strong> <span id="recibio"></span></p>
+                <p><strong>N.folio:</strong> <span id="folio"></span></p>
+                <p><strong>Archivo:</strong> <a href="#" id="archivo" target="_blank">Ver archivo</a></p>
+                <p><strong>Tiempo restante:</strong> <span id="tiempo-restante"></span></p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+
+
+<div class="modal fade" id="atenderModal" tabindex="-1" aria-labelledby="atenderModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="atenderModalLabel">Atender Registro</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="atenderFormContainer"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal de Previsualización -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="previewModalLabel">Previsualizar Archivo</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <iframe id="filePreview" src="" frameborder="0" style="width: 100%; height: 500px;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Edición con estilo ajustado -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="editModalLabel">Editar Registro</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editForm" method="post" action="" enctype="multipart/form-data" class="row g-3 needs-validation" novalidate>
+            {% csrf_token %}
+            {{ form.as_p }}
+        </form>
+      </div>    
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="submit" class="btn btn-primary" form="editForm">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de Eliminación -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">Eliminar Registro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ¿Estás seguro de que deseas eliminar este registro?
+      </div>
+      <div class="modal-footer">
+        <form id="deleteForm" method="post" action="{% url 'tablaOP' %}">
+          {% csrf_token %}
+          <input type="hidden" name="pk" id="pk_input">  <!-- Este campo oculto captura el ID del registro a eliminar -->
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Eliminar</button>
+      </form>
+      
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  $(document).ready(function() {
+      $('.table.display').each(function() {
+          $(this).DataTable({
+              "language": {
+                "url": "https://cdn.datatables.net/plug-ins/1.13.1/i18n/es-ES.json"
+              }
+          });
+      });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      var countdowns = document.querySelectorAll('.countdown');
+      
+      countdowns.forEach(function(countdown) {
+          var tiempoRestante = parseInt(countdown.dataset.tiempoRestante);
+          var countdownElement = countdown;
+
+          function updateCountdown() {
+              var hours = Math.floor(tiempoRestante / 3600);
+              var minutes = Math.floor((tiempoRestante % 3600) / 60);
+              var seconds = tiempoRestante % 60;
+
+              countdownElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s";
+              
+              if (tiempoRestante > 0) {
+                  tiempoRestante--;
+                  setTimeout(updateCountdown, 1000);
+              } else {
+                  countdownElement.innerHTML = "TIEMPO AGOTADO";
+              }
+          }
+          
+          updateCountdown();
+      });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var atenderModal = document.getElementById('atenderModal');
+    atenderModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var id = button.getAttribute('data-id');
+      var container = atenderModal.querySelector('#atenderFormContainer');
+      fetch('{% url "atender_odp" 0 %}'.slice(0, -2) + id + '/')
+        .then(response => response.text())
+        .then(html => {
+          container.innerHTML = html;
+        });
+    });
+  });
+</script>
+<script>
+  function openFilePreview(event, fileUrl, containerId) {
+    event.preventDefault();
+
+    // Construir el iframe para la previsualización del archivo
+    var iframe = document.createElement('iframe');
+    iframe.src = fileUrl;
+    iframe.frameBorder = 0;
+    iframe.style.width = '100%';
+    iframe.style.height = '500px';
+
+    // Obtener el contenedor adecuado dentro del modal
+    var filePreviewContainer = document.getElementById(containerId);
+
+    // Limpiar el contenedor antes de agregar el nuevo contenido
+    filePreviewContainer.innerHTML = '';
+    filePreviewContainer.appendChild(iframe);
+
+    // Mostrar el contenedor de previsualización y el botón de cerrar
+    filePreviewContainer.style.display = 'block';
+    var closeButton = document.createElement('button');
+    closeButton.className = 'btn btn-outline-secondary mt-2';
+    closeButton.textContent = 'Cerrar';
+    closeButton.onclick = function() {
+      filePreviewContainer.innerHTML = ''; // Limpiar el contenido del contenedor
+      filePreviewContainer.style.display = 'none'; // Ocultar el contenedor de previsualización
+    };
+    filePreviewContainer.appendChild(closeButton);
+  }
+</script>
+
+<!-- SweetAlert script -->
+{% if messages %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            {% for message in messages %}
+                Swal.fire({
+                    toast: true,
+                    position: 'top-end',
+                    icon: 'success',
+                    title: '{{ message }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    customClass: {
+                        popup: 'small-swal'  // Clase personalizada para cambiar el tamaño
+                    }
+                });
+            {% endfor %}
+        });
+    </script>
+{% endif %}
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var previewModal = document.getElementById('previewModal');
+    previewModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var fileUrl = button.getAttribute('data-file-url');
+      var iframe = previewModal.querySelector('#filePreview');
+      iframe.src = fileUrl;
+    });
+  
+    var editModal = document.getElementById('editModal');
+    editModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var id = button.getAttribute('data-id');
+      var form = editModal.querySelector('#editForm');
+      form.action = '{% url "editar_odp" 0 %}'.slice(0, -2) + id + '/';
+  
+      // Realiza una solicitud AJAX para obtener el formulario de edición
+      fetch('{% url "obtener_formulario_edicion" 0 %}'.slice(0, -2) + id + '/')
+        .then(response => response.text())
+        .then(html => {
+          form.innerHTML = html;
+  
+          // Ahora que el formulario se ha cargado, inicializa el campo de areas
+          // Esto asegura que las opciones seleccionadas previamente se muestren correctamente
+          var selectAreas = form.querySelector('#id_areas');
+          if (selectAreas) {
+            var selectedValues = selectAreas.getAttribute('data-selected-values');
+            if (selectedValues) {
+              selectedValues = selectedValues.split(',');
+              for (var i = 0; i < selectAreas.options.length; i++) {
+                if (selectedValues.includes(selectAreas.options[i].value)) {
+                  selectAreas.options[i].selected = true;
+                }
+              }
+            }
+          }
+        });
+    });
+    
+  
+    var deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+      var button = event.relatedTarget;
+      var id = button.getAttribute('data-id');
+      var form = deleteModal.querySelector('#deleteForm');
+      form.action = '{% url "eliminar_odp" 0 %}'.slice(0, -2) + id + '/';
+    });
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      function actualizarTiempo() {
+          document.querySelectorAll('.tiempo-restante').forEach(function(element) {
+              const fechaCreacion = new Date(element.getAttribute('data-fecha-creacion'));
+              const prioridad = element.getAttribute('data-prioridad');
+  
+              // Determinar el tiempo de atención basado en la prioridad
+              let tiempoAtencionHoras;
+              if (prioridad === 'alta') {
+                  tiempoAtencionHoras = 12;
+              } else if (prioridad === 'media') {
+                  tiempoAtencionHoras = 18;
+              } else {
+                  tiempoAtencionHoras = 24;
+              }
+  
+              // Calcular la fecha límite
+              const fechaLimite = new Date(fechaCreacion.getTime() + tiempoAtencionHoras * 60 * 60 * 1000);
+              const tiempoRestante = fechaLimite - new Date();
+  
+              if (tiempoRestante > 0) {
+                  const horasRestantes = Math.floor(tiempoRestante / (1000 * 60 * 60));
+                  const minutosRestantes = Math.floor((tiempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+                  const segundosRestantes = Math.floor((tiempoRestante % (1000 * 60)) / 1000);
+  
+                  element.textContent = `${horasRestantes} horas ${minutosRestantes} minutos ${segundosRestantes} segundos`;
+              } else {
+                  element.textContent = 'Atención vencida';
+              }
+          });
+      }
+  
+      // Actualizar el tiempo cada segundo (1000 ms)
+      setInterval(actualizarTiempo, 1000);
+  
+      // Actualizar el tiempo de inmediato cuando la página se carga
+      actualizarTiempo();
+  });
+  </script>
+  
+  
+
+{% endblock %}

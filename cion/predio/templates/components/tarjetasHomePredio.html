@@ -1,0 +1,67 @@
+{% load static %}
+{% load sass_tags %}
+<div class="container-fluid">
+    <div class="row">
+        
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card course-box widget-course">
+                <div class="card-body">
+                    <div class="course-widget">
+                        <div class="course-icon">
+                            <svg class="fill-icon">
+                                <use href="{% static 'assets/svg/icon-sprite.svg'%}#course-2"></use>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">Registro de Predios</h4><span class="f-light">Registro y gestión de información catastral y tributaria de predios.</span><a
+                                class="btn btn-outline-primary f-light" href="{% url "registroPredios" %}">Registrar<span class="ms-2">
+                                    <svg class="fill-icon f-light">
+                                        <use href="{% static 'assets/svg/icon-sprite.svg'%}#arrowright"></use>
+                                    </svg></span></a>
+                        </div>
+                    </div>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card course-box widget-course">
+                <div class="card-body">
+                    <div class="course-widget">
+                        <div class="course-icon warning">
+                            <svg class="fill-icon">
+                                <use href="{% static 'assets/svg/icon-sprite.svg'%}#fill-task"></use>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">Gestión de Pagos de Predios</h4><span class="f-light">Emisión y gestión de pagos y recibos para servicios y tributos de predios.</span><a
+                                class="btn btn-outline-primary f-light" href="{% url "cobroAgua" %}">Generar<span class="ms-2">
+                                    <svg class="fill-icon f-light">
+                                        <use href="{% static 'assets/svg/icon-sprite.svg'%}#arrowright"></use>
+                                    </svg></span></a>
+                        </div>
+                    </div>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

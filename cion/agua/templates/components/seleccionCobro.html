@@ -1,0 +1,229 @@
+{% load static %}
+{% load sass_tags %}
+<style>
+    .large-checkbox {
+        width: 20px;
+        height: 20px;
+    }
+    .texto{
+        font-size: 15px;
+        padding-top: 3px;
+        padding-left: 10px;
+    }
+</style>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-3 box-col-30">
+            <div class="md-sidebar job-sidebar">
+                <a class="btn btn-primary md-sidebar-toggle" href="javascript:void(0)">file filter</a>
+                <div class="md-sidebar-aside custom-scrollbar">
+                    <div class="file-sidebar">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- Información del Número de Servicio -->
+                                <h6>Información del Número de Servicio</h6>
+                                <div class="form-group">
+                                    <label for="numeroServicio">Número de Servicio</label>
+                                    <input type="text" id="numeroServicio" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="usuario">Usuario *</label>
+                                    <input type="text" id="usuario" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="estado">Estado: Por pagar / Pagado *</label>
+                                    <input type="text" id="estado" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="area">Área *</label>
+                                    <input type="text" id="area" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contribuyente">Contribuyente</label>
+                                    <input type="text" id="contribuyente" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="servicioMunicipio">Servicio Municipio *</label>
+                                    <input type="text" id="servicioMunicipio" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="claveProducto">Clave Producto *</label>
+                                    <input type="text" id="claveProducto" class="form-control" required>
+                                </div>
+                                <!-- Barra de Progreso -->
+                                <div class="mt-4">
+                                    <label for="progressBar">Progreso:</label>
+                                    <div class="progress">
+                                        <div id="progressBar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-9 col-md-12 box-col-70">
+            <div class="file-content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-md-flex d-sm-block">
+                            <h4>Meses cobrados y faltantes de pago</h4>
+                            
+                            <div class="flex-grow-1 text-end">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resumenPagosModal">
+                                    <i class="fa fa-history"></i> Ver resumen de pagos en el año
+                                </button>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="card-body file-manager">
+                         <!-- Campos adicionales sobre los meses -->
+                         <div class="form-group">
+                            <label for="folio">Folio (No. municipio/Año/Consecutivo) *</label>
+                            <input type="text" id="folio" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechaExpedicion">Fecha expedición *</label>
+                            <input type="date" id="fechaExpedicion" class="form-control" required>
+                        </div>
+                        <hr>
+
+                        <!-- Mes Actual -->
+                        <h4>Mes Actual: {{ current_month }}</h4>
+                        <!-- Checkboxes de los 12 meses -->
+                        <div class="row">
+                            <!-- Checkbox de Marcar Todos -->
+                            <div class="col-12 mb-3">
+                                <p>Selecciona los meses a cobrar, en caso de que el mes se muestre bloqueado el mes ya a sido pagado</p>
+                                <br>
+                                <div class="form-check">
+                                    <input class="form-check-input large-checkbox" type="checkbox" id="marcarTodos" onclick="toggleCheckboxes(this)">
+                                    <label class="form-check-label texto" for="marcarTodos">
+                                        Marcar Todos
+                                    </label>
+                                </div>
+                            </div>
+                            <!-- Checkboxes de los meses -->
+                            {% for month in months %}
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input month-checkbox large-checkbox" type="checkbox" id="month{{ forloop.counter }}">
+                                    <label class="form-check-label texto" for="month{{ forloop.counter }}">
+                                        {{ month }}
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        <!-- Campos adicionales debajo de los meses -->
+                        <div class="form-group">
+                            <label for="concepto">Concepto *</label>
+                            <input type="text" id="concepto" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subtotal">Subtotal *</label>
+                            <input type="text" id="subtotal" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="recargoDescuento">Recargo/Descuento *</label>
+                            <input type="text" id="recargoDescuento" class="form-control" required>
+                        </div>
+                        <!-- Total y Botón de Pagar -->
+                        <div class="mt-4">
+                            <h3>Total: $0.00</h3>
+                            <br>
+                            <button class="btn btn-primary">Pagar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<div class="icon-hover-bottom p-fixed fa-fa-icon-show-div opecity-0">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="icon-popup">
+                <div class="close-icon"><i class="icofont icofont-close"></i></div>
+                <div class="icon-first"><i id="icon_main"></i></div>
+                <div class="icon-class">
+                    <label class="icon-title">data-feather</label><span id="fclass1"></span>
+                </div>
+                <div class="icon-last icon-last">
+                    <label class="icon-title">Markup</label>
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <input class="inp-val form-control m-r-10" id="input_copy" type="text" value="" readonly="readonly">
+                            <button class="btn btn-primary notification" onclick="myFunction()">Copy text</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="resumenPagosModal" tabindex="-1" aria-labelledby="resumenPagosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resumenPagosModalLabel">Resumen de Pagos en el Año</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Contenido del resumen de pagos -->
+                <p>Resumen de pagos por No. de servicio</p>
+                <div style="height: 0px;width: 0px; overflow:hidden;">
+                    <input id="upfile" type="file" onchange="sub(this)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" onclick="getFile()">Descargar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleCheckboxes(source) {
+        checkboxes = document.getElementsByClassName('month-checkbox');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = source.checked;
+        }
+        updateProgressBar();
+    }
+
+    function updateProgressBar() {
+        const checkboxes = document.getElementsByClassName('month-checkbox');
+        const totalCheckboxes = checkboxes.length;
+        let checkedCount = 0;
+        
+        for (let i = 0; i < totalCheckboxes; i++) {
+            if (checkboxes[i].checked) {
+                checkedCount++;
+            }
+        }
+        
+        const progress = (checkedCount / totalCheckboxes) * 100;
+        const progressBar = document.getElementById('progressBar');
+        progressBar.style.width = progress + '%';
+        progressBar.setAttribute('aria-valuenow', progress);
+        progressBar.innerHTML = Math.round(progress) + '%';
+    }
+
+    // Actualizar barra de progreso al marcar/desmarcar cada checkbox individual
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkboxes = document.getElementsByClassName('month-checkbox');
+        for (let i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].addEventListener('change', updateProgressBar);
+        }
+    });
+</script>

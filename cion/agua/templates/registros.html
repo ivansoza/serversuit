@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatable-extension.css' %}">
+{% endblock %}
+
+{% block content %}
+  
+{% include 'general/loader.html' %}
+{% include 'components/alertas.html' %}  {# Incluir el componente de alertas aquí #}
+
+{% include 'components/tajetaTabla.html' %}
+<br>
+<!-- Container-fluid starts-->
+<div class="container-fluid extra_data">
+  <div class="row">
+    {% include 'components/tabla.html' %}
+  </div>
+</div>
+<!-- Container-fluid Ends-->
+
+{% endblock %}
+
+{% block scriptcontent %}
+
+<script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/jszip.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/pdfmake.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/vfs_fonts.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.autoFill.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.select.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.html5.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.print.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.keyTable.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.colReorder.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.fixedHeader.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.rowReorder.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.scroller.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/custom.js' %}"></script>
+<script src="{% static 'assets/js/tooltip-init.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  function confirmDelete(element) {
+    var serviceId = element.getAttribute('data-id');
+  
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "No podrás revertir esto",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminarlo',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Realizar la petición de eliminación
+        fetch(`/agua/eliminar/${serviceId}/`, {
+          method: 'DELETE',
+          headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+          }
+        }).then(response => {
+          if (response.ok) {
+            // Eliminar la fila de la tabla
+            element.closest('tr').remove();
+            
+            // Actualizar el contador dinámico
+            response.json().then(data => {
+              document.getElementById('contador-registros').textContent = data.count;
+            });
+            
+            Swal.fire({
+              title: 'Eliminado!',
+              text: 'El registro ha sido eliminado.',
+              icon: 'success',
+              timer: 2000,  // Tiempo en milisegundos (2 segundos en este ejemplo)
+              timerProgressBar: true,
+              showConfirmButton: false
+            });
+          } else {
+            Swal.fire(
+              'Error!',
+              'No se pudo eliminar el registro.',
+              'error'
+            );
+          }
+        }).catch(error => {
+          console.error('Error:', error);
+          Swal.fire(
+            'Error!',
+            'Ocurrió un error al eliminar el registro.',
+            'error'
+          );
+        });
+      }
+    });
+  }
+</script>
+
+{% endblock %}

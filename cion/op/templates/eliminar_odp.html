@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="modal-header">
+  <h5 class="modal-title">Eliminar Registro</h5>
+  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+<div class="modal-body">
+  <p>¿Estás seguro de que deseas eliminar este registro?</p>
+</div>
+<div class="modal-footer">
+  <form id="deleteForm" method="post" action="{% url 'eliminar_odp' odp.pk %}">
+    {% csrf_token %}
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+    <button type="submit" class="btn btn-danger">Eliminar</button>
+  </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  // Escucha el evento submit del formulario de eliminación
+  document.getElementById('deleteForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Evita la acción por defecto del formulario
+    
+    // Realiza una solicitud AJAX para eliminar el registro
+    fetch(this.action, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': document.querySelector('input[name="csrfmiddlewaretoken"]').value
+      }
+    })
+    .then(response => {
+      if (response.ok) {
+        // Mostrar SweetAlert de éxito
+        Swal.fire({
+          icon: 'success',
+          title: 'Registro eliminado correctamente',
+          showConfirmButton: false,
+          timer: 3000
+        }).then((result) => {
+          // Redirigir a la página de la tabla después de cerrar el modal
+          window.location.href = '{% url 'tablaOP' %}';
+        });
+      } else {
+        // Mostrar SweetAlert de error si la eliminación falla
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al eliminar el registro',
+          text: 'Hubo un problema al intentar eliminar el registro.'
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      // Mostrar SweetAlert de error del servidor si hay un problema de red o servidor
+      Swal.fire({
+        icon: 'error',
+        title: 'Error del servidor',
+        text: 'Hubo un problema en el servidor al intentar eliminar el registro.'
+      });
+    });
+  });
+</script>
+{% endblock %}

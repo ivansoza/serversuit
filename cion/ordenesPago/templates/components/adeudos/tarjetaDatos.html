@@ -1,0 +1,151 @@
+{% load static %}
+{% load sass_tags %}
+<style>
+    .user-card {
+        text-align: center; /* Centra el texto y los íconos en la tarjeta */
+    }
+    
+    .info-item {
+        margin-bottom: 1.5rem; /* Espacio entre cada ítem */
+    }
+    
+    .icon-wrapper {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 60px; /* Ajusta el tamaño del círculo según sea necesario */
+        height: 60px; /* Ajusta el tamaño del círculo según sea necesario */
+        border-radius: 50%;
+        background: rgba(0, 123, 255, 0.1); /* Color difuminado del círculo */
+        margin: 0 auto 0.5rem; /* Centra el ícono y agrega espacio debajo */
+    }
+
+    .icon-wrapper i {
+        font-size: 2em; /* Tamaño del ícono, ajusta según sea necesario */
+        color: #007bff; /* Color del ícono, cambia si es necesario */
+    }
+
+    .card-title, .card-text {
+        margin: 0; /* Elimina el margen por defecto para una mejor alineación */
+    }
+    
+    .card-title {
+        font-size: 1.25rem; /* Ajusta el tamaño del título según sea necesario */
+    }
+    
+    .card-text {
+        font-size: 1rem; /* Ajusta el tamaño del texto según sea necesario */
+    }
+    
+    /* Estilos para los colores específicos de cada ícono */
+    .info-item.user .icon-wrapper {
+        background: rgba(0, 123, 255, 0.1); /* Color difuminado para el ícono de usuario */
+    }
+    .info-item.user .icon-wrapper i {
+        color: #007bff; /* Color del ícono de usuario */
+    }
+
+    .info-item.id-card .icon-wrapper {
+        background: rgba(40, 167, 69, 0.1); /* Color difuminado para el ícono de ID */
+    }
+    .info-item.id-card .icon-wrapper i {
+        color: #28a745; /* Color del ícono de ID */
+    }
+
+    .info-item.email .icon-wrapper {
+        background: rgba(23, 162, 184, 0.1); /* Color difuminado para el ícono de email */
+    }
+    .info-item.email .icon-wrapper i {
+        color: #17a2b8; /* Color del ícono de email */
+    }
+
+    .info-item.phone .icon-wrapper {
+        background: rgba(255, 193, 7, 0.1); /* Color difuminado para el ícono de teléfono */
+    }
+    .info-item.phone .icon-wrapper i {
+        color: #ffc107; /* Color del ícono de teléfono */
+    }
+
+    .info-item.location .icon-wrapper {
+        background: rgba(220, 53, 69, 0.1); /* Color difuminado para el ícono de dirección */
+    }
+    .info-item.location .icon-wrapper i {
+        color: #dc3545; /* Color del ícono de dirección */
+    }
+    /* Botón redondo con el ícono de más */
+.btn-primary.rounded-circle {
+    width: 40px; /* Ajusta el tamaño del botón según sea necesario */
+    height:40px; /* Ajusta el tamaño del botón según sea necesario */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem; /* Ajusta el tamaño del ícono */
+}
+
+.btn-primary.rounded-circle .fa-plus {
+    color: white; /* Color del ícono */
+}
+.title-container {
+    background-color: var(--sidebar-color) !important;    padding: 15px; /* Espaciado interno */
+    border-radius: 10px 10px 0 0; /* Bordes redondeados en la parte superior */
+    margin-bottom: 15px; /* Espacio debajo del contenedor del título */
+}
+.titulo2 {
+  color:white;
+}
+</style>
+    
+<!-- Contenedor para la tarjeta de datos de usuario -->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-end mb-3">
+                <!-- Botón redondo para mostrar/ocultar la tarjeta en pantallas pequeñas -->
+                <button class="btn btn-primary d-md-none rounded-circle p-3" type="button" data-bs-toggle="collapse" data-bs-target="#user-card-collapse" aria-expanded="false" aria-controls="user-card-collapse">
+                    <i class="fa fa-plus-circle"></i>            
+                </button>
+            </div>
+            <!-- Tarjeta de datos de usuario -->
+            <div id="user-card-collapse" class="collapse d-md-block">
+                <div id="user-card" class="card user-card">
+                    <div class="title-container">
+                        <h3 class="card-title titulo2">Datos del contribuyente</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="info-item user">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-user"></i>
+                            </div>
+                            <h5 id="user-name" class="card-title">Nombre del Usuario</h5>
+                        </div>
+                        <div class="info-item id-card">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-id-card"></i>
+                            </div>
+                            <p class="card-text"><strong>RFC:</strong> <span id="user-rfc">XXXXXXX001</span></p>
+                        </div>
+                        <div class="info-item email">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-email"></i>
+                            </div>
+                            <p class="card-text"><strong>Correo Electrónico:</strong> <span id="user-email">usuario@ejemplo.com</span></p>
+                        </div>
+                        <div class="info-item phone">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-phone"></i>
+                            </div>
+                            <p class="card-text"><strong>Teléfono:</strong> <span id="user-phone">(123) 456-7890</span></p>
+                        </div>
+                        <div class="info-item location">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-location-pin"></i>
+                            </div>
+                            <p class="card-text"><strong>Dirección:</strong> <span id="user-address">Calle Ejemplo 123, Ciudad, País</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

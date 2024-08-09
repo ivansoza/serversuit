@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/date-picker.css' %}">
+
+{% endblock %}    
+
+{% block content %}
+{% include 'general/loader.html' %}
+
+{% include 'components/tarjetasHome.html' %}
+
+<div class="container-fluid">
+    <div class="row">
+        {% include 'components/grafica.html' %}
+        {% include 'components/miniTarjetasHome.html' %}
+    </div>
+</div>
+{% endblock content %}
+
+
+{% block scriptcontent %}
+        
+  <script src="{% static 'assets/js/chart/apex-chart/apex-chart.js' %}"></script>
+  <script src="{% static 'assets/js/chart/apex-chart/stock-prices.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.en.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.custom.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.en.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.custom.js' %}"></script>
+  <script src="{% static 'assets/js/general-widget.js' %}"></script>
+  <script src="{% static 'assets/js/height-equal.js' %}"></script>
+  <script src="{% static 'assets/js/chart/apex-chart/apex-chart.js' %}"></script>
+  {% comment %} Scripts para grafica {% endcomment %}
+  <script src="{% static 'assets/js/chart/apex-chart/stock-prices.js' %}"></script>
+  <script src="{% static 'assets/js/chart/apex-chart/chart-custom.js' %}"></script>
+  {% comment %} Scripts de widgets  {% endcomment %}
+  <script src="{% static 'assets/js/chart/apex-chart/apex-chart.js' %}"></script>
+  <script src="{% static 'assets/js/chart/apex-chart/stock-prices.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.en.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.custom.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.en.js' %}"></script>
+  <script src="{% static 'assets/js/datepicker/date-picker/datepicker.custom.js' %}"></script>
+  <script src="{% static 'assets/js/general-widget.js' %}"></script>
+  <script src="{% static 'assets/js/height-equal.js' %}"></script>
+{% endblock %}  

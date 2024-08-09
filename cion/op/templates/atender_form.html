@@ -1,0 +1,63 @@
+<form method="post" enctype="multipart/form-data" id="atenderForm" action="{% url 'atender_odp' odp.id %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="id_nombre" class="form-label">Nombre</label>
+                {{ form.nombre }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="id_apellido" class="form-label">Apellido</label>
+                {{ form.apellido }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="id_fecha" class="form-label">Fecha</label>
+                {{ form.fecha }}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label for="id_hora" class="form-label">Hora</label>
+                {{ form.hora }}
+            </div>
+        </div>
+        <div class="col-md-12">
+            <div class="mb-3">
+                <label for="id_archivo" class="form-label">Archivo de propuesta</label>
+                <h5>
+                {{ form.archivo }}
+            </div>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+
+
+  <script>
+    document.getElementById('atenderForm').onsubmit = function(event) {
+      event.preventDefault();
+      var form = this;
+      var formData = new FormData(form);
+      fetch(form.action, {
+        method: 'POST',
+        body: formData,
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.status === 'success') {
+          alert('Formulario guardado correctamente');
+          // Aquí se puede cerrar el modal y actualizar el botón
+          $('#atenderModal').modal('hide');
+          document.querySelector(`a[data-id="${form.getAttribute('action').split('/').slice(-2, -1)[0]}"]`).innerHTML = '<button class="btn btn-success" disabled>Atendido</button>';
+        } else {
+          alert('Errores en el formulario');
+          console.log(data.errors);
+        }
+      });
+    };
+  </script>
+  

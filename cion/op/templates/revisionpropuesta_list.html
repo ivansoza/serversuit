@@ -1,0 +1,366 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* Estilos para el ícono de PDF */
+    .icofont-file-pdf {
+      font-size: 19px; /* Tamaño del ícono */
+      color: #f00; /* Color del ícono (puedes cambiarlo según tu diseño) */
+    }
+    
+    .small-swal {
+      width: 300px !important;
+      height: auto !important;
+      font-size: 14px !important;
+    }
+  
+    .info-btn {
+      cursor: pointer;
+    }
+    .file-preview-container {
+      position: relative;
+      margin-top: 15px;
+    }
+    
+    .preview-wrapper button {
+      position: relative;
+      top: 10px;
+      right: 10px;
+      z-index: 1000;
+    }
+  
+    /* Estilo para el botón de cancelar en el modal de SweetAlert2 */
+  .swal2-popup .swal2-confirm {
+      background-color: green;
+      color: white;
+      border: none;
+  }
+  .btn-success {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: default;
+}
+
+</style>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Propuestas Por Aceptar</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header pb-0 card-no-border">
+                <h3 class="mb-3">Propuestas por aceptar</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-container">
+                    <div class="table-responsive theme-scrollbar">
+                      <table id="your-table-id" class="display">
+                        <thead>
+                            <tr>
+                                <th>Folio</th>
+                                <th>Documento</th>
+                                <th>Atendio</th>
+                                <th>Dependencia</th>
+                                <th>Fecha de atención</th>
+                                <th>Hora de atención</th>
+                                <th>Propuesta de respuesta</th>
+                                <th>Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for atendido in atendidos %}
+                            <tr>
+                                <td>{{ atendido.odp.folio }}</td>
+                                <td>{{ atendido.odp }}</td>
+                                <td>{{ atendido.nombre }}</td>
+                                <td>{{ atendido.odp.dependencia }}</td>
+                                <td>{{ atendido.fecha }}</td>
+                                <td>{{ atendido.hora }}</td>
+
+                                <td>
+                                    {% if atendido.archivo %}
+                                    <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal" data-file-url="{{ atendido.archivo.url }}">
+                                        <i class="icofont icofont-file-pdf"></i>
+                                    </a>
+                                    {% else %}
+                                    <i class="icon-file text-muted"></i>
+                                    {% endif %}
+                                </td>
+                                
+                                
+                                <td>
+                                    <ul class="action d-flex justify-content-center align-items-center">
+                                        <li class="info me-2">
+                                            <a href="#" class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal{{ atendido.pk }}" data-id="{{ atendido.pk }}">
+                                                <i class="icon-info" title="Información" data-bs-toggle="tooltip" data-bs-placement="top"></i>
+                                            </a>
+                                        </li>
+                                    
+                                        {% if atendido.revision and atendido.revision.acepta %}
+                                            <li class="accepted me-2">
+                                                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="{{ atendido.id }}">
+                                                    Aceptado
+                                                </button>
+                                            </li>
+                                        {% else %}
+                                            <li class="info">
+                                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#infoModal2{{ atendido.id }}">
+                                                    Revisar
+                                                </button>
+                                            </li>
+                                        {% endif %}
+                                    </ul>
+                                    
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </body>
+
+
+<!-- Modal para la previsualización del archivo -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="previewModalLabel">Previsualización del Archivo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="pdf-preview" src="" style="width: 100%; height: 80vh;" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% for atendido in atendidos %}
+<div class="modal fade" id="infoModal{{ atendido.pk }}" tabindex="-1" aria-labelledby="infoModalLabel{{ atendido.pk }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="infoModalLabel{{ atendido.pk }}">Información Detallada</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h3>Información odp</h3>
+            <hr>
+            <p><strong>Área:</strong> {{ atendido.odp.areas }}</p>
+            <p><strong>Tipo de documento:</strong> {{ atendido.odp.tipo_doc }}</p>
+            <p><strong>Procedencia:</strong> {{ atendido.odp.procedencia }}</p>
+            <p><strong>Prioridad:</strong> {{ atendido.odp.prioridad }}</p>
+            <p><strong>Dependencia:</strong> {{ atendido.odp.dependencia }}</p>
+            <p><strong>Recibido:</strong> {{ atendido.odp.recibio }}</p>
+            <p><strong>Observaciones:</strong> {{ atendido.odp.observaciones }}</p>
+            <p><strong>No. folio:</strong> {{ atendido.odp.folio }}</p>
+            <p><strong>Estado:</strong> {% if atendido.odp.status %}<span class="badge rounded-pill badge-success">Activo</span>{% else %}<span class="badge rounded-pill badge-danger">Inactivo</span>{% endif %}</p>
+            <div class="col-md-12">
+                {% if atendido.odp.archivo %}
+                    <p><strong>Archivo inicial:</strong></p>
+                    <a class="pdf" href="#" data-file-url="{{ atendido.odp.archivo.url }}" onclick="openFilePreview(event, '{{ atendido.odp.archivo.url }}', 'filePreviewContainer{{ atendido.odp.pk }}')">
+                        <i class="icofont icofont-file-pdf"></i> Archivo subido
+                    </a>
+                    <div id="filePreviewContainer{{ atendido.odp.pk }}"></div> <!-- Contenedor para la previsualización del archivo -->
+                {% endif %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h3>Información atención</h3>
+            <hr>
+            <div class="row">
+                <p><strong>Atendido por :</strong> {{ atendido.nombre }}</p>
+                <p><strong>Fecha:</strong> {{ atendido.fecha }}</p>
+                <p><strong>Hora:</strong> {{ atendido.hora }}</p>
+                <div class="col-md-12">
+                    {% if atendido.archivo %}
+                        <p><strong>Propuesta de archivo:</strong></p>
+                        <a class="pdf" href="#" data-file-url="{{ atendido.archivo.url }}" onclick="openFilePreview(event, '{{ atendido.archivo.url }}', 'filePreviewContainer{{ atendido.pk }}')">
+                            <i class="icofont icofont-file-pdf"></i> Archivo subido
+                        </a>
+                        <div id="filePreviewContainer{{ atendido.pk }}"></div> <!-- Contenedor para la previsualización del archivo -->
+                    {% endif %}
+                </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<!-- Modal -->
+{% for atendido in atendidos %}
+<div class="modal fade" id="infoModal2{{ atendido.id }}" tabindex="-1" aria-labelledby="infoModalLabel{{ atendido.id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="infoModal2Label{{ atendido.id }}">Revisión</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Formulario -->
+                <form method="post" action="{% url 'guardar_revision_propuesta' atendido.id %}" class="revision-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="fecha_{{ atendido.id }}" class="form-label">Fecha</label>
+                        <input type="date" class="form-control fecha" id="fecha_{{ atendido.id }}" name="fecha" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="hora_{{ atendido.id }}" class="form-label">Hora</label>
+                        <input type="time" class="form-control hora" id="hora_{{ atendido.id }}" name="hora" required>
+                    </div>
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input acepta" type="checkbox" id="acepta_{{ atendido.id }}" name="acepta">
+                            <label class="form-check-label" for="acepta_{{ atendido.id }}">
+                                Aceptar archivo de respuesta
+                            </label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input noacepta" type="checkbox" id="noacepta_{{ atendido.id }}" name="noacepta">
+                            <label class="form-check-label" for="noacepta_{{ atendido.id }}">
+                                No aceptar archivo de respuesta
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mb-3 observaciones-container" style="display: none;">
+                        <label for="observaciones_{{ atendido.id }}" class="form-label">Observaciones</label>
+                        <textarea class="form-control observaciones" id="observaciones_{{ atendido.id }}" name="observaciones"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </form>                
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener el modal y el iframe para la previsualización
+        const previewModal = document.getElementById('previewModal');
+        const pdfPreview = document.getElementById('pdf-preview');
+    
+        // Agregar un evento para el modal cuando se muestra
+        previewModal.addEventListener('show.bs.modal', function(event) {
+            // Obtener el enlace que se hizo clic
+            const button = event.relatedTarget;
+            // Obtener la URL del archivo del atributo data-file-url
+            const fileUrl = button.getAttribute('data-file-url');
+            // Establecer la URL del iframe para mostrar el PDF
+            pdfPreview.src = fileUrl;
+        });
+    });
+</script>
+
+<script>
+    function openFilePreview(event, fileUrl, containerId) {
+      event.preventDefault(); // Evita la acción por defecto del enlace
+      
+      // Encuentra el contenedor para la previsualización
+      var container = document.getElementById(containerId);
+      
+      // Verifica si el contenedor ya tiene una previsualización
+      if (container.innerHTML === '') {
+        // Agrega un botón de cerrar y un iframe para previsualizar el archivo PDF
+        container.innerHTML = `
+          <div class="preview-wrapper">
+            <button type="button" class="btn btn-primary btn-sm" onclick="closeFilePreview('${containerId}')">Cerrar previsualizador</button>
+            <iframe src="${fileUrl}" width="100%" height="500px"></iframe>
+          </div>
+        `;
+      } else {
+        // Alternar visibilidad del iframe si ya está visible
+        container.innerHTML = ''; // Limpia el contenedor si ya tiene una previsualización
+      }
+    }
+  
+    function closeFilePreview(containerId) {
+      var container = document.getElementById(containerId);
+      container.innerHTML = ''; // Limpia el contenedor para cerrar la previsualización
+    }
+  </script>
+  
+    
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener todos los formularios
+        const forms = document.querySelectorAll('.revision-form');
+    
+        forms.forEach(form => {
+            // Obtener los elementos dentro del formulario
+            const aceptaCheckbox = form.querySelector('.acepta');
+            const noaceptaCheckbox = form.querySelector('.noacepta');
+            const observacionesContainer = form.querySelector('.observaciones-container');
+    
+            // Función para actualizar la visibilidad del campo de observaciones
+            function updateObservacionesVisibility() {
+                if (noaceptaCheckbox.checked) {
+                    observacionesContainer.style.display = 'block';
+                } else {
+                    observacionesContainer.style.display = 'none';
+                }
+            }
+    
+            // Manejar el cambio en los checkboxes
+            aceptaCheckbox.addEventListener('change', function() {
+                if (aceptaCheckbox.checked) {
+                    noaceptaCheckbox.checked = false;
+                }
+                updateObservacionesVisibility();
+            });
+    
+            noaceptaCheckbox.addEventListener('change', function() {
+                if (noaceptaCheckbox.checked) {
+                    aceptaCheckbox.checked = false;
+                }
+                updateObservacionesVisibility();
+            });
+    
+            // Inicializar la visibilidad del campo de observaciones
+            updateObservacionesVisibility();
+        });
+    });
+    </script>
+    
+    
+  
+  <!-- Scripts para manejar los modales -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- SweetAlert script -->
+<script>
+ 
+  $(document).ready(function() {
+    console.log('DataTables script is running');
+    $('#your-table-id').DataTable({
+        "language": {
+            "url": "https://cdn.datatables.net/plug-ins/1.13.1/i18n/es-ES.json"
+        }
+    });
+});
+  </script>
+{% endblock %}

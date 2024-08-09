@@ -1,0 +1,129 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header pb-0 card-no-border">
+      <h3 class="mb-3">Registro de descuentos y recargos disponibles</h3>
+    </div>
+    <div class="card-body">
+      <div class="dt-ext table-responsive theme-scrollbar">
+        <table class="display" id="show-hidden-row">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Tipo</th>
+              <th>Descuento</th>
+              <th>Recargo</th>
+              <th>Estatu</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for registro in registros %}
+            <tr>
+              <td>{{ registro.nombre }}</td>
+              <td>{{ registro.tipo }}</td>
+              <td>
+                {% if registro.tipo == 'DESCUENTO' %}
+                  {{ registro.monto_descuento }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </td>
+              <td>
+                {% if registro.tipo == 'RECARGO' %}
+                  {{ registro.monto_recargo }}
+                {% else %}
+                  N/A
+                {% endif %}
+              </td>
+              <td>
+                {% if registro.tipo == 'DESCUENTO' %}
+                 {% if registro.estatus_descuento == 'ACTIVO' %}
+                 <span class="badge rounded-pill badge-success">ACTIVO</span>
+                 {% else %}
+                 <span class="badge rounded-pill badge-danger">INACTIVO</span>
+                 {% endif %}
+                {% else %}
+                {% if registro.estatus_recargos == 'ACTIVO' %}
+                 <span class="badge rounded-pill badge-success">ACTIVO</span>
+                 {% else %}
+                 <span class="badge rounded-pill badge-danger">INACTIVO</span>
+                 {% endif %}
+                {% endif %}
+              </td>
+              <td> 
+                <ul class="action"> 
+                  <li class="edit">
+                    <a href="#" 
+                    class="open-edit-modal" 
+                    data-id="{{ registro.id }}" 
+                    data-tipo="{{ registro.tipo }}"
+                    {% if registro.tipo == 'DESCUENTO' %}
+                    data-nombre="{{ registro.nombre }}"
+                    data-monto="{{ registro.monto_descuento }}"
+                    data-municipio="{{ registro.municipio.id }}" 
+                    data-estatus="{{ registro.estatus_descuento }}"
+                    {% elif registro.tipo == 'RECARGO' %}
+                    data-nombre="{{ registro.nombre }}"
+                    data-monto="{{ registro.monto_recargo }}"
+                    data-municipio="{{ registro.municipio.id }}" 
+                    data-estatus="{{ registro.estatus_recargos }}"
+                    {% endif %}
+                    >
+                     <i class="icon-pencil-alt"></i>
+                 </a>
+                 
+                  </li>                
+                  <li class="delete"><a href="#" data-id="{{ registro.id }}" onclick="confirmDelete(this);"><i class="icon-trash"></i></a></li>
+                </ul>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Asume que tienes un botón para abrir el modal de editar
+    var editButtons = document.querySelectorAll('.open-edit-modal');
+
+    editButtons.forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            var tipo = button.getAttribute('data-tipo');
+            var id = button.getAttribute('data-id');
+            var nombre = button.getAttribute('data-nombre');
+            var monto = button.getAttribute('data-monto');
+            var municipio = button.getAttribute('data-municipio');
+            var estatus = button.getAttribute('data-estatus');
+
+            if (tipo === 'DESCUENTO') {
+                // Abre el modal de descuento
+                var modal = new bootstrap.Modal(document.getElementById('modalEditarDescuento'));
+                document.getElementById('descuento_form_id').value = id;
+                document.querySelector('#editarDescuentoForm [name="nombre"]').value = nombre;
+                document.querySelector('#editarDescuentoForm [name="monto_descuento"]').value = monto;
+                document.querySelector('#editarDescuentoForm [name="municipio"]').value = municipio;
+                document.querySelector('#editarDescuentoForm [name="estatus_descuento"]').value = estatus;
+                modal.show();
+            } else if (tipo === 'RECARGO') {
+                // Abre el modal de recargo
+                var modal = new bootstrap.Modal(document.getElementById('modalEditarRecargo'));
+                document.getElementById('recargo_form_id').value = id;
+                document.querySelector('#editarRecargoForm [name="nombre"]').value = nombre;
+                document.querySelector('#editarRecargoForm [name="monto_recargo"]').value = monto;
+                document.querySelector('#editarRecargoForm [name="municipio"]').value = municipio;
+                document.querySelector('#editarRecargoForm [name="estatus_recargos"]').value = estatus;
+                modal.show();
+            }
+        });
+    });
+});
+
+</script>

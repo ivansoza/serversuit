@@ -1,0 +1,107 @@
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/date-picker.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+  <div class="row">
+      <div class="col-sm-12">
+          <div class="card">
+              <div class="card-body">
+                  <div class="form theme-form">
+                      <form method="post" enctype="multipart/form-data">
+                          {% csrf_token %}
+                          <div class="row">
+                            <div class="col-md-4">
+                              <div class="mb-3">
+                                <label class="form-label" for="exampleFormControlInput1">Areas</label>
+                                {{ form.areas }}
+                                <div class="valid-feedback">Looks good!</div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-4">
+                              <div class="mb-3">
+                                <label class="form-label" for="exampleFormControlInput1">Tipo de documento</label>
+                                {{ form.tipo_doc }}
+                                <div class="valid-feedback">Looks good!</div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-4">
+                              <div class="mb-3">
+                                <label class="form-label" for="exampleFormControlInput1">Procedencia</label>
+                                {{ form.procedencia }}
+                                <div class="valid-feedback">Looks good!</div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-6">
+                              <div class="mb-3">
+                                <label class="form-label" for="exampleFormControlInput1">Prioridad</label>
+                                {{ form.prioridad }}
+                                <div class="valid-feedback">Looks good!</div>
+                              </div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label class="form-label" for="validationCustom01">Dependencia</label>
+                              {{ form.dependencia }}
+                              <div class="valid-feedback">Looks good!</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label class="form-label" for="validationCustom01">Recibío</label>
+                              {{ form.recibio }}
+                              <div class="valid-feedback">Looks good!</div>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                              <label class="form-label" for="validationCustom01">Folio</label>
+                              {{ form.folio }}
+                              <div class="valid-feedback">Looks good!</div>
+                            </div>
+
+                            <div class="col-md-12 mb-4">
+                              <label class="form-label" for="validationCustom01">Observaciones</label>
+                              {{ form.observaciones }}
+                              <div class="valid-feedback">Looks good!</div>
+                            </div>
+
+                            <div class="col-md-12 mb-4">
+                              <label class="form-label" for="validationCustom01">Subir Archivo</label>
+                              {{ form.archivo }}
+                              <div class="valid-feedback">Looks good!</div>
+                            </div>
+
+                            <div class="col-md-4 mb-3">
+                              <label class="form-label" for="validationCustom01">Estado</label>
+                              {{ form.status }}
+                              <div class="valid-feedback">Looks good!</div>
+                            </div>
+
+                            <div class="col-4">
+                              <label class="form-label fw-bold" for="{{ form.contestacion.id_for_label }}">Contestación</label>
+                              {{ form.contestacion }}
+                            </div>
+
+                            <div class="col-4 contestacion-hours" style="display: {% if form.instance.contestacion %}block{% else %}none{% endif %};">
+                                <label class="form-label fw-bold" for="{{ form.horas_asignadas.id_for_label }}">Horas asignadas</label>
+                                {{ form.horas_asignadas }}
+                                <div class="invalid-tooltip">Please provide the assigned hours.</div>
+                            </div>
+                          </div>
+                      </form>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<!-- Container-fluid Ends-->
+
+{% endblock content %}

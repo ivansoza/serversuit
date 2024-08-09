@@ -1,0 +1,237 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header pb-0 card-no-border">
+            <h3 class="mb-3">Documentación asignada al área</h3>
+        </div>
+        <div class="card-body">
+            <div class="dt-ext table-responsive theme-scrollbar">
+                <table class="display" id="show-hidden-row">
+                    <thead>
+                        <tr>
+                            {% if filtro_activo == 'sin_respuesta' %}
+                            <th>Folio</th>
+                            <th>Tipo de Documento</th>
+                            <th>Prioridad</th>
+                            <th>Dependencia</th>
+                            <th>Procedencia</th>
+                            <th>Archivo</th>
+                            <th>Tiempo restante</th>
+                            <th>Acciones</th>
+                            {% else %}
+                            <th>Folio</th>
+                            <th>Tipo de Documento</th>
+                            <th>Dependencia</th>
+                            <th>Archivo de recepción</th>
+                            <th>Quién atendió</th>
+                            <th>Fecha de atención</th>
+                            <th>Archivo de respuesta</th>
+                            <th>Acciones</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if filtro_activo == 'sin_respuesta' %}
+                            {% for ofici in odp %}
+                            <tr>
+                                <td>{{ ofici.folio_odp }}</td>
+                                <td>{{ ofici.tipo_doc }}</td>
+                                <td>{{ ofici.prioridad }}</td>
+                                <td>{{ ofici.dependencia }}</td>
+                                <td>{{ ofici.procedencia }}</td>
+                                <td style="text-align: center;">
+                                    {% if ofici.archivo %}
+                                    <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal"
+                                        data-file-url="{{ ofici.archivo.url }}">
+                                        <i class="fa fa-file-pdf-o" style="color: #00B7B6;"></i>
+                                    </a>
+                                    {% else %}
+                                    <i class="icofont icofont-file-excel" style="color: red;"></i>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if ofici.horas_asignadas %}
+                                    <div class="countdown" data-tiempo-restante="{{ ofici.get_tiempo_restante }}"
+                                        id="countdown-{{ ofici.id }}"></div>
+                                    {% else %}
+                                    No requiere contestación
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <ul class="action">
+                                        <!-- Icono para abrir el modal de respuesta -->
+                                        <li class="edit" title="Subir respuesta">
+                                            <a href="#" class="open-modal" data-id="{{ ofici.id }}" data-bs-toggle="modal" data-bs-target="#modalFormRespuesta">
+                                                <i class="fa fa-upload"></i>
+                                            </a>
+                                        </li>
+                                        <!-- Icono para abrir el modal de información -->
+                                        <li class="info" title="Información del registro">
+                                            <a href="#" class="info-modal-btn" data-id="{{ ofici.id }}" data-bs-toggle="modal" data-bs-target="#infoModal">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% elif filtro_activo == 'con_respuesta' %}
+                            {% for ofici in odp %}
+                            <tr>
+                                <td>{{ ofici.folio_odp }}</td>
+                                <td>{{ ofici.tipo_doc }}</td>
+                                <td>{{ ofici.dependencia }}</td>
+                                <td style="text-align: center;">
+                                    {% if ofici.archivo %}
+                                    <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal"
+                                        data-file-url="{{ ofici.archivo.url }}">
+                                        <i class="fa fa-file-pdf-o" style="color: #00B7B6;"></i>
+                                    </a>
+                                    {% else %}
+                                    <i class="icofont icofont-file-excel" style="color: red;"></i>
+                                    {% endif %}
+                                </td>
+                                {% with respuesta=ofici.atendidos.first %}
+                                <td>{{ respuesta.usuario }}</td>
+                                <td>{{ respuesta.fechaHora }}</td>
+                                <td style="text-align: center;">
+                                    {% if respuesta.archivo %}
+                                    <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal"
+                                        data-file-url="{{ respuesta.archivo.url }}">
+                                        <i class="fa fa-file-pdf-o" style="color: #00B7B6;"></i>
+                                    </a>
+                                    {% else %}
+                                    <i class="icofont icofont-file-excel" style="color: red;"></i>
+                                    {% endif %}
+                                </td>
+                                {% endwith %}
+                                <td>
+                                    <ul class="action">
+                                        <!-- Icono para abrir el modal de respuesta -->
+                                        
+                                        <!-- Icono para abrir el modal de información -->
+                                        <li class="info" title="Información del registro">
+                                            <a href="#" class="info-modal-btn" data-id="{{ ofici.id }}" data-bs-toggle="modal" data-bs-target="#infoModal">
+                                                <i class="fa fa-info-circle"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <!-- Mostrar un mensaje cuando no hay filtros aplicados -->
+                            <tr>
+                                <td colspan="8">Por favor, seleccione un filtro para ver los documentos.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Previsualización -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="previewModalLabel">Previsualizar Documento</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <iframe id="filePreview" src="" frameborder="0" style="width: 100%; height: 650px;"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="infoModalLabel">Información del Documento</h3>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Folio:</strong> <span id="info-folio"></span></p>
+                <p><strong>Tipo de Documento:</strong> <span id="info-tipo-doc"></span></p>
+                <p><strong>Prioridad:</strong> <span id="info-prioridad"></span></p>
+                <p><strong>Dependencia:</strong> <span id="info-dependencia"></span></p>
+                <p><strong>Procedencia:</strong> <span id="info-procedencia"></span></p>
+                <p><strong>Archivo:</strong> <span id="info-archivo"></span></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var previewModal = document.getElementById('previewModal');
+        previewModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var fileUrl = button.getAttribute('data-file-url');
+            var iframe = previewModal.querySelector('#filePreview');
+            iframe.src = fileUrl;
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var countdowns = document.querySelectorAll('.countdown');
+
+        countdowns.forEach(function (countdown) {
+            var tiempoRestante = parseInt(countdown.dataset.tiempoRestante);
+            var countdownElement = countdown;
+
+            function updateCountdown() {
+                var hours = Math.floor(tiempoRestante / 3600);
+                var minutes = Math.floor((tiempoRestante % 3600) / 60);
+                var seconds = tiempoRestante % 60;
+
+                countdownElement.innerHTML = hours + "h " + minutes + "m " + seconds + "s";
+
+                if (tiempoRestante > 0) {
+                    tiempoRestante--;
+                    setTimeout(updateCountdown, 1000);
+                } else {
+                    countdownElement.innerHTML = "TIEMPO AGOTADO";
+                }
+            }
+
+            updateCountdown();
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Funcionalidad del modal de previsualización
+        var previewModal = document.getElementById('previewModal');
+        previewModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var fileUrl = button.getAttribute('data-file-url');
+            var iframe = previewModal.querySelector('#filePreview');
+            iframe.src = fileUrl;
+        });
+
+        // Funcionalidad del modal de información
+        var infoModal = document.getElementById('infoModal');
+        infoModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            fetch(`/oficialiaPartes/url-to-fetch-document-info/${id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('info-folio').textContent = data.folio;
+                    document.getElementById('info-tipo-doc').textContent = data.tipo_doc;
+                    document.getElementById('info-prioridad').textContent = data.prioridad;
+                    document.getElementById('info-dependencia').textContent = data.dependencia;
+                    document.getElementById('info-procedencia').textContent = data.procedencia;
+                    document.getElementById('info-archivo').innerHTML = data.archivo ? `<a href="${data.archivo}" target="_blank">Ver archivo</a>` : 'No disponible';
+                    document.getElementById('info-observaciones').textContent = data.observaciones;
+                });
+        });
+    });
+</script>

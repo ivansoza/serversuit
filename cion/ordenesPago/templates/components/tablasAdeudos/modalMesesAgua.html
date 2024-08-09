@@ -1,0 +1,373 @@
+{% load static %}
+{% load sass_tags %}
+{% if servicio %}
+
+<style>
+/* Estilos para el contenedor del selector de años */
+.year-picker-container {
+    position: relative;
+}
+
+/* Estilos para el campo de entrada del año */
+.year-picker-input {
+    cursor: pointer;
+    position: relative;
+    padding-right: 30px; /* Espacio para el icono */
+}
+
+/* Estilo para la flecha del dropdown */
+.year-picker-input::after {
+    content: '▼'; /* Puede usar un ícono de flecha hacia abajo */
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: #999;
+}
+
+/* Estilos para el contenedor del calendario */
+.year-picker {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background: #6F6C6D;
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+/* Estilos para el campo de búsqueda */
+.year-picker-search {
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+/* Estilos para los botones del calendario */
+.year-picker button {
+    display: block;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.year-picker button:hover {
+    background-color: #648FE5;
+    color: white;
+}
+
+/* Estilos para la separación entre botones */
+.year-picker button:not(:last-child) {
+    border-bottom: 1px solid #ddd;
+}
+
+.month-checkboxes {
+    margin-top: 10px;
+}
+
+/* Estilos para el mensaje informativo */
+.info-message {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Estilos para la cuadrícula de meses */
+.month-checkboxes-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas */
+    grid-template-rows: repeat(4, auto);  /* 4 filas */
+    gap: 10px; /* Espacio entre los checkboxes */
+}
+
+/* Estilo para los checkboxes dentro de la cuadrícula */
+.month-checkboxes-container div {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio entre el checkbox y la etiqueta */
+}
+
+/* Estilo para los checkboxes */
+.month-checkboxes-container input[type="checkbox"] {
+    width: 15px; /* Ancho del checkbox */
+    height: 15px; /* Alto del checkbox */
+    accent-color: #007bff; /* Color del checkbox (soporte para navegadores modernos) */
+    cursor: pointer;
+}
+
+/* Estilo para los checkboxes de selección de todo */
+.check-all-container input[type="checkbox"] {
+    width: 15px; /* Ancho del checkbox */
+    height: 15px; /* Alto del checkbox */
+    accent-color: #007bff; /* Color del checkbox (soporte para navegadores modernos) */
+    cursor: pointer;
+}
+
+/* Estilo para las etiquetas */
+.month-checkboxes-container label {
+    font-size: 16px; /* Tamaño de la fuente de la etiqueta */
+}
+.check-all-container input[type="checkbox"] {
+    width: 15px; /* Ancho del checkbox */
+    height: 15px; /* Alto del checkbox */
+    accent-color: #007bff; /* Color del checkbox (soporte para navegadores modernos) */
+    cursor: pointer;
+    margin-left: 10%;
+}
+/* Estilo para el botón de "Marcar todos" */
+.check-all-container {
+    margin-bottom: 10px;
+}
+
+/* Ocultar el contenedor de "Marcar todos" por defecto */
+.check-all-container {
+    display: none;
+}
+</style>
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="modal fade" id="modalMesesA" tabindex="-1" role="dialog" aria-labelledby="exampleModallogin" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h3 class="text text-secondary">
+                                Creación de recargos a número de servicio de agua potable
+                            </h3>
+                            <p class="text text-secondary">Seleccione el año y los meses que adeuda el contribuyente.</p>
+                            
+                            <!-- Renderiza el formulario aquí -->
+                            <form class="row g-3 needs-validation custom-input" id="formularioAgua" >
+                                {% csrf_token %}
+                                
+                                <div class="form-group" style="display: none;">
+                                    <label for="id_noServicio">Número de Servicio</label>
+                                    {{ form.noServicio }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_anio">Año</label>
+                                    <div class="year-picker-container">
+                                        <input type="text" id="id_anio" name="anio" class="form-control year-picker-input" placeholder="Selecciona el año" readonly required>
+                                        <div id="year-picker" class="year-picker">
+                                            <input type="text" id="year-picker-search" class="year-picker-search" placeholder="Buscar año">
+                                            <!-- Los botones de año se agregarán aquí dinámicamente -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group month-checkboxes">
+                                    <label>Meses</label>
+                                    <p id="info-message" class="info-message">Seleccione un año para asignar los meses.</p>
+                                    <div id="check-all-container" class="check-all-container">
+                                        <input type="checkbox" id="check-all">
+                                        <label for="check-all" style="font-size: 15px;">Marcar todos</label>
+                                        <input type="checkbox" id="check-first-semester">
+                                        <label for="check-first-semester" style="font-size: 15px;">Primer semestre</label>
+                                        <input type="checkbox" id="check-second-semester">
+                                        <label for="check-second-semester" style="font-size: 15px;">Segundo semestre</label>
+                                    </div>
+                                
+                                    <div id="month-checkboxes-container" class="month-checkboxes-container">
+                                        <!-- Los checkboxes se agregarán aquí dinámicamente -->
+                                    </div>
+                                    <input type="hidden" name="meses" id="meses">
+
+                                </div>                        
+                                <div class="form-group">
+                                    <label for="id_monto">Monto por mes</label>
+                                    {{ form.monto }}
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn btn-success-new" type="submit">Guardar</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('agua')
+        const yearInput = document.querySelector('#id_anio');
+        const yearPicker = document.querySelector('#year-picker');
+        const searchInput = document.querySelector('#year-picker-search');
+        const monthCheckboxesContainer = document.querySelector('#month-checkboxes-container');
+        const infoMessage = document.querySelector('#info-message');
+        const checkAllContainer = document.querySelector('#check-all-container');
+        const checkFirstSemester = document.querySelector('#check-first-semester');
+        const checkSecondSemester = document.querySelector('#check-second-semester');
+        const checkAll = document.querySelector('#check-all');
+        const mesesInput = document.querySelector('#meses');
+        const form = document.querySelector('form');
+        const form2 = document.getElementById('formularioAgua');
+    
+        // Mapeo de valores de meses a nombres
+        const monthNames = {
+            '1': 'Enero',
+            '2': 'Febrero',
+            '3': 'Marzo',
+            '4': 'Abril',
+            '5': 'Mayo',
+            '6': 'Junio',
+            '7': 'Julio',
+            '8': 'Agosto',
+            '9': 'Septiembre',
+            '10': 'Octubre',
+            '11': 'Noviembre',
+            '12': 'Diciembre'
+        };
+    
+        // Manejar el clic en el campo de entrada de año
+        yearInput.addEventListener('click', function () {
+            yearPicker.style.display = 'block';
+            searchInput.focus();
+        });
+         // Obtener los años disponibles del contexto
+    const añosDisponibles = JSON.parse('{{ años_disponibles|safe }}');
+
+    // Agregar botones de año dinámicamente
+    añosDisponibles.forEach(year => {
+        const button = document.createElement('button');
+        button.textContent = year;
+        button.value = year;
+        button.addEventListener('click', function (e) {
+            e.preventDefault();
+            yearInput.value = button.textContent;
+            yearPicker.style.display = 'none';
+            generateMonthCheckboxes(year);
+            mesesInput.value = '';
+            infoMessage.textContent = '';
+        });
+        yearPicker.appendChild(button);
+    });
+
+    
+        // Manejar la búsqueda en el selector de años
+        searchInput.addEventListener('input', function () {
+            const searchValue = searchInput.value.toLowerCase();
+            const buttons = yearPicker.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent.toLowerCase().includes(searchValue)) {
+                    button.style.display = 'block';
+                } else {
+                    button.style.display = 'none';
+                }
+            });
+        });
+    
+        // Generar checkboxes para los meses del año
+        function generateMonthCheckboxes(year) {
+            monthCheckboxesContainer.innerHTML = '';
+    
+            Object.keys(monthNames).forEach(month => {
+                const checkboxDiv = document.createElement('div');
+                const checkbox = document.createElement('input');
+                const label = document.createElement('label');
+    
+                checkbox.type = 'checkbox';
+                checkbox.value = month;
+                checkbox.id = `month-${month}`;
+    
+                label.htmlFor = checkbox.id;
+                label.textContent = monthNames[month];
+    
+                checkboxDiv.appendChild(checkbox);
+                checkboxDiv.appendChild(label);
+                monthCheckboxesContainer.appendChild(checkboxDiv);
+            });
+    
+            if (monthCheckboxesContainer.children.length > 0) {
+                checkAllContainer.style.display = 'block';
+            }
+        }
+    
+        // Marcar todos los meses
+        checkAll.addEventListener('change', function () {
+            const isChecked = checkAll.checked;
+            monthCheckboxesContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.checked = isChecked;
+            });
+            updateHiddenField();
+        });
+    
+        // Marcar primer semestre
+        checkFirstSemester.addEventListener('change', function () {
+            const isChecked = checkFirstSemester.checked;
+            [1, 2, 3, 4, 5, 6].forEach(month => {
+                document.querySelector(`#month-${month}`).checked = isChecked;
+            });
+            updateHiddenField();
+        });
+    
+        // Marcar segundo semestre
+        checkSecondSemester.addEventListener('change', function () {
+            const isChecked = checkSecondSemester.checked;
+            [7, 8, 9, 10, 11, 12].forEach(month => {
+                document.querySelector(`#month-${month}`).checked = isChecked;
+            });
+            updateHiddenField();
+        });
+    
+        // Actualizar el campo oculto con los meses seleccionados
+        function updateHiddenField() {
+            const checkedMonths = Array.from(monthCheckboxesContainer.querySelectorAll('input[type="checkbox"]:checked'))
+                .map(checkbox => checkbox.value);
+            mesesInput.value = checkedMonths.join(',');
+        }
+    
+        // Manejar el cambio en los checkboxes
+        monthCheckboxesContainer.addEventListener('change', updateHiddenField);
+    
+        form2.addEventListener('submit', function(event) {
+    event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+    console.log('Formulario enviado');
+
+    let formData = new FormData(this);
+
+    fetch("{% url 'info_adeudo2' %}", {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRFToken': '{{ csrf_token }}' // Asegúrate de incluir el token CSRF
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            console.log('Éxito:', data);
+            // Redirigir a la URL deseada con los parámetros id y type
+            window.location.href = "{% url 'info_adeudo' %}?id=" + encodeURIComponent(data.id) + "&type=" + encodeURIComponent('servicio');
+        } else {
+            console.error('Errores:', data.errors);
+            // Maneja los errores
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+});
+
+
+    });
+    </script>    
+{% endif %}

@@ -1,0 +1,46 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card small-widget mb-sm-0">
+                <div class="card-body warning">
+                    <h4> Registrar Nuevo Usuario</h4>
+
+                    <p></p>
+                    <div class="d-flex align-items-end gap-1">
+                        <a class="btn btn-outline-primary f-light" href="{% url "register" %}">Registrar 
+                            <i
+                                class="icon-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gradient">
+                        <svg class="stroke-icon svg-fill">
+                            <use href="{% static 'assets/svg/icon-sprite.svg'%}#new-order"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card small-widget mb-sm-0">
+                <div class="card-body primary">
+                    <h4>Numeros de Usuarios</h4>
+                    <span class="f-light">Número de Usuarios en el Sistema</span>
+                    <div class="d-flex align-items-end gap-1">
+                        <h4 id="contador-registros">{{ users.count }}</h4> <!-- Contador dinámico -->
+                        <span class="font-primary f-14 f-w-600"><i
+                                class="icon-arrow-up"></i></span>
+                    </div>
+                    <div class="bg-gradient">
+                        <svg class="stroke-icon svg-fill">
+                            <use href="{% static 'assets/svg/icon-sprite.svg'%}#customers"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

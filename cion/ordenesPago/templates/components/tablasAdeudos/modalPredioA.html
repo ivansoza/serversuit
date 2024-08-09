@@ -1,0 +1,196 @@
+{% load static %}
+{% load sass_tags %}
+{% if predio %}
+
+<style>
+    /* Estilos para el contenedor del selector de años */
+    .year-picker-container {
+        position: relative;
+    }
+    
+    /* Estilos para el campo de entrada del año */
+    .year-picker-input {
+        cursor: pointer;
+        position: relative;
+        padding-right: 30px; /* Espacio para el icono */
+    }
+    
+    /* Estilo para la flecha del dropdown */
+    .year-picker-input::after {
+        content: '▼'; /* Puede usar un ícono de flecha hacia abajo */
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 12px;
+        color: #999;
+    }
+    
+    /* Estilos para el contenedor del calendario */
+    .year-picker {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        border: 1px solid #ccc;
+        background: #6F6C6D;
+        z-index: 1000;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    /* Estilos para el campo de búsqueda */
+    .year-picker-search {
+        padding: 8px;
+        border: none;
+        border-bottom: 1px solid #ddd;
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+    
+    /* Estilos para los botones del calendario */
+    .year-picker button {
+        display: block;
+        width: 100%;
+        padding: 8px;
+        border: none;
+        background: #fff;
+        cursor: pointer;
+        text-align: left;
+        font-size: 14px;
+        transition: background-color 0.2s ease;
+    }
+    
+    .year-picker button:hover {
+        background-color: #648FE5;
+        color: white;
+    }
+    
+    /* Estilos para la separación entre botones */
+    .year-picker button:not(:last-child) {
+        border-bottom: 1px solid #ddd;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="modal fade" id="modalAnioPredio" tabindex="-1" role="dialog" aria-labelledby="exampleModallogin" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h3 class="text text-secondary">
+                                Creacion de recargos a predio
+                            </h3>
+                            <p class="text text-secondary">Seleccione los años que adeuda el contribuyente.</p>
+                            <form class="row g-3 needs-validation custom-input" id="formularioPredio" >
+                                {% csrf_token %}
+                                
+                                <div class="form-group" style="display: none;">
+                                    <label for="id_claveCatastarl">Clave Catastral</label>
+                                    {{ formP.claveCatastarl }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_anio">Año</label>
+                                    <div class="year-picker-container">
+                                        <input type="text" id="id_anio" name="anio" class="form-control year-picker-input" placeholder="Selecciona el año" readonly required>
+                                        <div id="year-picker" class="year-picker">
+                                            <input type="text" id="year-picker-search" class="year-picker-search" placeholder="Buscar año">
+                                            <!-- Los botones de año se agregarán aquí dinámicamente -->
+                                        </div>
+                                    </div>
+                                </div>                                                
+                                <div class="form-group">
+                                    <label for="id_monto">Monto por año</label>
+                                    {{ formP.monto }}
+                                </div>
+                                <div class="col-12">
+                                    <button class="btn btn-success-new" type="submit">Guardar</button>
+                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log('predio')
+        const yearInput = document.querySelector('#id_anio');
+        const yearPicker = document.querySelector('#year-picker');
+        const searchInput = document.querySelector('#year-picker-search');
+        const form2 = document.getElementById('formularioPredio');
+    
+        // Manejar el clic en el campo de entrada de año
+        yearInput.addEventListener('click', function () {
+            yearPicker.style.display = 'block';
+            searchInput.focus();
+        });
+        const availableYears = {{ años_disponibles|safe }};
+
+        // Agregar botones de año dinámicamente
+        availableYears.forEach(year => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = year;
+            button.addEventListener('click', function () {
+                yearInput.value = year;
+                yearPicker.style.display = 'none';
+            });
+            yearPicker.appendChild(button);
+        });
+    
+        // Manejar la búsqueda en el selector de años
+        searchInput.addEventListener('input', function () {
+            const searchValue = searchInput.value.toLowerCase();
+            const buttons = yearPicker.querySelectorAll('button');
+            buttons.forEach(button => {
+                if (button.textContent.toLowerCase().includes(searchValue)) {
+                    button.style.display = 'block';
+                } else {
+                    button.style.display = 'none';
+                }
+            });
+        });
+    
+        // Manejar el envío del formulario
+        form2.addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita que el formulario se envíe de la manera tradicional
+            console.log('Formulario enviado');
+    
+            let formData = new FormData(this);
+    
+            fetch("{% url 'info_adeudo_predio' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRFToken': '{{ csrf_token }}' // Asegúrate de incluir el token CSRF
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    console.log('Éxito:', data);
+                    // Redirigir a la URL deseada con los parámetros id y type
+                    window.location.href = "{% url 'info_adeudo' %}?id=" + encodeURIComponent(data.id) + "&type=" + encodeURIComponent('predio');
+                } else {
+                    console.error('Errores:', data.errors);
+                    // Maneja los errores
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    });
+    
+    </script>
+    {% endif %}

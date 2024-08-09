@@ -1,0 +1,75 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-4 col-md-6 custom-alert text-center">
+            <!-- Modal para Descuento -->
+            <div class="modal fade" id="modalEditarRecargo" tabindex="-1" role="dialog" aria-labelledby="modalEditarRecargoLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content dark-sign-up">
+                        <div class="modal-body social-profile text-start">
+                            <div class="modal-toggle-wrapper">
+                                <h3 class="text text-secondary">Editar Recargo</h3>
+                                <p class="text text-secondary">Complete la información a continuación para continuar.</p>
+
+                                <form class="row g-3 needs-validation custom-input" id="editarRecargoForm" method="post" action="{% url 'tablaDescuentos' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" id="recargo_form_id" name="form_id" value="">
+                                    <div class="col-md-12" style='display:none;'>
+                                        {{ recargo_form.tipo.label_tag }}
+                                        {{ recargo_form.tipo }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ recargo_form.nombre.label_tag }}
+                                        {{ recargo_form.nombre }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ recargo_form.monto_recargo.label_tag }}
+                                        {{ recargo_form.monto_recargo }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ recargo_form.estatus_recargos.label_tag }}
+                                        {{ recargo_form.estatus_recargos }}
+                                    </div>
+                                    <div class="col-md-12" style='display:none;'>
+                                        {{ recargo_form.municipio.label_tag }}
+                                        {{ recargo_form.municipio }}
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-success-new" type="submit" name="guardar_recargo">Guardar</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener todos los campos de texto que deseas convertir a mayúsculas
+        const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+
+        // Función para convertir texto a mayúsculas
+        const convertirAMayusculas = function (event) {
+            const campo = event.target;
+            campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+        };
+
+        // Agregar evento de escucha a cada campo de texto
+        camposTexto.forEach(function (campo) {
+            campo.addEventListener('input', convertirAMayusculas);
+        });
+    });
+</script>

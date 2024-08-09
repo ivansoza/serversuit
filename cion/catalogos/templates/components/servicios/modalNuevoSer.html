@@ -1,0 +1,67 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="modal fade" id="modalFormSer" tabindex="-1" role="dialog" aria-labelledby="exampleModallogin" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <h3 class="text text-secondary">
+                                Registrar nuevo servicio
+                            </h3>
+                            <p class="text text-secondary">Complete la información a continuación para continuar.</p>
+                            <form class="needs-validation custom-input" id="serForm" method="post" action="{% url 'tablaServicios' %}">
+                                {% csrf_token %}
+                                <div class="mb-3">
+                                    {{ ser_form.codigoServicio.label_tag }}
+                                    {{ ser_form.codigoServicio }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ ser_form.descripcion.label_tag }}
+                                    {{ ser_form.descripcion }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ ser_form.claveProducto.label_tag }}
+                                    {{ ser_form.claveProducto }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ ser_form.fecha_inicio.label_tag }}
+                                    {{ ser_form.fecha_inicio }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ ser_form.fecha_fin.label_tag }}
+                                    {{ ser_form.fecha_fin }}
+                                </div>
+                                <div class="mb-3">
+                                    {{ ser_form.estatus.label_tag }}
+                                    {{ ser_form.estatus }}
+                                </div>
+                                <button class="btn btn-primary" type="submit">Guardar Servicio</button>
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Obtener todos los campos de texto que deseas convertir a mayúsculas
+      const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+  
+      // Función para convertir texto a mayúsculas
+      const convertirAMayusculas = function (event) {
+        const campo = event.target;
+        campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+      };
+  
+      // Agregar evento de escucha a cada campo de texto
+      camposTexto.forEach(function (campo) {
+        campo.addEventListener('input', convertirAMayusculas);
+      });
+    });
+  </script>

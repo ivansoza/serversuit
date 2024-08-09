@@ -1,0 +1,129 @@
+{% load static %}
+{% load sass_tags %}
+<style>
+/* Estilos para los íconos en el modal */
+.instructions-list {
+    list-style: none;
+    padding: 0;
+}
+
+.instructions-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px; /* Tamaño del contenedor del icono */
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Estilos para íconos específicos */
+.rfc-icon {
+    background: rgba(255, 99, 71, 0.2); /* Fondo rojo claro */
+}
+
+.curp-icon {
+    background: rgba(54, 162, 235, 0.2); /* Fondo azul claro */
+}
+
+.name-icon {
+    background: rgba(75, 192, 192, 0.2); /* Fondo verde claro */
+}
+
+.instruction-icon {
+    color: #FF6347; /* Color del ícono rojo más fuerte */
+    font-size: 24px; /* Tamaño del icono */
+}
+
+.curp-icon .instruction-icon {
+    color: #36A2EB; /* Color del ícono azul más fuerte */
+}
+
+.name-icon .instruction-icon {
+    color: #4BC0C0; /* Color del ícono verde más fuerte */
+}
+
+.otro {
+    padding: 20px;
+}
+
+
+.modal-icon {
+    color: #36A2EB;
+    margin-left: 10px;
+    font-size: 1.5rem; /* Tamaño del icono en el encabezado del modal */
+}
+
+.modal-icon.animate {
+    animation: bounce 1s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-30px);
+    }
+    60% {
+        transform: translateY(-15px);
+    }
+}
+
+
+</style>
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-4">
+            <!--Centered modal-->
+            <div class="modal fade" id="helpModal" tabindex="-1" aria-labelledby="helpModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered"> <!-- Ajuste del tamaño del modal -->
+                    <div class="modal-content otro">
+                        <div class="modal-header">
+                            <strong>AYUDA</strong> 
+                            <h5 class="modal-title" id="helpModalLabel">
+                                <i data-feather="info" class="modal-icon animate"></i>
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Para realizar una consulta, puede ingresar cualquiera de los siguientes datos:</p>
+                            <ul class="instructions-list">
+                                <li>
+                                    <div class="icon-wrapper rfc-icon">
+                                        <i data-feather="code" class="instruction-icon"></i>
+                                    </div>
+                                    <strong>RFC:</strong> Ingrese los primeros 9 dígitos del RFC sin homoclave para personas morales.
+                                </li>
+                                <li>
+                                    <div class="icon-wrapper curp-icon">
+                                        <i data-feather="user" class="instruction-icon"></i>
+                                    </div>
+                                    <strong>CURP:</strong> Ingrese los primeros 10 dígitos del CURP para personas físicas.
+                                </li>
+                                <li>
+                                    <div class="icon-wrapper name-icon">
+                                        <i data-feather="briefcase" class="instruction-icon"></i>
+                                    </div>
+                                    <strong>Nombre o Razón Social:</strong> Ingrese el nombre completo o razón social para una búsqueda más general.
+                                </li>
+                            </ul>
+                            <p>Esto asegurará una búsqueda precisa y efectiva. Si no se encuentra el registro deseado, por favor <strong>registre al contribuyente</strong> para continuar.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

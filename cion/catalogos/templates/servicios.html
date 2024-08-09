@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatable-extension.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+
+
+
+
+{% endblock %}
+
+{% block content %}
+{% include 'components/alertas.html' %}  {# Incluir el componente de alertas aquí #}
+
+{% include 'general/loader.html' %}
+{% include 'components/servicios/tarjetasServicios.html' %}
+{% include 'components/servicios/modalEditar.html' %}
+
+{% include 'components/servicios/modalServicio.html' %}
+
+{% include 'components/servicios/modalNuevoSer.html' %}
+
+<br>
+<!-- Container-fluid starts-->
+<div class="container-fluid extra_data">
+  <div class="row">
+    {% include 'components/servicios/tablaServicios.html' %}
+  </div>
+</div>
+<!-- Container-fluid Ends-->
+
+
+{% endblock %}
+
+{% block scriptcontent %}
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+// In your Javascript (external .js resource or <script> tag)
+  $(document).ready(function() {
+    $('.select2').select2({
+        dropdownParent: $('#modalServicio') // Asegúrate de que esto apunte al contenedor del modal
+    });
+});
+
+</script>
+
+<script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/jszip.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/pdfmake.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/vfs_fonts.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.autoFill.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.select.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.html5.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.print.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.keyTable.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.colReorder.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.fixedHeader.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.rowReorder.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.scroller.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/custom.js' %}"></script>
+<script src="{% static 'assets/js/height-equal.js' %}"></script>
+<script src="{% static 'assets/js/tooltip-init.js' %}"></script>
+<script src="{% static 'assets/js/modalpage/validation-modal.js' %}"></script>
+<scipt src="{% static 'assets/js/tooltip-init.js' %}"></script>
+<script src="{% static 'assets/js/form-validation-custom.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
+{% endblock %}

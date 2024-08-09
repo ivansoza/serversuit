@@ -1,0 +1,79 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header pb-0 card-no-border">
+        <h3 class="mb-3">Usuarios Registrados en el Municipio</h3>
+    </div>
+    <div class="card-body">
+      <div class="dt-ext table-responsive theme-scrollbar">
+        <table class="display" id="basic-1">
+          <thead>
+            <tr>
+                <th>Nombre de Usuario</th>
+                <th>Nombre Completo</th>
+                <th>Correo Electrónico</th>
+                <th>Estado</th>
+                <th>Áreas</th>
+                <th>Acciones</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.username }}</td>
+                <td>
+                  {% if not user.first_name and not user.last_name and not user.apellido_materno %}
+                  N/A
+                {% else %}
+                  {{ user.first_name|upper }} {{ user.last_name|upper }} {{ user.apellido_materno|default_if_none:""|upper }}
+                {% endif %}
+                
+                  </td>
+                                  
+                  <td>{{ user.email }}</td>
+                <td class="text-center">
+                    {% if user.is_active %}
+                      <button class="badge rounded-pill badge-success btn-success" onclick="openStatusModal('{{ user.id }}', 'True')">Activo</button>
+                    {% else %}
+                      <button class="badge rounded-pill badge-danger btn-danger" onclick="openStatusModal('{{ user.id }}', 'False')">Inactivo</button>
+                    {% endif %}
+                  </td>
+
+                  <td class="text-center">
+                    {% if user.areas.all %}
+                        {% for area in user.areas.all %}
+                            {{ area.Area }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        Sin áreas asignadas
+                    {% endif %}
+                </td>
+                  
+                <td>
+                    <ul class="action">
+                      <li class="edit">
+                        <a href="#">
+                          <i class="icon-pencil-alt"></i>
+                        </a>
+                      </li>
+
+                    </ul>
+                </td>
+
+                
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+  
+

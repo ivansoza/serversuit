@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_head %}
+  <!-- Agrega los archivos de DataTables -->
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+
+  <!-- Estilo para centrar los datos de la tabla -->
+ 
+{% endblock %}
+
+{% block content %}
+<style>
+  .table-centered td,
+  .table-centered th {
+    text-align: center;
+  }
+
+  .table-centered {
+    text-align: center;
+  }
+  .icofont-file-pdf {
+    font-size: 19px; /* Tamaño del ícono */
+    color: #f00; /* Color del ícono (puedes cambiarlo según tu diseño) */
+    /* Otros estilos opcionales */
+  }
+  .btn-custom-small {
+    font-size: 0.75rem; /* Ajusta el tamaño de la fuente del botón */
+    padding: 0.25rem 0.5rem; /* Ajusta el relleno del botón */
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .list-inline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Espacio entre los botones */
+  }
+
+  .list-inline-item {
+    margin: 0;
+  }
+</style>
+<!-- templates/aplications/ODP/componentes/atendidos.html -->
+<div class="col-sm-12">
+  <div class="card">
+    <div class="card-header pb-0 card-no-border">
+      <h3 class="mb-3">Registros atendidos</h3>
+    </div>
+    <div class="card-body">
+      <div class="table-container">
+        <div class="table-responsive theme-scrollbar">
+          <table class="table display table-centered" id="data-source" style="width:100%">
+            <thead>
+              <tr>
+                <th><strong>Folio</strong></th>
+                <th><strong>Tipo de documento</strong></th>
+                <th><strong>Prioridad</strong></th>
+                <th><strong>Dependencia</strong></th>
+                <th><strong>Archivo inicial</strong></th>
+                <th><strong>Quien atendio</strong></th>
+                <th><strong>Fecha de Atención</strong></th>
+                <th><strong>Hora de Atención</strong></th>
+                <th><strong>Archivo de Respuesta</strong></th>
+                <th><strong>Opciones</strong></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for atendido in atendidos %}
+                <tr>
+                  <td>{{ atendido.odp.folio }}</td>
+                  <td>{{ atendido.odp.tipo_doc }}</td>
+                  <td>{{ atendido.odp.prioridad }}</td>
+                  <td>{{ atendido.odp.dependencia }}</td>
+                  <td>
+                    {% if atendido.odp.archivo %}
+                      <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal" data-file-url="{{ atendido.odp.archivo.url }}">
+                        <i class="icofont icofont-file-pdf"></i>
+                      </a>
+                    {% else %}
+                      <i class="icon-file text-muted"></i>
+                    {% endif %}
+                  </td>    
+                  <td>{{ atendido.nombre }}</td>
+                  <td>{{ atendido.fecha|date:"d/m/y" }}</td>
+                  <td>{{ atendido.hora }}</td>
+                  <td>
+                    {% if atendido.archivo %}
+                      <a class="pdf" href="#" data-bs-toggle="modal" data-bs-target="#previewModal" data-file-url="{{ atendido.archivo.url }}">
+                        <i class="icofont icofont-file-pdf"></i>
+                      </a>
+                    {% else %}
+                      <i class="icon-file text-muted"></i>
+                    {% endif %}
+                  </td>    
+                  <td class="text-center">
+                    <ul class="action list-inline">
+                      <li class="info list-inline-item">
+                        <a href="#" class="info-btn" data-bs-toggle="modal" data-bs-target="#infoModal{{ atendido.pk }}" data-id="{{ atendido.pk }}">
+                          <i class="icon-info" title="Información" data-bs-toggle="tooltip" data-bs-placement="top"></i>
+                        </a>
+                      </li>
+                      <li class="atendido list-inline-item">
+                        <button class="btn btn-primary btn-custom-small">Atendido</button>
+                      </li>
+                      {% if atendido.revision %}
+                        {% if atendido.revision.acepta %}
+                          <li class="aceptado list-inline-item">
+                            <button class="btn btn-danger btn-custom-small">Aceptado</button>
+                          </li>
+                        {% elif atendido.revision.noacepta %}
+                          <li class="no-aceptado list-inline-item">
+                            <button class="btn btn-warning btn-custom-small">No Aceptado</button>
+                          </li>
+                        {% endif %}
+                      {% endif %}
+                    </ul>
+                  </td>                 
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% for atendido in atendidos %}
+<div class="modal fade" id="infoModal{{ atendido.pk }}" tabindex="-1" aria-labelledby="infoModalLabel{{ atendido.pk }}" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="infoModalLabel{{ atendido.pk }}">Información Detallada</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-6">
+            <p><strong>Área:</strong> {{ atendido.odp.areas }}</p>
+            <p><strong>Tipo de documento:</strong> {{ atendido.odp.tipo_doc }}</p>
+            <p><strong>Procedencia:</strong> {{ atendido.odp.procedencia }}</p>
+            <p><strong>Prioridad:</strong> {{ atendido.odp.prioridad }}</p>
+            <p><strong>Dependencia:</strong> {{ atendido.odp.dependencia }}</p>
+            <p><strong>Recibido:</strong> {{ atendido.odp.recibio }}</p>
+            <p><strong>No. folio:</strong> {{ atendido.odp.folio }}</p>
+          </div>
+          <div class="col-md-6">
+            <div class="row">
+              <p><strong>Estado:</strong> {% if atendido.odp.status %}<span class="badge rounded-pill badge-success">Activo</span>{% else %}<span class="badge rounded-pill badge-danger">Inactivo</span>{% endif %}</p>
+              <p><strong>Fecha de atención:</strong> {{ atendido.fecha }}</p>
+              <p><strong>Hora de atención:</strong> {{ atendido.hora }}</p>
+              <div class="col-md-12">
+                {% if atendido.odp.archivo %}
+                <p><strong>Archivo inicial:</strong></p>
+                <a class="pdf" href="#" onclick="openFilePreview(event, '{{ atendido.odp.archivo.url }}', 'filePreviewContainer{{ atendido.pk }}-modal')">
+                  <i class="icofont icofont-file-pdf"></i> Archivo subido
+                </a>
+                <div id="filePreviewContainer{{ atendido.pk }}-modal"></div> <!-- Contenedor para la previsualización del archivo -->
+                {% endif %}
+              </div>
+              <div class="col-md-12">
+                {% if atendido.archivo %}
+                <p><strong>Archivo de respuesta:</strong></p>
+                <a class="pdf" href="#" onclick="openFilePreview(event, '{{ atendido.archivo.url }}', 'filePreviewContainer{{ atendido.pk }}-response-modal')">
+                  <i class="icofont icofont-file-pdf"></i> Archivo de respuesta
+                </a>
+                <div id="filePreviewContainer{{ atendido.pk }}-response-modal"></div> <!-- Contenedor para la previsualización del archivo -->
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<!-- Modal de Previsualización -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="previewModalLabel">Previsualizar Archivo</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <iframe id="filePreview" src="" frameborder="0" style="width: 100%; height: 500px;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const previewModal = document.getElementById('previewModal');
+  previewModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget; // Botón que activó el modal
+    const fileUrl = button.getAttribute('data-file-url'); // Extraer la URL del archivo del atributo data-file-url
+    
+    // Encuentra el iframe y establece la URL
+    const filePreviewIframe = document.getElementById('filePreview');
+    filePreviewIframe.src = fileUrl;
+  });
+
+  function openFilePreview(event, fileUrl, containerId) {
+    event.preventDefault(); // Evita la acción por defecto del enlace
+    
+    // Encuentra el contenedor para la previsualización
+    var container = document.getElementById(containerId);
+    
+    // Verifica si el contenedor ya tiene una previsualización
+    if (container.innerHTML === '') {
+      // Agrega un botón de cerrar y un iframe para previsualizar el archivo PDF
+      container.innerHTML = `
+        <div class="preview-wrapper">
+          <button type="button" class="btn btn-primary btn-sm" onclick="closeFilePreview('${containerId}')">Cerrar previsualizador</button>
+          <iframe src="${fileUrl}" width="100%" height="500px"></iframe>
+        </div>
+      `;
+    } else {
+      // Alternar visibilidad del iframe si ya está visible
+      container.innerHTML = ''; // Limpia el contenedor si ya tiene una previsualización
+    }
+  }
+  
+  function closeFilePreview(containerId) {
+    var container = document.getElementById(containerId);
+    container.innerHTML = ''; // Limpia el contenedor para cerrar la previsualización
+  }
+
+  // Código para manejar la apertura del modal de previsualización
+  $('#previewModal').on('show.bs.modal', function (event) {
+    var button = $(event.relatedTarget); // Botón que activó el modal
+    var fileUrl = button.data('file-url'); // Extrae la información del data-* atributo
+    var modal = $(this);
+    modal.find('.modal-body iframe').attr('src', fileUrl);
+  });
+</script>
+
+{% endblock %}

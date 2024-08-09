@@ -1,0 +1,280 @@
+{% load static %}
+{% load sass_tags %}
+{% load customFilters %}
+
+<style>
+    .large-checkbox {
+        width: 20px;
+        height: 20px;
+    }
+    .texto {
+        font-size: 15px;
+        padding-top: 3px;
+        padding-left: 10px;
+    }
+    .small-container {
+        max-width: 300px; /* Ajusta el ancho del contenedor izquierdo */
+    }
+    .form-control {
+        margin-bottom: 10px; /* Espacio entre campos del formulario */
+    }
+</style>
+
+<!-- Container-fluid starts-->
+<div class="container-fluid">
+    <div class="row">
+        <!-- Contenedor izquierdo -->
+        <div class="col-xl-3 box-col-30 small-container">
+            <div class="md-sidebar job-sidebar">
+                <a class="btn btn-primary md-sidebar-toggle" href="javascript:void(0)">file filter</a>
+                <div class="md-sidebar-aside custom-scrollbar">
+                    <div class="file-sidebar">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- Información del Número de Servicio -->
+                                <h4>Información de la Orden de Pago</h4>
+                                <form method="post" class="row g-3 needs-validation custom-input" novalidate="">
+                                    {% csrf_token %}
+                                    {{ ordenes_pago_form.non_field_errors }}
+                                
+                                    <!-- Campos del lado izquierdo -->
+                                    <div class="form-group">
+                                        {{ ordenes_pago_form.folio.label_tag }}
+                                        {{ ordenes_pago_form.folio }}
+                                        {{ ordenes_pago_form.folio.errors }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ ordenes_pago_form.area.label_tag }}
+                                        {{ ordenes_pago_form.area }}
+                                        {{ ordenes_pago_form.area.errors }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ ordenes_pago_form.contribuyente.label_tag }}
+                                        {{ ordenes_pago_form.contribuyente }}
+                                        {{ ordenes_pago_form.contribuyente.errors }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ ordenes_pago_form.usuario.label_tag }}
+                                        {{ ordenes_pago_form.usuario }}
+                                        {{ ordenes_pago_form.usuario.errors }}
+                                    </div>
+                                    <div class="form-group" style='display:none;'>
+                                        {{ ordenes_pago_form.estado.label_tag }}
+                                        {{ ordenes_pago_form.estado }}
+                                        {{ ordenes_pago_form.estado.errors }}
+                                    </div>
+                                    <div class="form-group">
+                                        {{ ordenes_pago_form.observaciones.label_tag }}
+                                        {{ ordenes_pago_form.observaciones }}
+                                        {{ ordenes_pago_form.observaciones.errors }}
+                                    </div>
+                                
+                                    <!-- Campos ocultos -->
+                                    <input type="hidden" name="total_descuento" value="{{ ordenes_pago_form.total_descuento.value|default:"0" }}">
+                                    <input type="hidden" name="total_Recargos" value="{{ ordenes_pago_form.total_Recargos.value|default:"0" }}">
+                                    <input type="hidden" name="sub_total" value="{{ ordenes_pago_form.sub_total.value|default:"0" }}">
+                                    <input type="hidden" name="total" value="{{ ordenes_pago_form.total.value|default:"0" }}">
+                                
+                                    <!-- Etiquetas que muestran los valores de los campos ocultos -->
+                                    <div class="form-group">
+                                        <label class="form-label h5">Total Descuento:</label>
+                                        <p class="form-control-plaintext">{{ ordenes_pago_form.total_descuento.value|default:"0" }}</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label h5">Total Recargos:</label>
+                                        <p class="form-control-plaintext">{{ ordenes_pago_form.total_Recargos.value|default:"0" }}</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label h5">Sub Total:</label>
+                                        <p class="form-control-plaintext">{{ ordenes_pago_form.sub_total.value|default:"0" }}</p>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label h5">Total:</label>
+                                        <p class="form-control-plaintext">{{ ordenes_pago_form.total.value|default:"0" }}</p>
+                                    </div>
+                                
+                                   
+                                
+                                    <!-- Botón para enviar el formulario -->
+                                    <button type="submit" name="ordenes_pago_submit" class="btn btn-primary">Enviar Ordenes de Pago</button>
+                                </form>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contenedor derecho -->
+        <div class="col-xl-9 col-md-12 box-col-70">
+            <div class="file-content">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="d-md-flex d-sm-block">
+                            <h4>Conceptos de pago</h4>
+                            
+                            <div class="flex-grow-1 text-end">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#resumenPagosModal">
+                                    <i class="fa fa-history"></i> Ver resumen de pagos en el año
+                                </button>
+                            </div>
+                            
+                        </div>
+                    </div>
+
+                    <div class="card-body file-manager">
+                        {{ detalle_orden_form.non_field_errors }}
+                    
+                        <!-- Fila de campos horizontales -->
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                  {{ detalle_orden_form.folioOrden.label_tag }}
+                                  {{ detalle_orden_form.folioOrden }}
+                                  <div class="valid-feedback">Looks good!</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ detalle_orden_form.folioOrden.label_tag }}
+                                    {{ detalle_orden_form.folioOrden }}
+                                  <div class="valid-feedback">Looks good!</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ detalle_orden_form.conceptos.label_tag }}
+                                    {{ detalle_orden_form.conceptos }}
+                                  <div class="valid-feedback">Looks good!</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ detalle_orden_form.recargosDescuentos.label_tag }}
+                                    {{ detalle_orden_form.recargosDescuentos }}
+                                  <div class="valid-feedback">Looks good!</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ detalle_orden_form.sub_total.label_tag }}
+                                    {{ detalle_orden_form.sub_total }}
+                                  <div class="valid-feedback">Looks good!</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ detalle_orden_form.noServicio.label_tag }}
+                                    {{ detalle_orden_form.noServicio }}
+                                  <div class="valid-feedback">Looks good!</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ detalle_orden_form.claveCatastral.label_tag }}
+                                    {{ detalle_orden_form.claveCatastral }}
+                                  <div class="valid-feedback">Looks good!</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    {{ detalle_orden_form.statusPredio.label_tag }}
+                                    {{ detalle_orden_form.statusPredio }}
+                                  <div class="valid-feedback">Looks good!</div>
+                                </div>
+                            </div>
+                        </div>
+                    
+                        <!-- Fila de checkboxes de meses (ocupa toda la pantalla) -->
+                        <div class="row">
+                            <div class="col-12">
+                                <hr>
+                                <h4>Mes Actual: {{ current_month }}</h4>
+                                <p>Selecciona los meses a cobrar, en caso de que el mes se muestre bloqueado el mes ya ha sido pagado</p>
+                                <br>
+                                <div class="form-check">
+                                    <input class="form-check-input large-checkbox" type="checkbox" id="marcarTodos" onclick="toggleCheckboxes(this)">
+                                    <label class="form-check-label texto" for="marcarTodos">
+                                        Marcar Todos
+                                    </label>
+                                </div>
+                            </div>
+                            {% for month in months %}
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input large-checkbox month-checkbox" type="checkbox" name="{{ month|lower }}" id="id_{{ month|lower }}">
+                                    <label class="form-check-label texto" for="id_{{ month|lower }}">
+                                        {{ month }}
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    
+                        <!-- Total y Botón de Pagar -->
+                        <div class="row">
+                            <div class="col-12 mt-4">
+                                <h3>Total: {{ detalle_orden_form.sub_total.value|floatformat:2 }}</h3>
+                                <br>
+                                <button class="btn btn-primary" type="submit" name="detalle_orden_submit">Pagar</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<!-- Modal -->
+<div class="modal fade" id="resumenPagosModal" tabindex="-1" aria-labelledby="resumenPagosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resumenPagosModalLabel">Resumen de Pagos en el Año</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="resumenPagosContainer">
+                    <!-- Aquí irá el resumen de pagos -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateProgressBar() {
+            var checkboxes = document.querySelectorAll('.month-checkbox');
+            var checkedCount = Array.from(checkboxes).filter(checkbox => checkbox.checked).length;
+            var totalCount = checkboxes.length;
+            var percentage = (checkedCount / totalCount) * 100;
+            var progressBar = document.getElementById('progressBar');
+            progressBar.style.width = percentage + '%';
+            progressBar.innerText = Math.round(percentage) + '%';
+            progressBar.setAttribute('aria-valuenow', percentage);
+        }
+        
+        document.querySelectorAll('.month-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', updateProgressBar);
+        });
+
+        updateProgressBar(); // Inicializar al cargar
+    });
+
+    function toggleCheckboxes(source) {
+        var checkboxes = document.querySelectorAll('.month-checkbox');
+        checkboxes.forEach(checkbox => {
+            checkbox.checked = source.checked;
+        });
+        document.getElementById('progressBar').style.width = source.checked ? '100%' : '0%';
+    }
+</script>

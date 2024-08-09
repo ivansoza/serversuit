@@ -1,0 +1,1004 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatable-extension.css' %}">
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+{% endblock %}    
+
+
+{% block content %}
+
+<style>
+    .user-card {
+        text-align: center; /* Centra el texto y los íconos en la tarjeta */
+        border-radius: 15px 15px 0 0; /* Aplica redondeo solo en las esquinas superiores */
+
+    }
+    
+    .info-item {
+        text-align: center; /* Centra todos los elementos dentro de info-item */
+        display: flex;
+        flex-direction: column; /* Organiza los elementos en columnas (uno encima del otro) */
+        align-items: center; /* Alinea los elementos al centro horizontalmente */
+    }
+    .user-data {
+        display: block; /* Hace que el span se comporte como un bloque para poder centrarlo */
+        width: 100%; /* Ocupa todo el ancho posible dentro de su contenedor */
+        text-align: center; /* Alinea el texto al centro */
+    }
+        
+    .icon-wrapper {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px; /* Ajusta el tamaño del círculo según sea necesario */
+        height: 50px; /* Ajusta el tamaño del círculo según sea necesario */
+        border-radius: 50%;
+        background: rgba(0, 123, 255, 0.1); /* Color difuminado del círculo */
+        margin: 0 auto 0.5rem; /* Centra el ícono y agrega espacio debajo */
+        
+    }
+
+    .icon-wrapper i {
+        font-size: 2em; /* Tamaño del ícono, ajusta según sea necesario */
+        color: #007bff; /* Color del ícono, cambia si es necesario */
+    }
+
+    .card-title, .card-text {
+        margin: 0; /* Elimina el margen por defecto para una mejor alineación */
+        
+    }
+    
+    .card-title {
+        font-size: 1.125rem; /* Ajusta el tamaño del título según sea necesario */
+        
+    }
+
+    .card-title-new{
+        padding-top: 15px;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+        background-color: var(--color-secondary) !important;
+        color: #f8f9fa;
+        padding-left: 15px;
+        border-radius: 10px 10px 0 0
+    }
+    .card-text {
+        font-size: 1rem; /* Ajusta el tamaño del texto según sea necesario */
+    }
+    
+    /* Estilos para los colores específicos de cada ícono */
+    .info-item.user .icon-wrapper {
+        background: rgba(0, 123, 255, 0.1); /* Color difuminado para el ícono de usuario */
+    }
+    .info-item.user .icon-wrapper i {
+        color: #007bff; /* Color del ícono de usuario */
+    }
+
+    .info-item.id-card .icon-wrapper {
+        background: rgba(40, 167, 69, 0.1); /* Color difuminado para el ícono de ID */
+    }
+    .info-item.id-card .icon-wrapper i {
+        color: #28a745; /* Color del ícono de ID */
+    }
+
+    .info-item.email .icon-wrapper {
+        background: rgba(23, 162, 184, 0.1); /* Color difuminado para el ícono de email */
+    }
+    .info-item.email .icon-wrapper i {
+        color: #17a2b8; /* Color del ícono de email */
+    }
+
+    .info-item.phone .icon-wrapper {
+        background: rgba(255, 193, 7, 0.1); 
+    }
+    .info-item.phone .icon-wrapper i {
+        color: #ffc107; 
+    }
+
+    .info-item.location .icon-wrapper {
+        background: rgba(220, 53, 69, 0.1); 
+    }
+    .info-item.location .icon-wrapper i {
+        color: #dc3545; 
+    }
+ 
+    .btn-primary.rounded-circle {
+        width: 40px; 
+        height:40px; 
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem; 
+    }
+
+    .btn-primary.rounded-circle .fa-plus {
+        color: white; 
+    }
+
+    .btn-danger.rounded-circle {
+        width: 40px; 
+        height:40px; 
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem; 
+    }
+
+    .btn-danger.rounded-circle .fa-plus {
+        color: white; 
+    }
+
+    @media (min-width: 1500px) { /* Para pantallas muy amplias */
+    .info-item {
+        display: flex;
+        flex-direction: row; /* Mantiene la disposición en fila */
+        align-items: center; /* Alinea verticalmente los elementos al centro */
+        justify-content: flex-start; /* Alinea horizontalmente los elementos al inicio */
+        width: auto; /* No se expande al 100%, usa el ancho necesario */
+    }
+
+    .icon-wrapper {
+        width: 50px; /* Ancho fijo para los iconos */
+        height: 50px; /* Altura fija para los iconos */
+        flex-shrink: 0; /* Evita que el icono se reduzca */
+        margin-right: 10px; /* Espacio entre el icono y el texto */
+    }
+
+    .card-text {
+        flex-grow: 1; /* Permite que el texto ocupe el espacio restante */
+        display: flex;
+        flex-direction: column; /* Organiza el contenido del texto en columna */
+        justify-content: center; /* Centra el contenido del texto verticalmente */
+        text-align: left; /* Alinea el texto a la izquierda */
+    }
+
+    .user-data {
+        text-align: left;
+    }
+}
+
+    @media (max-width: 768px) {
+
+        .info-item.email {
+                max-width: 100%; 
+        }
+        #user-email {
+            display: block; 
+            max-width: calc(100% - 60px);
+            word-wrap: break-word; 
+            white-space: normal;
+            overflow-wrap: break-word; 
+            text-overflow: clip; 
+            hyphens: auto;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: row; 
+            align-items: center; 
+            justify-content: flex-start; 
+            margin-top: 30px;
+            width: 100%; 
+        }
+
+        .info-item:first-child {
+            margin-top: 0;
+        }
+
+        .icon-wrapper {
+            width: 50px; 
+            height: 50px; 
+            flex-shrink: 0;
+            margin-right: 10px; 
+        }
+
+        .card-text {
+            flex-grow: 1; 
+            display: flex;
+            flex-direction: column; 
+            justify-content: center; 
+            text-align: left; 
+        }
+
+        .user-data {
+            width: 100%; 
+            text-align: left; 
+        }
+        .count-card {
+        flex-direction: column !important;
+         }
+         .count-card .info-item  {
+            margin-top: 20px;
+         }
+
+
+
+    }   
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+  }
+  
+  .shake {
+    animation: shake 3.0s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+  }
+  
+
+  #user-email {
+
+    overflow-wrap: break-word; /* Permite que las palabras largas se rompan y pasen a la siguiente línea */
+    word-wrap: break-word; /* Asegura la ruptura de palabras en navegadores más antiguos */
+}
+
+.count-card {
+    display: flex;
+    justify-content: space-around;
+    padding: 20px;
+}
+
+
+</style>
+
+{% include 'components/alertasPredio.html' %}  
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-4">
+
+            <button type="button" id="openModalBtn" class="btn btn-primary" style="display:none;" data-bs-toggle="modal" data-bs-target="#exampleModalCenter1">Seleccionar Contribuyente</button>
+                    
+
+                    <div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenter1" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content">
+                                <h3 style="text-align: center; margin-top: 2px;" class="text text-secondary">Seleccione el Contribuyente</h3>
+                                <small style="text-align: center;">Se encontró mas de un registro de contribuyente con el mismo nombre, seleccione el adecuado y proceda</small>
+  
+
+                                <div class="text-center my-3">
+                                    <a href="{% url "registro_contribuyente" %}" class="btn btn-primary d-flex align-items-center" style="max-width: 300px; margin: 0 auto;">
+                                        <i class="icofont icofont-contact-add" style="font-size: 1.5rem;"></i>
+                                        <span class="ms-2">Registrar contribuyente</span> 
+                                    </a> 
+                                </div>
+                          
+                                <div class="modal-body">
+                                    <div class="modal-toggle-wrapper">
+                                        <ul id="contribuyenteList" class="list-group"></ul>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+        </div>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Tarjeta con formulario de búsqueda -->
+
+                <div class="card">
+                    <div class="card-body">
+                        Consulta
+                        <div class="input-group mb-3">
+                                <input type="text" class="form-control" id="consultaRFCorCURP" placeholder="Ingresa RFC, CURP, nombre o razón social para consultar" required oninput="validateInput(); this.value = this.value.toUpperCase();" maxlength="30">
+                                <button class="btn btn-outline-danger disabled" id="consultarBtn" type="button" onclick="consultarDatos();" disabled>Consultar</button>
+                                <button type="button" class="btn btn-outline-primary ms" data-bs-toggle="modal" data-bs-target="#helpModal">
+                                <i data-feather="info"></i>
+                            </button>
+
+                                <div class="valid-feedback">¡Se ve bien!</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+    </div>
+</div>
+
+{% include 'components/ordenesPago/modalAyuda.html' %}
+
+
+
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+
+                <div id="user-card" class="card user-card">
+                    <h3 style="text-align: justify; background-color: #f8f9fa;" class="card-title card-title-new">Datos del Contribuyente</h3>
+                    <div class="card-body d-flex justify-content-around flex-wrap"> <!-- Modificado para permitir el wrap -->
+                        <div class="info-item user">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-user"></i>
+                            </div>
+                            <p class="card-text"><strong id="nombreLabel">Nombre del Contribuyente:</strong> 
+                                <span id="user-name"  class="user-data">Ejemplo</span></p>
+                        </div>
+                        <div class="info-item id-card">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-id-card"></i>
+                            </div>
+                            <p class="card-text"><strong>RFC:</strong> 
+                                <span id="user-rfc" class="user-data">XXXXXXX001</span></p>
+                        </div>
+                        <div class="info-item email">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-email"></i>
+                            </div>
+                            <p class="card-text"><strong>Correo Electrónico:</strong> 
+                                
+                            <span id="user-email"class="user-data">usuario@ejemplo.com</span></p>
+                        </div>
+                        <div class="info-item phone">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-phone"></i>
+                            </div>
+                            <p class="card-text"><strong>Teléfono:</strong> 
+                                <span id="user-phone" class="user-data">(123) 456-7890</span></p>
+                        </div>
+                        <div class="info-item location">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-location-pin"></i>
+                            </div>
+                            <p class="card-text"><strong>Dirección:</strong> 
+                                <span id="user-address" class="user-data">Calle Ejemplo 123, Ciudad, País</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div id="dividerContainer" class="divider" style="border-top: 1px solid #e0e0e0; margin: 0 20px; display: none;"></div>
+
+                    <div class="card-footer" id="count-card" style="display: none;">
+                        <div class="count-card">
+
+                            <div id="predioContainer"  style="display: none;">
+
+
+                                <div  class="info-item" >
+                                    <div class="icon-wrapper">
+                                        <i class="icofont icofont-ui-home"></i>
+                                    </div>
+                                    <p class="card-text predio">
+                                        <strong>Predios:</strong> 
+                                        <span id="predios-count" class="user-data">0</span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div id="aguaContainer"style="display: none;">
+
+                                <div  class="info-item" >
+                                    <div class="icon-wrapper">
+                                        <i class="icofont icofont-water-drop"></i>
+                                    </div>
+                                    <p class="card-text agua">
+                                        <strong>Servicios de Agua:</strong> 
+                                        <span id="agua-servicios-count" class="user-data">0</span>
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+        </div>
+    </div>
+</div>
+
+
+
+<style>
+
+    .select2-container {
+        width: calc(100% - 98px) !important; /* Ajusta esto según el tamaño del botón */
+        height: 38px; /* Alinea la altura con el botón */
+    }
+    
+    .input-group .select2-container--default .select2-selection--single {
+        height: 38px; /* Alinea la altura con el botón */
+        border-radius: 0.25rem; /* Asegura bordes redondeados si es necesario */
+    }
+    
+
+    
+
+</style>
+<div class="container-fluid mt-3" id="areaPagoContainer" style="display: none;">
+    <div class="card">
+        <div class="card-body">
+            <label class="form-label" for="selectAreaPago">Área de Pago</label>
+            <div class="input-group mb-3 has-validation">
+                <select class="form-select" id="selectAreaPago" name="areaPago" onchange="seleccionaArea()">
+                    <option value="" selected>Selecciona el área de pago</option>
+                </select>
+                <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#helpModalAreaPago">
+                    <i id="infoIcon" data-feather="info"></i>
+                </button>
+            </div>
+            
+            <div id="errorAreaPago" class="text-danger"></div> 
+
+            <div  id="serviciosContainer" style="display: none;">
+
+                <label class="form-label" for="selectServicio">Servicios</label>
+                <div class="input-group mb-3 has-validation">
+                    <select class="form-select" id="selectServicio" name="servicioSelect">
+                        <option value="" selected>Selecciona el servicio</option>
+                    </select>
+                    <button type="button" class="btn btn-outline-primary ms" data-bs-toggle="modal" data-bs-target="#helpModalServicio">
+                        <i id="infoIcon" data-feather="info"></i>
+                    </button>
+
+                    <div class="valid-feedback">¡Se ve bien!</div>
+
+                </div>
+                <div id="errorServicio" class="text-danger"></div> 
+            </div>
+
+        </div>
+    </div>
+
+
+</div>
+
+
+<div class="container-fluid" id="zonaDePagos" style="display: none;">
+
+    
+</div>
+
+
+<!-- Modal para seleccionar un nuevo servicio -->
+<div class="modal fade" id="modalAgregarServicio" tabindex="-1" aria-labelledby="modalAgregarServicioLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalAgregarServicioLabel">Agregar Nuevo Servicio</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <select id="selectModalServicio" class="form-select">
+            <!-- Las opciones se llenarán dinámicamente desde JavaScript -->
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          <button type="button" class="btn btn-primary" id="btnAgregarDesdeModal">Agregar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+
+
+
+{% endblock %}
+
+
+
+{% block scriptcontent %}
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+<script>
+
+    var contribuyenteGlobal = null;  // Almacenará los datos del contribuyente seleccionado globalmente
+
+    $(document).ready(function() {
+        inicializarSelects();
+        configurarEventos();
+        agregarBotonOrden();
+    });
+
+    
+    function inicializarSelects() {
+        $('#selectAreaPago, #selectServicio').select2();
+    }
+
+
+    function configurarEventos() {
+        $('#selectServicio').on('change', function() {
+            var servicioTexto = $(this).find("option:selected").text();
+            var servicioId = $(this).val();
+            agregarFormulario(servicioTexto, servicioId);
+        });
+        
+    
+        $('#zonaDePagos').on('click', '.btnAgregar', function() {
+            $('#modalAgregarServicio').modal('show');
+        });
+    
+        $('#btnAgregarDesdeModal').click(function() {
+            var servicioTexto = $('#selectModalServicio option:selected').text();
+            var servicioId = $('#selectModalServicio').val(); // Obtiene el valor (id) del servicio seleccionado en el modal        
+            agregarFormulario(servicioTexto, servicioId);
+            $('#modalAgregarServicio').modal('hide');
+        });
+        
+    
+        $('#zonaDePagos').on('click', '.btnEliminar', function() {
+            // Verifica si el formulario a eliminar es el primero antes de removerlo
+            const isFirst = $(this).closest('.card').index() === 0;
+        
+            // Elimina el formulario
+            $(this).closest('.card').remove();
+        
+            // Actualiza botones y visibilidad del botón de orden
+            actualizarBotones();
+            gestionarVisibilidadBotonOrden();
+        
+            // Si el formulario eliminado era el primero, resetea los selects
+            if (isFirst) {
+                // Utilizando directamente getElementById para cada select específico
+                const select = document.getElementById('selectServicio');
+                select.value = ''; // Establece la opción por defecto como seleccionada
+            }
+        });
+        
+    }   
+    
+
+    function agregarBotonOrden() {
+        var botonOrdenHtml = `
+            <div id="botonOrden" class="card mb-3" style="display: none;">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <span>Total: $567.50</span>
+                    <button type="submit" class="btn btn-primary">Generar Orden de Pago</button>
+                </div>
+            </div>
+        `;
+        $('#zonaDePagos').append(botonOrdenHtml);
+    }
+    
+    function agregarFormulario(servicioTexto, servicioId) {
+        var nombreServicio = servicioTexto.split(' - $')[0];
+        var montoServicio = servicioTexto.split(' - $')[1];
+    
+        var cardHtml = `
+            <div class="card mb-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span>Detalle del Servicio</span>
+                    <button class="btn btn-danger rounded-circle p-3 btnEliminar" type="button" >
+                        <i class="fa fa-minus-circle"></i>
+                    </button>
+                </div>
+                
+                <div class="card-body">
+                    <h5 class="card-title">${nombreServicio}</h5>
+                    <p class="card-text">Monto: $${montoServicio}</p>
+                    <p>ID del Servicio: ${servicioId}</p> <!-- Muestra el ID para referencia -->
+
+                    <form>
+                        <div class="mb-3">
+                            <label class="form-label">Descuento</label>
+                            <select class="form-select">
+                                <option value="">Sin descuento</option>
+                                <option value="10">10% descuento</option>
+                                <option value="20">20% descuento</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Cargo adicional</label>
+                            <select class="form-select">
+                                <option value="">Sin cargo</option>
+                                <option value="50">Cargo de $50</option>
+                                <option value="100">Cargo de $100</option>
+                            </select>
+                        </div>
+                        <div class="d-flex justify-content-end mb-3">
+                       
+                            <button class="btn btn-primary rounded-circle p-3 btnAgregar" type="button">
+                                <i class="fa fa-plus-circle"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        `;
+        $('#zonaDePagos').append(cardHtml).show();
+        $('#botonOrden').appendTo('#zonaDePagos');
+        actualizarBotones();
+        gestionarVisibilidadBotonOrden();
+    }
+    
+
+    function actualizarBotones() {
+        $('.btnAgregar').hide();  // Oculta todos los botones de agregar
+        $('.btnAgregar').last().show();  // Muestra solo el último botón de agregar
+        
+        if ($('#zonaDePagos .card').length >= 1) {
+            $('.btnEliminar').show();  // Muestra los botones de eliminar si hay al menos un formulario
+        } else {
+            $('.btnEliminar').hide();  // Oculta los botones de eliminar si no hay formularios
+        }
+    }
+    
+    
+    function gestionarVisibilidadBotonOrden() {
+        if ($('#zonaDePagos .card').length > 1) { 
+            $('#botonOrden').show();
+        } else {
+            $('#botonOrden').hide();
+        }
+    }
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    function validateInput() {
+        var input = document.getElementById('consultaRFCorCURP');
+        var feedback = document.querySelector('.valid-feedback');
+        var btn = document.getElementById('consultarBtn');
+    
+
+        if (input.value.length >= 3 && input.value.length < 9) {
+            input.classList.add('is-valid');
+            input.classList.remove('is-invalid');
+            feedback.style.display = 'block';
+            feedback.innerText = 'Razón social posible. ¡Listo para consultar!';
+            btn.disabled = false;
+            btn.className = "btn btn-outline-primary";
+        } else if (input.value.length === 9) {
+            input.classList.add('is-valid');
+            input.classList.remove('is-invalid');
+            feedback.style.display = 'block';
+            feedback.innerText = 'RFC para persona moral. ¡Listo para consultar!';
+            btn.disabled = false;
+            btn.className = "btn btn-outline-primary";
+        } else if (input.value.length === 10) {
+            input.classList.add('is-valid');
+            input.classList.remove('is-invalid');
+            feedback.style.display = 'block';
+            feedback.innerText = 'CURP para persona física. ¡Listo para consultar!';
+            btn.disabled = false;
+            btn.className = "btn btn-outline-primary";
+        } else if (input.value.length > 10) {
+            input.classList.add('is-valid');
+            input.classList.remove('is-invalid');
+            feedback.style.display = 'block';
+            feedback.innerText = 'Nombre de persona: ' + input.value + '. ¡Listo para consultar!';
+            btn.disabled = false;
+            btn.className = "btn btn-outline-primary";
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+            feedback.style.display = 'none'; // Oculta el mensaje si no cumple los criterios
+            btn.disabled = true;
+            btn.className = "btn btn-outline-danger disabled";
+        }
+    }
+    
+
+
+    function consultarDatos() {
+        var rfcCurp = document.getElementById('consultaRFCorCURP').value;
+        $.ajax({
+            url: '/predio/consultar-contribuyente_op/',  
+            type: 'GET',
+            data: { 'consulta': rfcCurp },
+            success: function(data) {
+                console.log(data)
+                if (!data.mensaje && Array.isArray(data) && data.length > 0) {
+                    if (data.length > 1) {
+                        $('#contribuyenteList').empty(); // Limpia la lista anterior
+                        data.forEach(function(contribuyente) {
+                        var tipoPersona = contribuyente.tipoPersona === 'PF' ? '' : '';
+                        var icono, contenido, detallesAdicionales;
+                        var mc = contribuyente.mc ? 'true' : 'false';
+
+                        if (contribuyente.mc && contribuyente.nombre_mc) {
+                            var apellidoM_mc = contribuyente.apellidoM_mc ? ` ${contribuyente.apellidoM_mc}` : '';
+                            var nombreCompletoMancomunado = `${contribuyente.nombre_mc} ${contribuyente.apellidoP_mc}${apellidoM_mc}`;
+                        }
+
+                        if (contribuyente.tipoPersona === 'PF') {
+                            var apellidoM = contribuyente.apellidoM ? ` ${contribuyente.apellidoM}` : '';
+                            var nombreCompleto = `${contribuyente.nombre} ${contribuyente.apellidoP}${apellidoM}`;
+                            contenido = `<strong>${nombreCompleto}${contribuyente.mc && contribuyente.nombre_mc ? ' y ' + nombreCompletoMancomunado : ''}</strong>`;
+                            icono = contribuyente.mc ? '<i class="fa fa-users"></i>' : '<i class="fa fa-user"></i>';
+                            detallesAdicionales = `<br><small>RFC: ${contribuyente.rfc} ${contribuyente.homoclave ? contribuyente.homoclave : ''}</small><br><small>CURP: ${contribuyente.curp}</small>`;
+                        } else {
+                            contenido = `<strong>${contribuyente.razonSocial}${contribuyente.mc && contribuyente.nombre_mc ? ' y ' + nombreCompletoMancomunado : ''}</strong>`;
+                            icono = '<i class="fa fa-building"></i>';
+                            var representante = `${contribuyente.nombre} ${contribuyente.apellidoP}${apellidoM}`;
+                            detallesAdicionales = `<br><small>Representante: ${representante}</small><br><small>RFC: ${contribuyente.rfc} ${contribuyente.homoclave ? contribuyente.homoclave : ''}</small>`;
+                        }
+
+                        detallesAdicionales += `<br><small>Email: ${contribuyente.email ? contribuyente.email : 'N/A'}</small><br><small>Teléfono: ${contribuyente.telefono ? contribuyente.telefono : 'N/A'}</small>`;
+                        detallesAdicionales += `<br><small>Dirección: ${contribuyente.domicilio ? contribuyente.domicilio : 'N/A'}</small>`;
+
+
+                        tipoPersona += ` ${icono}`;
+
+                        $('#contribuyenteList').append(
+                            `<li class="list-group-item d-flex justify-content-between align-items-center" 
+                                data-id="${contribuyente.id}" 
+                                data-nombre="${contribuyente.nombre}" 
+                                data-rfc="${contribuyente.rfc}" 
+                                data-curp="${contribuyente.curp}" 
+                                data-homoclave="${contribuyente.homoclave}" 
+                                data-apellido-p="${contribuyente.apellidoP}" 
+                                data-apellido-m="${contribuyente.apellidoM}" 
+                                data-tipo-persona="${contribuyente.tipoPersona || ''}"
+                                data-mc="${mc}"
+                                data-nombre-mc="${contribuyente.nombre_mc || ''}"
+                                data-apellido-p-mc="${contribuyente.apellidoP_mc || ''}"
+                                data-apellido-m-mc="${contribuyente.apellidoM_mc || ''}"
+                                data-email="${contribuyente.email || ''}"
+                                data-telefono="${contribuyente.telefono || ''}"
+                                data-razon-social="${contribuyente.razonSocial || ''}"
+                                data-domicilio="${contribuyente.domicilio || ''}"
+                                data-predios-count="${contribuyente.predios_count}"
+                                data-noservicios-count="${contribuyente.noservicios_count}">
+
+                                <div>
+                                    ${contenido} - ${tipoPersona}${detallesAdicionales}
+                                </div>
+                                <button onclick="seleccionarContribuyente(this.closest('.list-group-item'))" class="btn btn-primary btn-sm">Seleccionar</button>
+                            </li>`
+                        );
+                    });
+                      
+                        $('#openModalBtn').click(); 
+                        
+                    } else {
+
+                        llenarDatosContribuyente(data[0]);
+                    }
+                } else if (data.mensaje) {
+
+                    showAlert(data.mensaje, 'danger');
+                } else {
+
+                    showAlert('No se encontró un contribuyente asociado al RFC/CURP, verifique que ya ha sido registrado', 'danger');
+                }
+            },
+            error: function(xhr, status, error) {
+              showAlert('No se encontró un contribuyente asociado al RFC/CURP, verifique que ya ha sido registrado', 'danger');
+            }
+        });
+      
+    }
+
+    function seleccionarContribuyente(element) {
+
+            contribuyenteGlobal = {
+                id: element.dataset.id,
+                nombre: element.dataset.nombre,
+                rfc: element.dataset.rfc,
+                curp: element.dataset.curp,
+                homoclave: element.dataset.homoclave,
+                apellidoP: element.dataset.apellidoP,
+                apellidoM: element.dataset.apellidoM,
+                tipoPersona: element.dataset.tipoPersona,
+                mc: element.dataset.mc === "true",
+                nombre_mc: element.dataset.nombreMc,
+                apellidoP_mc: element.dataset.apellidoPMc,
+                apellidoM_mc: element.dataset.apellidoMMc,
+                email: element.dataset.email,
+                telefono: element.dataset.telefono,
+                razonSocial: element.dataset.razonSocial,
+                domicilio: element.dataset.domicilio,
+                predios_count: element.dataset.prediosCount,
+                noservicios_count: element.dataset.noserviciosCount
+        };
+        llenarDatosContribuyente(contribuyenteGlobal);
+    }
+
+
+
+        function llenarDatosContribuyente(contribuyente) {
+            console.log("Contribuyente recibido:", contribuyente);
+        
+            let nombreCompleto;
+            let nombreLabel = document.getElementById('nombreLabel'); // Obtén la referencia al elemento de la etiqueta
+        
+            if (contribuyente.tipoPersona === 'PF') {
+                nombreCompleto = contribuyente.nombre + (contribuyente.apellidoP ? " " + contribuyente.apellidoP : "") + (contribuyente.apellidoM ? " " + contribuyente.apellidoM : "");
+                nombreLabel.innerHTML = "Nombre del Contribuyente:";
+                if (contribuyente.mc === 'true' && contribuyente.nombre_mc) {
+                    let nombreCompletoMC = contribuyente.nombre_mc + (contribuyente.apellidoP_mc ? " " + contribuyente.apellidoP_mc : "") + (contribuyente.apellidoM_mc ? " " + contribuyente.apellidoM_mc : "");
+                    nombreCompleto += "<br> y " + nombreCompletoMC;
+                }
+            } else if (contribuyente.tipoPersona === 'PM') {
+                nombreCompleto = contribuyente.razonSocial;
+                nombreLabel.innerHTML = "Nombre de la Razón Social:";
+            }
+        
+            document.getElementById('user-name').innerHTML = nombreCompleto;
+            document.getElementById('user-rfc').textContent = contribuyente.rfc + (contribuyente.homoclave ? contribuyente.homoclave : "");
+            document.getElementById('user-email').textContent = contribuyente.email || "No disponible";
+            document.getElementById('user-phone').textContent = contribuyente.telefono || "No disponible";
+            document.getElementById('user-address').textContent = contribuyente.domicilio || "N/A";
+            handleCounts(contribuyente);
+
+            var iconWrapper = document.querySelector('.info-item.user .icon-wrapper i');
+            if (contribuyente.tipoPersona === 'PF') {
+                iconWrapper.className = contribuyente.mc === 'true' ? 'icofont icofont-users' : 'icofont icofont-user';
+            } else if (contribuyente.tipoPersona === 'PM') {
+                iconWrapper.className = 'icofont icofont-building-alt';
+            }
+            $.ajax({
+                url: '/ordenesPago/obtener-areas/',
+                type: 'GET',
+                success: function(data) {
+                    if (data.error) {
+                        document.getElementById('errorAreaPago').textContent = data.error;
+                        document.getElementById('selectAreaPago').disabled = true;
+                        document.getElementById('errorAreaPago').style.display = 'block';
+                        document.getElementById('infoIcon').classList.add('shake');
+                        setTimeout(function() {
+                            document.getElementById('infoIcon').classList.remove('shake');
+                        }, 3000);
+                    } else {
+                        const select = document.getElementById('selectAreaPago');
+                        select.innerHTML = '<option value="" selected>Selecciona el área de pago</option>';
+                        data.forEach(area => {
+                            const option = new Option(area.nombre, area.id);
+                            select.add(option);
+                        });
+                        select.disabled = false;
+                        document.getElementById('errorAreaPago').style.display = 'none';
+                    }
+                },
+                error: function(xhr) {
+                    // Aquí asegúrate de obtener el mensaje de error del JSON si está disponible
+                    let errorMsg = 'Error desconocido al cargar las áreas.';
+                    if (xhr.status >= 400 && xhr.responseText) {
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMsg = response.error || errorMsg;
+                        } catch (e) {
+                            // Si hay un error al parsear la respuesta, mantén el mensaje de error desconocido
+                        }
+                    } else {
+                        errorMsg = 'Error al cargar las áreas. Verifique su conexión.';
+                    }
+                    document.getElementById('errorAreaPago').textContent = errorMsg;
+                    document.getElementById('errorAreaPago').style.display = 'block';
+                    document.getElementById('selectAreaPago').disabled = true;
+                    document.getElementById('infoIcon').classList.add('shake');
+                    setTimeout(function() {
+                        document.getElementById('infoIcon').classList.remove('shake');
+                    }, 3000);
+                }
+            });
+            
+        
+            document.getElementById('areaPagoContainer').style.display = 'block'; // Mostrar contenedor de área de pago
+
+            $('#exampleModalCenter1').modal('hide');
+    }
+
+    
+
+    function handleCounts(contribuyente) {
+        // Muestra y actualiza el conteo de predios si hay algún predio registrado
+        var predioCount = contribuyente.predios_count || 0;
+        var aguaCount = contribuyente.noservicios_count || 0;
+        console.log(predioCount)
+
+        console.log(aguaCount)
+
+        if (predioCount > 0) {
+            document.getElementById('predioContainer').style.display = 'block';
+            document.getElementById('predios-count').textContent = predioCount;
+            document.getElementById('dividerContainer').style.display = 'block';
+            document.getElementById('count-card').style.display = 'block';
+
+        } else {
+            document.getElementById('predioContainer').style.display = 'none';
+        }
+
+        // Muestra y actualiza el conteo de servicios de agua si hay algún servicio registrado
+        if (aguaCount > 0) {
+            document.getElementById('aguaContainer').style.display = 'block';
+            document.getElementById('agua-servicios-count').textContent = aguaCount;
+            document.getElementById('dividerContainer').style.display = 'block';
+            document.getElementById('count-card').style.display = 'block';
+
+        } else {
+            document.getElementById('aguaContainer').style.display = 'none';
+        }
+
+        // Oculta el divisor si ambos conteos son cero
+        if (predioCount === 0 && aguaCount === 0) {
+            document.getElementById('dividerContainer').style.display = 'none';
+            document.getElementById('count-card').style.display = 'none';
+
+        }
+    }
+    function seleccionaArea() {
+        const selectArea = document.getElementById('selectAreaPago');
+        const areaId = selectArea.value;
+    
+        if (!areaId) {
+            console.error("No se ha seleccionado una área válida.");
+            return;
+        }
+    
+        console.log("Área seleccionada: ", areaId);
+    
+        // Mostrar contenedor de servicios
+        document.getElementById('serviciosContainer').style.display = 'block';
+    
+        $.ajax({
+            url: `/ordenesPago/get_servicios_por_area/${areaId}`, // Ajusta esta URL según tu configuración de rutas
+            type: 'GET',
+            success: function(data) {
+                const selectServicio = document.getElementById('selectServicio');
+                const selectModalServicio = document.getElementById('selectModalServicio');
+        
+                selectServicio.innerHTML = ''; // Limpiar el select principal
+                selectModalServicio.innerHTML = ''; // Limpiar el select del modal
+        
+                // Añadir opción por defecto al principio en ambos selects
+                ['selectServicio', 'selectModalServicio'].forEach(selectId => {
+                    const select = document.getElementById(selectId);
+                    const defaultOption = new Option('Selecciona un servicio', '', true, true);
+                    defaultOption.disabled = true;
+                    select.appendChild(defaultOption);
+                });
+        
+                // Añadir opciones de servicios basadas en los datos recibidos a ambos selects
+                data.forEach(servicio => {
+                    const option = new Option(servicio.nombre + ' - $' + servicio.monto, servicio.id);
+                    const optionForModal = new Option(servicio.nombre + ' - $' + servicio.monto, servicio.id);
+        
+                    selectServicio.appendChild(option);
+                    selectModalServicio.appendChild(optionForModal);
+                });
+        
+                selectServicio.disabled = false; // Habilitar el select después de cargar los datos
+                selectModalServicio.disabled = false; // Asegurarse de que el select del modal también esté habilitado
+            },
+            error: function(xhr) {
+                const errorMsg = xhr.status >= 400 ? xhr.responseText || 'Error al cargar servicios.' : 'Error desconocido al cargar servicios.';
+                document.getElementById('errorServicio').textContent = errorMsg;
+                document.getElementById('errorServicio').style.display = 'block';
+                document.getElementById('selectServicio').disabled = true; // Deshabilitar el select en caso de error
+                document.getElementById('selectModalServicio').disabled = true; // También deshabilitar el select del modal
+            }
+        });
+        
+    }
+    
+
+</script>
+
+{% endblock scriptcontent %}

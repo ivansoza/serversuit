@@ -1,0 +1,938 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/sweetalert2.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/filepond.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/filepond-plugin-image-preview.css' %}">
+
+{% endblock %}
+{% block content %}
+
+<style>
+
+.card .main-layout1 {
+    letter-spacing: normal;  /* Restablece el letter-spacing para los elementos dentro de la tarjeta */
+}
+
+.card .sidebar-type1 {
+    letter-spacing: normal;  /* Restablece el letter-spacing para los elementos dentro de la tarjeta */
+}
+
+.card .sidebar-setting {
+    letter-spacing: normal;  /* Restablece el letter-spacing para los elementos dentro de la tarjeta */
+}
+
+.color-rt{
+    background-color: white;
+}
+    .main-layout1 {
+      >li {
+        height: 145px;
+        width: 255px;
+        border: 1px solid #F5F6F9;
+        border-radius: 10px;
+        display: inline-block;
+        transition: transform 0.3s ease;
+      }
+
+    }
+
+
+    .main-layout1 > li:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+
+        }
+
+    .main-layout1 > li.selected-layout {
+      transform: scale(1.1);
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1); /* Sombreado suave */
+
+    }
+
+    .main-layout1 > li {
+      margin-right: 20px; /* Ajusta este valor según tus necesidades */
+      margin-top: 20px; /* Ajusta este valor según tus necesidades */
+
+    }
+
+
+
+    .sidebar-type1,
+    .sidebar-setting {
+      >li {
+        height: 145px;
+        width: 255px;
+        border: 1px solid #F5F6F9;
+        border-radius: 5px;
+        display: inline-block;
+        transition: transform 0.3s ease;
+
+
+      }
+    }
+
+
+    .sidebar-type1 > li.selected-layout {
+      transform: scale(1.1);
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1); /* Sombreado suave */
+
+    }
+
+    .sidebar-type1  > li {
+      margin-right: 20px; /* Ajusta este valor según tus necesidades */
+      margin-top: 20px; /* Ajusta este valor según tus necesidades */
+
+    }
+
+
+    .sidebar-setting > li.selected-layout {
+      transform: scale(1.1);
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1); /* Sombreado suave */
+
+    }
+
+    .sidebar-setting > li {
+      margin-right: 20px; /* Ajusta este valor según tus necesidades */
+      margin-top: 20px; /* Ajusta este valor según tus necesidades */
+
+    }
+
+
+    .sidebar-type1 > li:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+
+        }
+
+    .sidebar-setting > li:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+
+        }
+
+    .sidebar-type1 {
+      li {
+        &[data-attr="normal-sidebar"] {
+          .body {
+            ul {
+              li {
+
+                &.bg-dark,
+                &.sidebar {
+                  width: 100%;
+                  height: 15px;
+                  display: block;
+                }
+
+                &.bg-light,
+                &.body {
+                  height: calc(100% - 15px);
+                  width: 100%;
+                }
+              }
+            }
+          }
+
+          &.body-compact {
+            .body {
+              ul {
+                li {
+                  &.body {
+                    width: calc(100% - 25px);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .layout-grid1 {
+      &.customizer-mix {
+        .color-layout {
+          height: 70px;
+          width: 80px;
+          border: 1px solid #f6f7fb;
+          border-radius: 5px;
+        
+          &.selected {
+            height: 75px; /* Incrementa el tamaño */
+            width: 85px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Agrega sombreado */
+            border: 2px solid #000; /* O cualquier otro estilo que desees */
+          }
+    
+        }
+      }
+    }
+    .color-layout {
+      height: 35px;
+      width: 35px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-right: 3px;
+      border: 1px solid #b8b8b8;
+      padding: 3px;
+      cursor: pointer; /* Cambia el cursor a pointer */
+      transition: all 0.3s ease; /* Añade una transición suave */
+
+
+
+      >div {
+        background-color: #6D3634;
+        height: 100%;
+        width: 100%;
+        border-radius: 5px;
+      }
+
+      &[data-attr="color-2"] {
+        div {
+          background-color:#215196 ;
+        }
+      }
+
+      &[data-attr="color-3"] {
+        div {
+          background-color: #FFD038;
+        }
+      }
+
+      &[data-attr="color-4"] {
+        div {
+          background-color: #E83D2B;
+        }
+      }
+
+      &[data-attr="color-5"] {
+        div {
+          background-color: #E83D2B;
+        }
+      }
+
+      &[data-attr="color-6"] {
+        div {
+          background-color: #75C1C6;
+        }
+      }
+
+      &[data-attr="color-7"] {
+        div {
+          background-color: #00587A;
+        }
+      }
+
+
+      &[data-attr="color-8"] {
+        div {
+          background-color: #333333;
+        }
+      }
+      &[data-attr="color-9"] {
+        div {
+          background-color: #D4AF37;
+        }
+      }
+      &[data-attr="color-10"] {
+        div {
+          background-color: #30D5C8;
+        }
+      }
+      &[data-attr="color-11"] {
+        div {
+          background-color: #7851A9;
+        }
+      }
+      &[data-attr="color-12"] {
+        div {
+          background-color: #FFD700;
+        }
+      }
+      &[data-attr="color-13"] {
+        div {
+          background-color: #4CAF50;
+        }
+      }
+      &[data-attr="color-14"] {
+        div {
+          background-color: #FF5733;
+        }
+      }
+
+
+      &.selected {
+        height: 40px; /* Incrementa el tamaño */
+        width: 40px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Agrega sombreado */
+        border: 2px solid #000; /* O cualquier otro estilo que desees */
+      }
+      &:hover {
+        height: 40px; /* Incrementa el tamaño al pasar el cursor */
+        width: 40px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Agrega sombreado al pasar el cursor */
+        border: 2px solid #000; /* O cualquier otro estilo que desees */
+      }
+    }
+
+    .color-layout2 {
+      height: 35px;
+      width: 35px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-right: 3px;
+      border: 1px solid #b8b8b8;
+      padding: 3px;
+      cursor: pointer; /* Cambia el cursor a pointer */
+      transition: all 0.3s ease; /* Añade una transición suave */
+    
+      > div {
+        background-color: #79BABD;
+        height: 100%;
+        width: 100%;
+        border-radius: 5px;
+      }
+    
+      &[data-attr="color-2"] {
+        div {
+          background-color: #215196;
+        }
+      }
+    
+      &[data-attr="color-3"] {
+        div {
+          background-color: #ffd038;
+        }
+      }
+    
+      &[data-attr="color-4"] {
+        div {
+          background-color: #e83d2b;
+        }
+      }
+    
+      &[data-attr="color-5"] {
+        div {
+          background-color: #e83d2b;
+        }
+      }
+    
+      &[data-attr="color-6"] {
+        div {
+          background-color: #75c1c6;
+        }
+      }
+
+      &[data-attr="color-7"] {
+        div {
+          background-color: #FF7E67;
+        }
+      }
+
+      &[data-attr="color-8"] {
+        div {
+          background-color: #CDDC39;
+        }
+      }
+      &[data-attr="color-9"] {
+        div {
+          background-color: #000080;
+        }
+      }
+      &[data-attr="color-10"] {
+        div {
+          background-color: #FFDAB9;
+        }
+      }
+      &[data-attr="color-11"] {
+        div {
+          background-color: #D7BDE2;
+        }
+      }
+      &[data-attr="color-12"] {
+        div {
+          background-color: #A8A8A8;
+        }
+      }
+      &[data-attr="color-13"] {
+        div {
+          background-color: #795548;
+        }
+      }
+      &[data-attr="color-14"] {
+        div {
+          background-color: #343A40;
+        }
+      }
+
+
+    
+      &.selected {
+        height: 40px; /* Incrementa el tamaño */
+        width: 40px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Agrega sombreado */
+        border: 2px solid #000; /* O cualquier otro estilo que desees */
+      }
+    
+      &:hover {
+        height: 40px; /* Incrementa el tamaño al pasar el cursor */
+        width: 40px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* Agrega sombreado al pasar el cursor */
+        border: 2px solid #000; /* O cualquier otro estilo que desees */
+      }
+    }
+
+.layout-grid1:not(.customizer-color) {
+  li {
+    padding: 15px;
+
+    >.header {
+      height: 19px;
+      border-radius: 3px;
+      position: relative;
+
+      ul {
+        position: absolute;
+        top: -4px;
+        left: 5px;
+
+        >li {
+          display: inline-block;
+          width: 7px;
+          height: 7px;
+          border-radius: 5px;
+          top: calc(50% - 3px);
+          background-color: var(--theme-default);
+          margin-right: 2px;
+          padding: 0;
+
+          &:nth-child(2) {
+            background-color: var(--theme-secondary);
+          }
+
+          &:nth-child(3) {
+            background-color: $success-color;
+          }
+        }
+      }
+    }
+
+    >.body {
+      background-color: gray;
+      height: calc(100% - 16px);
+      border-radius: 3px;
+      position: relative;
+      margin-top: 5px;
+      text-align: center;
+      line-height: 6.1;
+
+      ul {
+        height: 100%;
+        background-color: white;
+
+        .sidebar {
+          width: 18px;
+          height: 100%;
+          border-radius: 3px;
+          display: inline-block;
+          margin-right: 3px;
+          padding: 0;
+
+          &.compact {
+            width: 12px;
+
+            &~.body {
+              width: calc(100% - 19px);
+            }
+          }
+        }
+
+        .body {
+          width: calc(100% - 25px);
+          padding: 0;
+          margin: 0;
+          height: 100%;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 3px;
+
+          .badge {
+            position: absolute;
+            font-size: larger;
+          }
+        }
+      }
+    }
+  }
+
+}
+
+
+</style>
+
+<!-- Container-fluid starts-->
+{% include 'components/personalizacion/alertas.html' %}  
+
+<div class="container-fluid">
+  <div class="card">
+    <div class="card-header pb-0">
+      <h2><i class="icofont icofont-image me-2"></i> Personaliza el Logotipo</h2>
+      <p class="f-m-light mt-1">Sube y actualiza el logotipo de tu municipio. Asegúrate de que el archivo sea una imagen en formato JPEG, PNG, GIF o WebP.</p>
+      
+      <div class="card-header-right">
+        <ul class="list-unstyled card-option">
+          <li>
+            <div><i class="icon-settings"></i></div>
+          </li>
+          <li><i class="icofont icofont-maximize full-card"></i></li>
+          <li><i class="icofont icofont-minus minimize-card"></i></li>
+          <li><i class="icofont icofont-error close-card"></i></li>
+        </ul>
+      </div>
+    </div>
+    <div class="card-body">
+          <div class="card">
+
+            <div class="card-body">
+              <form action="{% url 'subir_logotipo' %}" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="file" id="filepond-input">
+                <button class="btn btn-success"  type="submit">Subir</button>
+            </form>
+    
+            
+            </div>
+          </div>
+    </div>
+  </div>
+
+
+    
+      
+
+      
+
+    <div class="card">
+      <div class="card-header pb-0">
+        <h2><i class="icofont icofont-edit-alt me-2"></i> Personaliza la Plantilla</h2>
+        <p class="f-m-light mt-1">Personaliza todo, desde la apariencia hasta la posición de tus campos.</p>
+        
+        <div class="card-header-right">
+          <ul class="list-unstyled card-option">
+            <li>
+              <div><i class="icon-settings"></i></div>
+            </li>
+            <li><i class="icofont icofont-maximize full-card"></i></li>
+            <li><i class="icofont icofont-minus minimize-card"></i></li>
+            <li><i class="icofont icofont-error close-card"></i></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-body">
+            <h3>Tipo de Diseño</h3>
+            <ul class="main-layout1 layout-grid1">
+              <li data-attr="ltr" class="{% if personalizacion and personalizacion.tipo_diseno == 'LTR' %}selected-layout{% endif %}">
+                <div class="header bg-light">
+                        <ul>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </div>
+                    <div class="body">
+                        <ul>
+                            <li class="bg-light sidebar"></li>
+                            <li class="bg-light body">
+                                <span class="badge badge-primary">LTR</span>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li data-attr="rtl" class="{% if personalizacion and personalizacion.tipo_diseno == 'RTL' %}selected-layout{% endif %}">
+                  <div class="header bg-light">
+                      <ul>
+                          <li></li>
+                          <li></li>
+                          <li></li>
+                      </ul>
+                  </div>
+                  <div class="body">
+                      <ul>
+                          <li class="bg-light body">
+                              <span class="badge badge-primary">RTL</span>
+                          </li>
+                          <li class="bg-light sidebar"></li>
+                      </ul>
+                  </div>
+              </li>
+              <li data-attr="box" class="{% if personalizacion and personalizacion.tipo_diseno == 'BOX' %}selected-layout{% endif %}">
+                <div class="header bg-light">
+                      <ul>
+                          <li></li>
+                          <li></li>
+                          <li></li>
+                      </ul>
+                  </div>
+                  <div class="body">
+                      <ul>
+                          <li class="bg-light sidebar"></li>
+                          <li class="bg-light body">
+                              <span class="badge badge-primary">Box</span>
+                          </li>
+                      </ul>
+                  </div>
+              </li>
+            </ul>
+
+            <h3 class="mt-3">Elige el Tipo de Sidebar</h3>
+            <ul class="sidebar-type1 layout-grid1">
+              <li data-attr="normal-sidebar" class="{% if personalizacion and personalizacion.tipo_sidebar == 'NORMAL-SIDEBAR' %}selected-layout{% endif %}">
+                <div class="header bg-light">
+                      <ul>
+                          <li></li>
+                          <li></li>
+                          <li></li>
+                      </ul>
+                  </div>
+                  <div class="body">
+                      <ul>
+                          <li class="bg-dark sidebar"></li>
+                          <li class="bg-light body"></li>
+                      </ul>
+                  </div>
+              </li>
+              <li data-attr="compact-sidebar" class="{% if personalizacion and personalizacion.tipo_sidebar == 'COMPACT-SIDEBAR' %}selected-layout{% endif %}">
+                <div class="header bg-light">
+                      <ul>
+                          <li></li>
+                          <li></li>
+                          <li></li>
+                      </ul>
+                  </div>
+                  <div class="body">
+                      <ul>
+                          <li class="bg-dark sidebar compact"></li>
+                          <li class="bg-light body"></li>
+                      </ul>
+                  </div>
+              </li>
+          </ul>
+
+
+          <h3 class="mt-3">Elige el Tipo de Icono para el Sidebar</h3>
+          <ul class="sidebar-setting layout-grid1">
+            <li data-attr="stroke-svg" class="{% if personalizacion and personalizacion.tipo_icono_sidebar == 'STROKE-SVG' %}selected-layout{% endif %}">
+              <div class="header bg-light">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </div>
+                <div class="body bg-light">
+                    <span style="font-size: larger;" class="badge badge-primary">Stroke</span>
+                </div>
+            </li>
+            <li data-attr="fill-svg" class="{% if personalizacion and personalizacion.tipo_icono_sidebar == 'FILL-SVG' %}selected-layout{% endif %}">
+              <div class="header bg-light">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </div>
+                <div class="body bg-light">
+                    <span style="font-size: larger;" class="badge badge-primary">Fill</span>
+                </div>
+            </li>
+        </ul>
+
+        <h3 class="mt-3">Elige el Color Primario</h3>
+        <ul class="layout-grid1 customizer-color">
+              <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#6D3634' %} selected{% endif %}" data-attr="color-1" data-primary="#6D3634" data-secondary="#4c2524
+              ">
+                <div></div>
+            </li>
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#215196' %} selected{% endif %}" data-attr="color-2" data-primary="#215196" data-secondary="#13305a">
+                <div></div>
+            </li>
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#FFD038' %} selected{% endif %}" data-attr="color-3" data-primary="#FFD038" data-secondary="#997c21">
+                <div></div>
+            </li>
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#E83D2B' %} selected{% endif %}" data-attr="color-4" data-primary="#E83D2B" data-secondary="#8b2419">
+                <div></div>
+            </li>
+
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#00587A' %} selected{% endif %}" data-attr="color-7" data-primary="#00587A" data-secondary="#003d55">
+              <div></div>
+            </li>
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#333333' %} selected{% endif %}" data-attr="color-8" data-primary="#333333" data-secondary="#232323">
+                <div></div>
+            </li>
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#D4AF37' %} selected{% endif %}" data-attr="color-9" data-primary="#D4AF37" data-secondary="#7f6921">
+                <div></div>
+            </li>
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#30D5C8' %} selected{% endif %}" data-attr="color-10" data-primary="#30D5C8" data-secondary="#1c7f78">
+                <div></div>
+            </li>
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#7851A9' %} selected{% endif %}" data-attr="color-11" data-primary="#7851A9" data-secondary="#3c2854">
+                <div></div>
+            </li>
+      
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#FFD700' %} selected{% endif %}" data-attr="color-12" data-primary="#FFD700" data-secondary="#998100">
+              <div></div>
+            </li>
+
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#4CAF50' %} selected{% endif %}" data-attr="color-13" data-primary="#4CAF50" data-secondary="#265728">
+                <div></div>
+            </li>
+
+            <li class="color-layout{% if personalizacion and personalizacion.color_primario == '#FF5733' %} selected{% endif %}" data-attr="color-14" data-primary="#FF5733" data-secondary="#99341e">
+              <div></div>
+            </li>
+
+
+
+        </ul>
+    
+    
+        <h3 class="mt-3">Elige el Color Secundario</h3>
+        <ul class="layout-grid1 customizer-color">
+            <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#79BABD' %} selected{% endif %}" data-attr="color-1" data-primary="#79BABD" data-secondary="#aed5d7">
+                <div></div>
+            </li>
+            <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#215196' %} selected{% endif %}" data-attr="color-2" data-primary="#215196" data-secondary="#6385b5">
+                <div></div>
+            </li>
+            <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#FFD038' %} selected{% endif %}" data-attr="color-3" data-primary="#FFD038" data-secondary="#ffde73">
+                <div></div>
+            </li>
+            <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#E83D2B' %} selected{% endif %}" data-attr="color-4" data-primary="#E83D2B" data-secondary="#f18a7f">
+                <div></div>
+            </li>
+
+ 
+            <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#FF7E67' %} selected{% endif %}" data-attr="color-7" data-primary="#FF7E67" data-secondary="#ffb1a3">
+              <div></div>
+            </li>
+          
+              <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#CDDC39' %} selected{% endif %}" data-attr="color-8" data-primary="#CDDC39" data-secondary="#e1ea88">
+                  <div></div>
+              </li>
+                  
+                <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#000080' %} selected{% endif %}" data-attr="color-9" data-primary="#000080" data-secondary="#4c4ca6">
+                    <div></div>
+                </li>
+                <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#FFDAB9' %} selected{% endif %}" data-attr="color-10" data-primary="#FFDAB9" data-secondary="#ffe5ce">
+                  <div></div>
+                </li>
+                <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#D7BDE2' %} selected{% endif %}" data-attr="color-11" data-primary="#D7BDE2" data-secondary="#e3d0ea">
+                  <div></div>
+              </li>
+                <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#A8A8A8' %} selected{% endif %}" data-attr="color-12" data-primary="#A8A8A8" data-secondary="#cacaca">
+                  <div></div>
+              </li>
+        
+              <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#795548' %} selected{% endif %}" data-attr="color-13" data-primary="#795548" data-secondary="#a1887e">
+                <div></div>
+              </li>
+
+              <li class="color-layout2{% if personalizacion and personalizacion.color_secundario == '#343A40' %} selected{% endif %}" data-attr="color-14" data-primary="#343A40" data-secondary="#707579">
+                <div></div>
+              </li>
+
+
+
+        
+        </ul>
+        <form method="POST" action="{% url 'actualizar_personalizacion1' %}">
+          {% csrf_token %}
+          <!-- Los campos ocultos almacenan los valores seleccionados -->
+          <input type="hidden" name="tipo_diseno" id="tipo_diseno">
+          <input type="hidden" name="tipo_sidebar" id="tipo_sidebar">
+          <input type="hidden" name="tipo_icono_sidebar" id="tipo_icono_sidebar">
+          <input type="hidden" name="color_1" id="color_1">
+          <input type="hidden" name="color_1a" id="color_1a">
+          <input type="hidden" name="color_2" id="color_2">
+          <input type="hidden" name="color_2a" id="color_2a">
+      
+          <button type="submit" class="btn btn-success-new btn-lg mt-3">Guardar</button>
+      </form>
+      </div>
+    </div>
+        
+
+
+
+
+</div>
+
+
+
+{% endblock %}
+
+        
+
+{% block scriptcontent %}
+
+<script src="{% static 'assets/js/sweet-alert/sweetalert.min.js' %}"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script src="{% static 'assets/js/dropzone/dropzone.js' %}"></script>
+<script src="{% static 'assets/js/dropzone/dropzone-script.js' %}"></script>
+<script src="{% static 'assets/js/filepond/filepond-plugin-image-preview.js' %}"></script>
+<script src="{% static 'assets/js/filepond/filepond-plugin-file-rename.js' %}"></script>
+<script src="{% static 'assets/js/filepond/filepond-plugin-image-transform.js' %}"></script>
+<script src="{% static 'assets/js/filepond/filepond.js' %}?v1.1"></script>
+<script src="{% static 'assets/js/filepond/custom-filepond.js' %}?V1.23"></script>
+<script src="{% static 'assets/js/tooltip-init.js' %}"></script>
+
+<script>
+
+  document.addEventListener("DOMContentLoaded", function() {
+    const colorLayoutsPrimarios = document.querySelectorAll(".color-layout");
+    const colorLayoutsSecundarios = document.querySelectorAll(".color-layout2");
+    const mainLayouts = document.querySelectorAll(".main-layout1 > li");
+    const sidebarTypes = document.querySelectorAll(".sidebar-type1 > li");
+    const sidebarSettings = document.querySelectorAll(".sidebar-setting > li");
+    const guardarBtn = document.querySelector(".btn-success-new");
+
+    // Desactivar inicialmente el botón de guardar
+    guardarBtn.disabled = true;
+    // Función genérica para manejar el clic y la selección
+    function handleLayoutClick(event, layouts) {
+        const currentLayout = event.currentTarget;
+
+        // Remover la clase 'selected' y 'selected-layout' de todos los elementos del mismo grupo
+        layouts.forEach(layout => {
+            layout.classList.remove('selected', 'selected-layout');
+        });
+
+        // Agregar la clase 'selected' o 'selected-layout' al elemento clickeado
+        if (currentLayout.parentNode.classList.contains('main-layout1') ||
+            currentLayout.parentNode.classList.contains('sidebar-type1') ||
+            currentLayout.parentNode.classList.contains('sidebar-setting')) {
+            currentLayout.classList.add('selected-layout');
+        } else {
+            currentLayout.classList.add('selected');
+        }
+
+        // Habilitar el botón de guardar si hay alguna selección
+        guardarBtn.disabled = !document.querySelector(".selected, .selected-layout");
+        actualizarColores();  // Llama a actualizar los colores de :root aquí
+
+    }
+
+    // Añadir eventos a los colores primarios, secundarios, y otros layouts
+    [...colorLayoutsPrimarios, ...colorLayoutsSecundarios, ...mainLayouts, ...sidebarTypes, ...sidebarSettings].forEach(layout => {
+        layout.addEventListener("click", (event) => handleLayoutClick(event, layout.parentNode.children));
+    });
+
+
+      
+    function actualizarColores() {
+      const selectedPrimaryColor = document.querySelector(".layout-grid1.customizer-color > .color-layout.selected");
+      const selectedSecondaryColor = document.querySelector(".layout-grid1.customizer-color > .color-layout2.selected");
+
+      if (selectedPrimaryColor) {
+          document.documentElement.style.setProperty('--sidebar-color', selectedPrimaryColor.getAttribute('data-primary'));
+          document.documentElement.style.setProperty('--color-secondary', selectedPrimaryColor.getAttribute('data-secondary'));
+
+      }
+
+      if (selectedSecondaryColor) {
+          document.documentElement.style.setProperty('--theme-default', selectedSecondaryColor.getAttribute('data-primary'));
+          document.documentElement.style.setProperty('--color-third', selectedSecondaryColor.getAttribute('data-secondary'));
+
+
+      }
+  }
+
+    // Función de guardar
+    function guardar() {
+        guardarBtn.textContent = 'Guardado!';  // Cambia el texto del botón para confirmar que el evento se dispara
+
+        // Recopilar la información de cada selección
+        const selectedDesign = document.querySelector(".main-layout1 > .selected-layout");
+        const selectedSidebarType = document.querySelector(".sidebar-type1 > .selected-layout");
+        const selectedSidebarIcon = document.querySelector(".sidebar-setting > .selected-layout");
+        const selectedPrimaryColor = document.querySelector(".layout-grid1.customizer-color > .color-layout.selected");
+        const selectedSecondaryColor = document.querySelector(".layout-grid1.customizer-color > .color-layout2.selected");
+
+        // Asignar valores al formulario antes de enviar
+        document.getElementById('tipo_diseno').value = selectedDesign ? selectedDesign.getAttribute('data-attr') : '';
+        document.getElementById('tipo_sidebar').value = selectedSidebarType ? selectedSidebarType.getAttribute('data-attr') : '';
+        document.getElementById('tipo_icono_sidebar').value = selectedSidebarIcon ? selectedSidebarIcon.getAttribute('data-attr') : '';
+        document.getElementById('color_1').value = selectedPrimaryColor ? selectedPrimaryColor.getAttribute('data-primary') : '';
+        document.getElementById('color_1a').value = selectedPrimaryColor ? selectedPrimaryColor.getAttribute('data-secondary') : '';
+        document.getElementById('color_2').value = selectedSecondaryColor ? selectedSecondaryColor.getAttribute('data-primary') : '';
+        document.getElementById('color_2a').value = selectedSecondaryColor ? selectedSecondaryColor.getAttribute('data-secondary') : '';
+
+        // Imprimir los valores en la consola para verificación
+        console.log({
+            tipo_diseno: selectedDesign ? selectedDesign.getAttribute('data-attr') : null,
+            tipo_sidebar: selectedSidebarType ? selectedSidebarType.getAttribute('data-attr') : null,
+            tipo_icono_sidebar: selectedSidebarIcon ? selectedSidebarIcon.getAttribute('data-attr') : null,
+            color_1: selectedPrimaryColor ? selectedPrimaryColor.getAttribute('data-primary') : null,
+            color_1a: selectedPrimaryColor ? selectedPrimaryColor.getAttribute('data-secondary') : null,
+            color_2: selectedSecondaryColor ? selectedSecondaryColor.getAttribute('data-primary') : null,
+            color_2a: selectedSecondaryColor ? selectedSecondaryColor.getAttribute('data-secondary') : null
+        });
+    }
+
+    // Evento para el botón de guardar
+    guardarBtn.addEventListener("click", guardar);
+});
+
+
+</script>
+
+{% if logotipo_url%}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const inputElement = document.querySelector('input[type="file"]');
+    FilePond.registerPlugin(FilePondPluginImagePreview);
+
+    // Crea la instancia de FilePond
+    const pond = FilePond.create(inputElement, {
+        storeAsFile: true,
+        allowMultiple: false
+    });
+
+    
+    // Añade el archivo de imagen al FilePond después de la creación de la instancia
+    if ('{{ logotipo_url }}') {
+        pond.addFile('{{ logotipo_url }}').then(function(file){
+            console.log('Archivo cargado correctamente:', file);
+        });
+    }
+});
+
+
+  </script>
+  
+
+{% else %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const inputElement = document.querySelector('input[type="file"]');
+      FilePond.registerPlugin(FilePondPluginImagePreview);
+
+      // Crea la instancia de FilePond
+      const pond = FilePond.create(inputElement, {
+          storeAsFile: true,
+          allowMultiple: false
+      });
+  });
+  </script>
+
+
+{% endif %}
+
+{% endblock %}

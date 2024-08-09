@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block content %}
+
+
+{% include 'general/loader.html' %}
+{% include 'components/registro/formularioRecep.html' %}
+
+
+{% endblock %}
+
+{% block scriptcontent %}
+<script src="{% static 'assets/js/height-equal.js' %}"></script>
+<script src="{% static 'assets/js/alert.js' %}"></script>
+<script src="{% static 'assets/js/form-wizard/form-wizard.js' %}"></script>
+<script src="{% static 'assets/js/form-wizard/image-upload.js' %}"></script>
+<script src="{% static 'assets/js/height-equal.js' %}"></script>
+<script src="{% static 'assets/js/form-validation-custom.js' %}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Manejar el paso al siguiente tab
+      document.getElementById('nextStep1').addEventListener('click', function() {
+        var nextTab = new bootstrap.Tab(document.getElementById('wizard-cart-tab'));
+        nextTab.show();
+      });
+  
+      // Manejar el paso al tab anterior
+      document.getElementById('previousStep2').addEventListener('click', function() {
+        var previousTab = new bootstrap.Tab(document.getElementById('wizard-contact-tab'));
+        previousTab.show();
+      });
+      // Envío del formulario en la última pestaña
+      document.getElementById('submitForm').addEventListener('click', function() {
+        document.getElementById('form-wizard').submit();
+      });
+    });
+  </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener los elementos
+        const archivoInput = document.querySelector('input[name="archivo"]');
+        const pdfViewerContainer = document.getElementById('pdf-viewer-container');
+        const pdfViewer = document.getElementById('pdf-viewer');
+        const closePdfViewerButton = document.getElementById('close-pdf-viewer');
+    
+        // Función para mostrar el PDF en el iframe
+        function mostrarPDF() {
+            const archivo = archivoInput.files[0];
+            if (archivo) {
+                const archivoURL = URL.createObjectURL(archivo);
+                pdfViewer.src = archivoURL;
+                pdfViewerContainer.style.display = 'block';
+                closePdfViewerButton.style.display = 'inline-block'; // Mostrar botón de cerrar
+            } else {
+                pdfViewerContainer.style.display = 'none';
+                pdfViewer.src = '';
+                closePdfViewerButton.style.display = 'none'; // Ocultar botón de cerrar
+            }
+        }
+    
+        // Función para cerrar el visor de PDF
+        function cerrarPDF() {
+            pdfViewerContainer.style.display = 'none';
+            pdfViewer.src = '';
+            closePdfViewerButton.style.display = 'none'; // Ocultar botón de cerrar
+        }
+    
+        // Agregar eventos
+        archivoInput.addEventListener('change', mostrarPDF);
+        closePdfViewerButton.addEventListener('click', cerrarPDF);
+    });
+    </script>
+    
+    
+    
+{% endblock scriptcontent%}

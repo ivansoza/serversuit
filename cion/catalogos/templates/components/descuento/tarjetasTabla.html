@@ -1,0 +1,81 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xxl-3 col-xl-4 col-md-4 col-sm-6">
+            <div class="card small-widget mb-sm-0">
+                <div class="card-body primary">
+                    <h4> Registrar nuevo descuento</h4>
+
+                    <p></p>
+                    <div class="d-flex align-items-end gap-1">
+                        <a id="openCrearDescuentoModalBtn" class="btn btn-outline-primary f-light" href="#">Registrar 
+                            <i
+                                class="icon-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gradient">
+                        <svg class="stroke-icon svg-fill">
+                            <use href="{% static 'assets/svg/icon-sprite.svg'%}#profit"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-3 col-xl-4 col-md-4 col-sm-6">
+            <div class="card small-widget mb-sm-0">
+                <div class="card-body primary">
+                    <h4> Registrar nuevo recargo</h4>
+
+                    <p></p>
+                    <div class="d-flex align-items-end gap-1">
+                        <a id="openCrearRecargoModalBtn" class="btn btn-outline-primary f-light" href="#">Registrar 
+                            <i
+                                class="icon-arrow-right"></i>
+                        </a>
+                    </div>
+                    <div class="bg-gradient">
+                        <svg class="stroke-icon svg-fill">
+                            <use href="{% static 'assets/svg/icon-sprite.svg'%}#profit"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-3 col-xl-4 col-md-4 col-sm-6">
+            <div class="card small-widget mb-sm-0">
+                <div class="card-body primary">
+                    <h3>Cantidad de descuentos registrados</h3>
+                    <span class="f-light">Descuentos</span>
+                    <div class="d-flex align-items-end gap-1">
+                        <h4 id="contador-descuentos">{{ descuento_count }}</h4> <!-- Contador de descuentos -->
+                        <span class="font-primary f-14 f-w-600"><i class="icon-arrow-up"></i></span>
+                    </div>
+                    <div class="bg-gradient">
+                        <svg class="stroke-icon svg-fill">
+                            <use href="{% static 'assets/svg/icon-sprite.svg'%}#sale"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-3 col-xl-4 col-md-4 col-sm-6">
+            <div class="card small-widget mb-sm-0">
+                <div class="card-body primary">
+                    <h4>Cantidad de recargos registrados</h4>
+                    <span class="f-light">Recargos</span>
+                    <div class="d-flex align-items-end gap-1">
+                        <h4 id="contador-recargos">{{ recargo_count }}</h4> <!-- Contador de recargos -->
+                        <span class="font-primary f-14 f-w-600"><i class="icon-arrow-up"></i></span>
+                    </div>
+                    <div class="bg-gradient">
+                        <svg class="stroke-icon svg-fill">
+                            <use href="{% static 'assets/svg/icon-sprite.svg'%}#orders"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

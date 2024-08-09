@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/date-picker.css' %}">
+{% endblock %}    
+
+{% block content %}
+{% include 'general/loader.html' %}
+{% include 'components/home_odp.html' %}
+{% endblock content %}

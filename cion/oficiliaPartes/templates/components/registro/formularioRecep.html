@@ -1,0 +1,214 @@
+{% load static %}
+{% load sass_tags %}
+<style>
+.d-flex {
+    display: flex;
+    align-items: center;
+}
+
+.form-check-label {
+    margin-right: 23px; /* Espacio entre la etiqueta y el checkbox */
+    margin-top: 1px;
+}
+.alert-info2{
+    background-color: var(--sidebar-color) !important;    padding: 15px; /* Espaciado interno */
+    color: white;
+}
+</style>
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header pb-0">
+            <h3>Registro</h3>
+            <p class="f-m-light mt-1">Llena los datos y luego procede.</p>
+        </div>
+        <div class="card-body">
+            <div class="vertical-main-wizard">
+                <div class="row g-3">
+                    <div class="col-xxl-3 col-xl-4 col-12">
+                        <div class="nav flex-column header-vertical-wizard" id="wizard-tab" role="tablist"
+                            aria-orientation="vertical">
+                            <a class="nav-link active" id="wizard-contact-tab" data-bs-toggle="pill"
+                                href="#wizard-contact" role="tab" aria-controls="wizard-contact" aria-selected="true">
+                                <div class="vertical-wizard">
+                                    <div class="stroke-icon-wizard"><i class="fa fa-laptop"></i></div>
+                                    <div class="vertical-wizard-content">
+                                        <h3>Información de la recepción</h3>
+                                        <p>Detalles sobre la recepción de la documentación </p>
+                                    </div>
+                                </div>
+                            </a>
+                            <a class="nav-link" id="wizard-cart-tab" data-bs-toggle="pill" href="#wizard-cart"
+                                role="tab" aria-controls="wizard-cart" aria-selected="false">
+                                <div class="vertical-wizard">
+                                    <div class="stroke-icon-wizard"><i class="fa fa-file-text"></i></div>
+                                    <div class="vertical-wizard-content">
+                                        <h3>Información del Documento</h3>
+                                        <p>Agrega los detalles sobre la documentación</p>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-xxl-9 col-xl-8 col-12">
+                        <form method="post" class="row g-3 needs-validation custom-input"  enctype="multipart/form-data" novalidate="">
+                            {% csrf_token %}
+                            <div class="tab-content" id="wizard-tabContent">
+                                <!-- Información del contribuyente -->
+                                <div class="tab-pane fade show active" id="wizard-contact" role="tabpanel"
+                                    aria-labelledby="wizard-contact-tab">
+                                    <div class="row g-3">
+                                        
+                                        <div class="col-12">
+                                            <div class="alert alert-info2" role="alert">
+                                                <i class="fa fa-info-circle"></i> 
+                                                Se generará automáticamente un número de folio en el formato <strong>No. de municipio/año/consecutivo</strong> cuando guardes el formulario.
+                                            </div>
+                                            <label class="form-label" for="folio_odp" hidden>Folio de Oficialia de Partes<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3 has-validation" hidden>
+                                              {{ form.folio_odp }}
+                                              <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="areas">Áreas<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                              {{ form.areas }}
+                                              <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <label class="form-label" for="recibio">Recibió<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                              {{ form.recibio }}
+                                              <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 text-end">
+                                            <button class="btn btn-success-new" type="button"
+                                                id="nextStep1">Siguiente</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Información del predio -->
+                                <div class="tab-pane fade" id="wizard-cart" role="tabpanel"
+                                    aria-labelledby="wizard-cart-tab">
+                                    <div class="row g-3">
+                                        <div class="col-xxl-6 col-sm-6">
+                                            <label class="form-label" for="tipo_doc">Tipo de Documento<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                                {{ form.tipo_doc }}
+                                                <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-6 col-sm-6">
+                                            <label class="form-label" for="prioridad">Prioridad<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                                {{ form.prioridad }}
+                                                <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-6 col-sm-6">
+                                            <label class="form-label" for="dependencia">Dependencia<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                                {{ form.dependencia }}
+                                                <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-6 col-sm-6">
+                                            <label class="form-label" for="procedencia">Procedencia<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                                {{ form.procedencia }}
+                                                <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-6 col-sm-6">
+                                            <label class="form-label" for="folio_expediente">Folio o Expediente<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                                {{ form.folio_expediente }}
+                                                <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-6 col-sm-6">
+                                            <label class="form-label" for="archivo">Archivo<span class="txt-danger">*</span></label>
+                                            <div class="input-group mb-3">
+                                                {{ form.archivo }}
+                                                <div class="valid-feedback">¡Se ve bien!</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xxl-6 col-sm-6">
+                                            <div class="form-check d-flex align-items-center">
+                                                <label class="form-check-label ms-2" for="validationContestacion">
+                                                    ¿El documento requiere contestación?<span class="txt-danger">*</span>
+                                                </label>
+                                                <input type="checkbox" id="validationContestacion" class="form-check-input" name="contestacion" >
+                                            </div>
+                                            <div class="valid-feedback">¡Se ve bien!</div>
+                                            <div class="col-xxl-12 col-sm-6" id="horas-asignadas-container" style="display: none;">
+                                                <label class="form-label" for="horas_asignadas">Horas Asignadas para contestación<span class="txt-danger">*</span></label>
+                                                <div class="input-group mb-3">
+                                                    {{ form.horas_asignadas }}
+                                                    <div class="valid-feedback">¡Se ve bien!</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                            <label class="form-label" for="validationObservaciones">Observaciones</label>
+                                            {{ form.observaciones }}
+                                            <div class="invalid-feedback">Por favor ingresa una observación válida.</div>
+                                            <div class="valid-feedback">¡Se ve bien!</div>
+                                        </div>
+                                        <div class="col-12 text-end">
+                                            <button type="button" id="close-pdf-viewer" class="btn btn-danger" style="display: none; margin-left: 10px;">Cerrar PDF</button>
+                                            <button class="btn btn-secondary-new" type="button" id="previousStep2">Anterior</button>
+                                            <button class="btn btn-success-new" type="submit">Enviar</button>
+                                        </div>
+                                        <div id="pdf-viewer-container" style="display: none; margin-top: 10px;">
+                                            <iframe id="pdf-viewer" src="" width="100%" height="500px" style="border: none;"></iframe>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener el checkbox de "Contestación" y el contenedor de "Horas Asignadas"
+        const contestacionCheckbox = document.querySelector('input[name="contestacion"]');
+        const horasAsignadasContainer = document.getElementById('horas-asignadas-container');
+
+        // Función para mostrar u ocultar "Horas Asignadas"
+        function actualizarHorasAsignadas() {
+            if (contestacionCheckbox.checked) {
+                horasAsignadasContainer.style.display = 'block';
+            } else {
+                horasAsignadasContainer.style.display = 'none';
+            }
+        }
+
+        // Agregar evento de escucha al checkbox
+        contestacionCheckbox.addEventListener('change', actualizarHorasAsignadas);
+
+        // Llamar a la función para inicializar el estado correcto
+        actualizarHorasAsignadas();
+        
+        // Convertir texto a mayúsculas
+        const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+        const convertirAMayusculas = function (event) {
+            const campo = event.target;
+            campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+        };
+        camposTexto.forEach(function (campo) {
+            campo.addEventListener('input', convertirAMayusculas);
+        });
+    });
+</script>

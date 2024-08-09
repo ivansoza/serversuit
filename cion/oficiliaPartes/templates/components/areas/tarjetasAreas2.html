@@ -1,0 +1,47 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card small-widget mb-sm-0">
+                <div class="card-body warning">
+                    <h4>Solicitudes sin respuesta</h4>
+                    <p></p>
+                    <div class="d-flex align-items-end gap-1">
+                        <a class="btn {% if filtro_activo == 'sin_respuesta' %}btn-outline-primary active{% else %}btn-outline-primary{% endif %} f-light" 
+                           href="{% url 'areasODP' %}?filtro=sin_respuesta">
+                            Filtrar <i class="fa fa-filter"></i>                        
+                        </a>
+                    </div>
+                    <div class="bg-gradient">
+                        <svg class="stroke-icon svg-fill">
+                            <use href="{% static 'assets/svg/icon-sprite.svg'%}#clock"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card small-widget mb-sm-0">
+                <div class="card-body warning">
+                    <h4>Solicitudes con respuesta</h4>
+                    <p></p>
+                    <div class="d-flex align-items-end gap-1">
+                        <a class="btn {% if filtro_activo == 'con_respuesta' %}btn-outline-primary active{% else %}btn-outline-primary{% endif %} f-light" 
+                           href="{% url 'areasODP' %}?filtro=con_respuesta">
+                            Filtrar <i class="fa fa-filter"></i>                        
+                        </a>
+                    </div>
+                    <div class="bg-gradient">
+                        <svg class="stroke-icon svg-fill">
+                            <use href="{% static 'assets/svg/icon-sprite.svg'%}#course-1"></use>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- El resto de la plantilla -->

@@ -1,0 +1,72 @@
+{% load static %}
+{% load sass_tags %}
+<style>
+  .card.course-box {
+    position: relative;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    transition: all 0.3s ease;
+  }
+  
+  .card.course-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  .course-icon svg {
+    fill: #007bff; /* Cambia el color del icono */
+  }
+
+  .badge-success {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+  
+  .area-name {
+    font-size: 1.5rem; /* Aumenta el tamaño del nombre del área */
+    font-weight: bold;
+  }
+  
+  .image-title-container {
+    margin-left: 20px; /* Ajusta el margen izquierdo para mover la imagen y el título a la derecha */
+  }
+
+</style>
+
+<h2>Áreas disponibles</h2>
+<br>
+<br>
+<div class="container-fluid">
+  <div class="row">
+    {% for area in areas_municipio %}
+    <div class="col-xxl-4 col-xl-6 col-md-6 col-sm-12 mb-4">
+      <div class="ribbon ribbon-bookmark ribbon-vertical-left ribbon-secondary"><i class="fa fa-building-o"></i></div>
+      <div class="card course-box widget-course h-100 shadow-sm">
+        <div class="card-body d-flex flex-column">
+          <div class="d-flex align-items-center mb-3 image-title-container">
+            <div class="course-icon me-3">
+              <img class="img-40 img-fluid m-r-20" src="/cion/cionapp/static/assets/images/job-search/3.jpg" alt="">            </div>
+            <div>
+              <h4 class="area-name">{{ area.Area }}</h4>
+            </div>
+          </div>
+          <span class="badge rounded-pill badge-success">Activo</span>
+          <p class="text-muted">El área de {{ area.Area }} trabaja continuamente para ofrecer servicios eficientes y de calidad, promoviendo el bienestar y el desarrollo sostenible del municipio de {{muni.municipio}}.</p>
+          
+          <ul class="square-group mt-3">
+            <li class="square-1 warning"></li>
+            <li class="square-1 primary"></li>
+            <li class="square-2 warning1"></li>
+            <li class="square-3 danger"></li>
+            <li class="square-4 light"></li>
+            <li class="square-5 warning"></li>
+            <li class="square-6 success"></li>
+            <li class="square-7 success"></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>

@@ -1,0 +1,333 @@
+{% load static %}
+{% load sass_tags %}
+{% load crispy_forms_tags %}
+<style>
+
+  .skeleton-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.input-skeleton {
+    height: 40px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 6.5s infinite;
+    border-radius: 5px;
+}
+
+.input-skeleton.small {
+    flex: 1 1 calc(30% - 10px);
+}
+
+.input-skeleton.medium {
+    flex: 1 1 calc(45% - 10px);
+}
+
+.input-skeleton.large {
+    flex: 1 1 calc(100% - 10px);
+}
+
+@keyframes loading {
+    from {
+        background-position: 200% 0;
+    }
+    to {
+        background-position: -200% 0;
+    }
+}
+</style>
+<div class="col-md-12">
+  <div class="card">
+    <div class="card-header pb-0">
+      <h3>Registro</h3>
+      <p class="f-m-light mt-1">Llena los datos y luego procede.</p>
+    </div>
+    <div class="card-body">
+      <div class="vertical-main-wizard">
+        <div class="row g-3">
+          <div class="col-xxl-3 col-xl-4 col-12">
+            <div class="nav flex-column header-vertical-wizard" id="wizard-tab" role="tablist"
+              aria-orientation="vertical">
+              <a class="nav-link active" id="wizard-contact-tab" data-bs-toggle="pill" href="#wizard-contact" role="tab"
+                aria-controls="wizard-contact" aria-selected="true">
+                <div class="vertical-wizard">
+                  <div class="stroke-icon-wizard"><i class="fa fa-user"></i></div>
+                  <div class="vertical-wizard-content">
+                    <h3>Información del contribuyente</h3>
+                    <p>Agrega los detalles sobre el contribuyente</p>
+                  </div>
+                </div>
+              </a>
+              <a class="nav-link disabled" id="wizard-cart-tab" data-bs-toggle="pill" href="#wizard-cart" role="tab"
+                aria-controls="wizard-cart" aria-selected="false">
+                <div class="vertical-wizard">
+                  <div class="stroke-icon-wizard"><i class="fa fa-map-marker"></i></div>
+                  <div class="vertical-wizard-content">
+                    <h3>Información del predio</h3>
+                    <p>Agrega los detalles sobre predio</p>
+                  </div>
+                </div>
+              </a>
+
+
+            </div>
+          </div>
+
+
+
+          <div class="col-xxl-9 col-xl-8 col-12">
+                <form method="post" class="row g-3 needs-validation custom-input" novalidate="">
+                {% csrf_token %}
+                    <div class="tab-content" id="wizard-tabContent">
+                      <div class="tab-pane fade show active" id="wizard-contact" role="tabpanel" aria-labelledby="wizard-contact-tab">
+                                <div class="col-12">
+                                  <label class="form-label" for="consultaRFCorCURP">Consulta<span class="txt-danger">*</span></label>
+                                  <div class="input-group mb-3 has-validation">
+                                                <input type="text" class="form-control" id="consultaRFCorCURP" placeholder="Ingresa RFC, CURP, nombre o razón social para consultar" required oninput="validateInput(); this.value = this.value.toUpperCase();" maxlength="30">
+                                                <button class="btn btn-outline-danger disabled" id="consultarBtn" type="button" onclick="consultarDatos();" disabled>Consultar</button>
+                                                <button type="button" class="btn btn-outline-primary ms" data-bs-toggle="modal" data-bs-target="#helpModal">
+                                                  <i data-feather="info"></i>
+                                              </button>
+
+                                                  <div class="valid-feedback">¡Se ve bien!</div>
+                                              </div>
+                                </div>
+            
+                            <br>
+                            <div class="row g-3" id="card-nota">
+                    
+                                    <div class="row">
+                                        <!-- RFC y Homoclave -->
+                                        <div class="col-8 col-md-6 col-lg-5">
+                                            <div class="mb-3">
+                                                <label for="staticRFC" class="form-label">RFC</label>
+                                                <input type="text" disabled class="form-control"  placeholder="Ingresa tu RFC">
+                                            </div>
+                                        </div>
+                                        <div class="col-4 col-md-3 col-lg-2">
+                                            <div class="mb-3">
+                                                <label for="staticHomoclave" class="form-label">Homoclave</label>
+                                                <input type="text" disabled class="form-control"  placeholder="Ingresa tu homoclave">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-3 col-lg-5">
+                                            <div class="mb-3">
+                                                <label for="staticCURP" class="form-label">CURP</label>
+                                                <input type="text" disabled class="form-control"  placeholder="Ingresa tu CURP">
+                                            </div>
+                                        </div>
+                                    </div>
+                              
+                                    <div class="row">
+                                        <!-- Nombre y Apellidos -->
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="mb-3">
+                                                <label for="staticNombre" class="form-label">Nombre (s)</label>
+                                                <input type="text" disabled class="form-control"  placeholder="Ingresa tu nombre">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="mb-3">
+                                                <label for="staticApellidoPaterno" class="form-label">Apellido Paterno</label>
+                                                <input type="text" disabled class="form-control"  placeholder="Ingresa tu apellido paterno">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="mb-3">
+                                                <label for="staticApellidoMaterno" class="form-label">Apellido Materno</label>
+                                                <input type="text" disabled class="form-control"  placeholder="Ingresa tu apellido materno">
+                                            </div>
+                                        </div>
+                                    </div>
+                              
+                                    <div class="row">
+                                        <!-- Correo Electrónico y Teléfono -->
+                                        <div class="col-12 col-md-6 col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="staticEmail" class="form-label">Correo Electrónico</label>
+                                                <input type="text" disabled class="form-control"  placeholder="ejemplo@correo.com">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6 col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="staticTelefono" class="form-label">Teléfono</label>
+                                                <input type="text" disabled class="form-control"  placeholder="Ingresa tu teléfono">
+                                            </div>
+                                        </div>
+                                    </div>
+                              
+                              
+
+                          
+                            </div>
+
+                  <div class="row g-3">
+
+                    <div class="row">
+                      <div class="col-8 col-md-6 col-lg-5" id="rfc-container" style="display:none;">
+                        {{ form.rfc|as_crispy_field}}
+                      </div>
+
+                      <div class="col-4 col-md-3 col-lg-2" id="homoclave-container" style="display:none;">
+                        {{ form.homoclave|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-3 col-lg-5" id="curp-container" style="display:none;">
+                        {{ form.curp|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4" id="razonSocial-container" style="display:none;">
+                        {{ form.razonSocial|as_crispy_field }}
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-12 col-md-6 col-lg-4" id="nombre-container" style="display:none;">
+                        {{ form.nombre|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4" id="apellidoP-container" style="display:none;">
+                        {{ form.ApellidoP|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4" id="apellidoM-container" style="display:none;">
+                        {{ form.ApellidoM|as_crispy_field }}
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-12 col-md-6 col-lg-6" id="email-container" style="display:none;">
+                        {{ form.email|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-6" id="telefono-container" style="display:none;">
+                        {{ form.telefono|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4" id="contribuyente-container" style="display:none;">
+                        {{ form.contribuyente|as_crispy_field }}
+                      </div>
+                    </div>
+
+
+                    <div class="row">
+                      <strong style="display:none;" id="nombreAdi">Nombre Adicional</strong>
+
+                      <div class="col-12 col-md-6 col-lg-4" id="nombre_mc-container" style="display:none;">
+                        {{ form.nombre_mc|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4" id="apellidoP_mc-container" style="display:none;">
+                        {{ form.ApellidoP_mc|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4" id="apellidoM_mc-container" style="display:none;">
+                        {{ form.ApellidoM_mc|as_crispy_field }}
+                      </div>
+
+                              </div>
+                      
+                            <div class="col-12 text-end">
+                              <button class="btn btn-success-new disabled" type="button" id="nextStep1">Siguiente</button>
+                            </div>
+
+                  </div>
+                </div>
+
+                <div class="tab-pane fade" id="wizard-cart" role="tabpanel" aria-labelledby="wizard-cart-tab">
+                  <div class="row g-3">
+
+                    <div class="row">
+                      <div class="col-12 col-md-6 col-lg-4">
+                        {{ form.clave_catastral|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4">
+                        {{ form.uso_predio|as_crispy_field }}
+                      </div>
+
+                      <div class="col-12 col-md-6 col-lg-4">
+                        {{ form.valor_catastral|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4">
+                        {{ form.superficie_total|as_crispy_field }}
+                      </div>
+                      <div class="col-12 col-md-6 col-lg-4">
+                        {{ form.superficie_construida|as_crispy_field }}
+                      </div>
+
+
+                    </div>
+                    <div class="row">
+                      <!-- Código Postal -->
+                      <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="codigo_postal" class="form-label">Código postal<span
+                            class="txt-danger">*</span></label>
+                        <input type="text" id="codigo_postal" name="codigo_postal" class="form-control"
+                          placeholder="Código Postal" maxlength="5" required>
+                        <div class="invalid-feedback" id="postal-error" style="display: none;">Código postal no válido o
+                          no encontrado.</div>
+                      </div>
+
+                      <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="estado" class="form-label">Estado<span class="txt-danger">*</span></label>
+                        <input type="text" id="estado" name="estado" class="form-control readonly-style"
+                          placeholder="Estado" readonly autocomplete="off" required>
+                        <div class="invalid-feedback" id="estado-error" style="display: none;">Estado no válido o no
+                          encontrado.</div>
+                      </div>
+
+
+                      <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <label for="municipio" class="form-label">Municipio<span class="txt-danger">*</span></label>
+                        <input type="text" id="municipio" name="municipio" class="form-control readonly-style"
+                          placeholder="Municipio" readonly required>
+                        <div class="invalid-feedback" id="municipio-error" style="display: none;">Municipio no válido o
+                          no encontrado.</div>
+                      </div>
+
+                      <div class="col-12 col-md-6 col-lg-4 mb-3" id="coloniaContainer" style="display: none;">
+                        <label for="colonia" class="form-label">Colonia<span class="txt-danger">*</span></label>
+                        <select id="colonia" name="colonia" class="form-select" required>
+                          <option value="">Seleccione Colonia</option>
+                        </select>
+                      </div>
+
+                      <div class="col-12 col-md-6 col-lg-4 mb-3" id="calleContainer" style="display: none;">
+                        <label for="calle" class="form-label">Calle<span class="txt-danger">*</span></label>
+                        <select id="calle" name="calle" class="form-select" required>
+                          <option value="">Seleccione Calle</option>
+                        </select>
+                        <div class="invalid-feedback" id="calle-error" style="display: none;">Calle no válida o ya
+                          existente.</div>
+
+                        </div>
+                        
+                        <div class="col-6 col-md-2 col-lg-2" id="exteriorContainer" style="display: none;">
+                          {{ form.numero_exterior|as_crispy_field }}
+                        </div>
+                        <div class="col-6 col-md-2 col-lg-2" id="interiorContainer" style="display: none;">
+                          {{ form.numero_interior|as_crispy_field }}
+                        </div>
+                        
+           
+                        </div>
+                        
+           
+
+
+                          <div class="col-12 text-end">
+                            <button class="btn btn-secondary-new" type="button" id="previousStep2">
+                              <i class="icofont icofont-rounded-left"></i> Anterior
+                            </button>
+                                                          
+                            <button class="btn btn-success-new" type="submit" id="submitButton">Enviar</button>
+                            </div>
+                        </div>
+                      </div>
+
+
+
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

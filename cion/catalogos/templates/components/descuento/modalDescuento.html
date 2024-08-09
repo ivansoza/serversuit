@@ -1,0 +1,80 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xl-4 col-md-6 custom-alert text-center">
+            <div class="modal fade" id="modalCrearDescuento" tabindex="-1" role="dialog" aria-labelledby="modalCrearDescuentoLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content dark-sign-up">
+                        <div class="modal-body social-profile text-start">
+                            <div class="modal-toggle-wrapper">
+                                <h3 class="text text-secondary">Registrar Descuento</h3>
+                                <p class="text text-secondary">Complete la información a continuación para continuar.</p>
+                                <form class="row g-3 needs-validation custom-input" id="crearDescuentoForm" method="post" action="{% url 'tablaDescuentos' %}">
+                                    {% csrf_token %}
+                                    <!-- Campos del formulario -->
+                                    <div class="col-md-12" style='display:none;'>
+                                        {{ descuento_form.tipo.label_tag }}
+                                        {{ descuento_form.tipo }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ descuento_form.nombre.label_tag }}
+                                        {{ descuento_form.nombre }}
+                                    </div>
+                                    <div class="col-md-12">
+                                        {{ descuento_form.monto_descuento.label_tag }}
+                                        {{ descuento_form.monto_descuento }}
+                                    </div>
+                                    <div class="col-md-12" style='display:none;'>
+                                        {{ descuento_form.estatus_descuento.label_tag }}
+                                        {{ descuento_form.estatus_descuento }}
+                                    </div>
+                                    <div class="col-md-12" style='display:none;'>
+                                        {{ descuento_form.municipio.label_tag }}
+                                        {{ descuento_form.municipio }}
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-success-new" type="submit" name="guardar_descuento">Guardar</button>
+                                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var openCrearDescuentoModalBtn = document.getElementById('openCrearDescuentoModalBtn');
+        openCrearDescuentoModalBtn.addEventListener('click', function(event) {
+            event.preventDefault();
+            $('#modalCrearDescuento').modal('show');
+        });
+    });
+    
+</script>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Obtener todos los campos de texto que deseas convertir a mayúsculas
+      const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+  
+      // Función para convertir texto a mayúsculas
+      const convertirAMayusculas = function (event) {
+        const campo = event.target;
+        campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+      };
+  
+      // Agregar evento de escucha a cada campo de texto
+      camposTexto.forEach(function (campo) {
+        campo.addEventListener('input', convertirAMayusculas);
+      });
+    });
+  </script>

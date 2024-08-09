@@ -1,0 +1,249 @@
+{% load static %}
+{% load sass_tags %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card course-box widget-course">
+                <ul class="square-group top-left">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+                <div class="card-body">
+                    <div class="course-widget text-center">
+                        <div class="course-icon warning mb-3">
+                            <svg class="fill-icon icon-size">
+                                <use href="{% static 'assets/svg/icon-sprite.svg'%}#fill-user"></use>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">Generar orden de pago</h4>
+                            <span class="f-light">Emite una orden de pago disponible para tu area.</span>
+                            <br>
+                            <div class="btn-group mt-3">
+                                <a class="btn btn-outline-primary f-light" href="{% url "create_orden_pago" %}">Crear registro<span class="ms-2">
+                                    <svg class="fill-icon f-light">
+                                        <use href="{% static 'assets/svg/icon-sprite.svg'%}#arrowright"></use>
+                                    </svg></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card course-box widget-course">
+                <ul class="square-group top-left">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+                <div class="card-body">
+                    <div class="course-widget text-center">
+                        <div class="course-icon warning mb-3">
+                            <svg class="fill-icon icon-size">
+                                <use href="{% static 'assets/svg/icon-sprite.svg'%}#sale"></use>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">Registros de ordenes de pago</h4>
+                            <span class="f-light">Ordenes de pago emitidas.</span>
+                            <br>
+                            <div class="btn-group mt-3">
+                                <a class="btn btn-outline-primary f-light" href="#">Visualizar y crear registros<span class="ms-2">
+                                    <svg class="fill-icon f-light">
+                                        <use href="{% static 'assets/svg/icon-sprite.svg'%}#arrowright"></use>
+                                    </svg></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card course-box widget-course">
+                <ul class="square-group top-left">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+                <div class="card-body">
+                    <div class="course-widget text-center">
+                        <div class="course-icon warning mb-3">
+                            <svg class="fill-icon icon-size">
+                                <use href="{% static 'assets/svg/icon-sprite.svg'%}#fill-task"></use>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">Generar orden de pago predial</h4>
+                            <span class="f-light">Escribe una descripción.</span>
+                            <br>
+                            <div class="btn-group mt-3">
+                                <a class="btn btn-outline-primary f-light" href="#">Visualizar y crear registros<span class="ms-2">
+                                    <svg class="fill-icon f-light">
+                                        <use href="{% static 'assets/svg/icon-sprite.svg'%}#arrowright"></use>
+                                    </svg></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-xxl-6 col-xl-6 col-md-6 col-sm-12">
+            <div class="card course-box widget-course">
+                <ul class="square-group top-left">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+                <div class="card-body">
+                    <div class="course-widget text-center">
+                        <div class="course-icon  warning mb-3">
+                            <svg class="fill-icon icon-size">
+                                <use href="{% static 'assets/svg/icon-sprite.svg'%}#course-2"></use>
+                            </svg>
+                        </div>
+                        <div>
+                            <h4 class="mb-0">Generar orden de pago agua</h4>
+                            <span class="f-light">Escribe una descripción de tu modulo.</span>
+                            <br>
+                            <div class="btn-group mt-3">
+                                <a class="btn btn-outline-primary f-light" href="#">Visualizar y crear registros<span class="ms-2">
+                                    <svg class="fill-icon f-light">
+                                        <use href="{% static 'assets/svg/icon-sprite.svg'%}#arrowright"></use>
+                                    </svg></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <ul class="square-group">
+                    <li class="square-1 warning"></li>
+                    <li class="square-1 primary"></li>
+                    <li class="square-2 warning1"></li>
+                    <li class="square-3 danger"></li>
+                    <li class="square-4 light"></li>
+                    <li class="square-5 warning"></li>
+                    <li class="square-6 success"></li>
+                    <li class="square-7 success"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .course-box {
+        height: 350px; /* Adjusted height for taller cards */
+        position: relative; /* Ensure absolute positioning for square groups */
+    }
+    .course-widget {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+    .course-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 80px; /* Adjusted width */
+        height: 80px; /* Adjusted height */
+        margin-bottom: 20px; /* Adjusted margin */
+    }
+    .icon-size {
+        width: 100%;
+        height: 100%;
+    }
+    .btn-group .btn {
+        margin: 5px;
+    }
+    .square-group {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
+    }
+    .square-group.top-left {
+        top: 10px;
+        right: auto;
+        left: 10px;
+        bottom: auto;
+    }
+    .square-group li {
+        width: 10px;
+        height: 10px;
+    }
+    .square-1 { background-color: var(--color1); }
+    .square-2 { background-color: var(--color2); }
+    .square-3 { background-color: var(--color3); }
+    .square-4 { background-color: var(--color4); }
+    .square-5 { background-color: var(--color5); }
+    .square-6 { background-color: var(--color6); }
+    .square-7 { background-color: var(--color7); }
+    .warning { background-color: #ffc107; }
+    .primary { background-color: #007bff; }
+    .warning1 { background-color: #ff9800; }
+    .danger { background-color: #dc3545; }
+    .light { background-color: #f8f9fa; }
+    .success { background-color: #28a745; }
+</style>

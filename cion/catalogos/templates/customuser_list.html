@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+{% load sass_tags %}
+{% block css %}
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatables.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'assets/css/vendors/datatable-extension.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+{% include 'components/personalizacion/alertas.html' %}  
+
+{% include "components/usuarios/cardsTable.html" %}
+
+<br>
+<!-- Container-fluid starts-->
+<div class="container-fluid extra_data">
+  <div class="row">
+    {% include 'components/usuarios/tablaUsuarios.html' %}
+  </div>
+</div>
+
+<!-- Modal para Cambiar Estado -->
+<div class="modal fade" id="statusModal" tabindex="-1" role="dialog" aria-labelledby="exampleModallogin" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content dark-sign-up">
+            <div class="modal-body social-profile text-start">
+                <div class="modal-toggle-wrapper">
+                    <h3 class="text text-secondary">Cambiar Estado del Usuario</h3>
+                    <p class="text text-secondary">Seleccione el nuevo estado para el usuario.</p>
+                    <form class="row g-3 needs-validation custom-input" id="statusForm" method="post" action="{% url 'customuser_list' %}">
+                        {% csrf_token %}
+                        <div class="col-md-12">
+                            <label for="userStatus" class="form-label">Estado</label>
+                            <select class="form-control" id="userStatus" name="user_status">
+                                <option value="True">Activo</option>
+                                <option value="False">Inactivo</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="userId" name="user_id" value="">
+                        <div class="col-12">
+
+                 
+                            <button type="submit" class="btn btn-success-new">Actualizar Estatus</button>
+                            <button type="button" class="btn btn-danger-new" data-bs-dismiss="modal" id="cancelButton">Cancelar</button>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+
+
+{% block scriptcontent %}
+
+<script src="{% static 'assets/js/datatable/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.buttons.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/jszip.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.colVis.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/pdfmake.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/vfs_fonts.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.autoFill.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.select.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.html5.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/buttons.print.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.responsive.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/responsive.bootstrap4.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.keyTable.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.colReorder.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.fixedHeader.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.rowReorder.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/dataTables.scroller.min.js' %}"></script>
+<script src="{% static 'assets/js/datatable/datatable-extension/custom.js' %}"></script>
+<script src="{% static 'assets/js/tooltip-init.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+    function openStatusModal(userId, isActive) {
+        $('#userId').val(userId);
+        $('#userStatus').val(isActive);
+        $('#statusModal').modal('show');
+      }
+      
+  </script>
+{% endblock %}

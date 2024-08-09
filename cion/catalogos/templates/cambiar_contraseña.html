@@ -1,0 +1,176 @@
+
+
+
+{% extends "base.html" %} 
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+    <style>
+        .field-icon {
+            position: absolute;
+            margin-top: -40px; 
+            right: 20px; 
+            z-index: 2;
+        }
+        
+        .field-icon:hover {
+            cursor: pointer;
+            display: none;
+
+        }
+        /* Estilos que solo se aplicarán en pantallas menores de 768px */
+        @media (min-width: 767px) {
+            .custom-input .form-check .form-check-input:valid ~ .form-check-label {
+                color: #000000 !important;
+                margin-top: 25px;
+                font-size: medium;
+            }
+    
+            .custom-input .form-check .form-check-input:valid {
+                margin-top: 30px;
+                font-size: large;
+            }
+        }
+    
+    </style>
+
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header pb-0">
+        <h2><i class="icofont icofont-ui-lock"></i> Cambiar Contraseña</h2>
+        <p class="f-m-light mt-1">Asegura tu cuenta actualizando tu contraseña.</p>
+        
+        <div class="card-header-right">
+          <ul class="list-unstyled card-option">
+            <li>
+              <div><i class="icon-settings"></i></div>
+            </li>
+            <li><i class="icofont icofont-maximize full-card"></i></li>
+            <li><i class="icofont icofont-minus minimize-card"></i></li>
+            <li><i class="icofont icofont-error close-card"></i></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-body">
+            <div class="card">
+              <div class="card-body">
+                <form method="post" >
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-12 col-md-12 col-lg-6">
+                            {{ form.old_password|as_crispy_field }}
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-6 col-lg-6">
+                            {{ form.new_password1|as_crispy_field }}
+                            <span toggle="#id_new_password1" class="fa fa-fw field-icon toggle-password fa-eye" style="display: block;"></span>
+                            <div id="password-criteria">
+                                <p>La contraseña debe cumplir los siguientes requerimientos:</p>
+                                <ul>
+                                    <li id="criteria-length" class="text-danger">Al menos 8 caracteres</li>
+                                    <li id="criteria-uppercase" class="text-danger">Al menos una letra mayúscula</li>
+                                    <li id="criteria-number" class="text-danger">Al menos un número</li>
+                                    <li id="criteria-match" class="text-danger">Las contraseñas deben coincidir</li>
+                                    <li id="criteria-nospaces" class="text-danger">La contraseña no debe tener espacios</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 col-lg-6 mb-2">
+                            {{ form.new_password2|as_crispy_field }}
+                            <span toggle="#id_new_password2" class="fa fa-fw fa-eye field-icon toggle-password"></span>
+                        </div>
+                    </div>
+                    
+                  <a class="btn btn-danger-new" href="{% url "configuracion" %}">Cancelar</a>  
+
+                  <button class="btn btn-success-new" type="submit">Actualizar Contraseña</button>
+                </form>
+              </div>
+            </div>
+      </div>
+    </div>
+</div>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const password1 = document.getElementById('id_new_password1');
+        const password2 = document.getElementById('id_new_password2');
+        const criteriaElements = {
+            length: document.getElementById('criteria-length'),
+            uppercase: document.getElementById('criteria-uppercase'),
+            number: document.getElementById('criteria-number'),
+            match: document.getElementById('criteria-match'),
+            nospaces: document.getElementById('criteria-nospaces')
+        };
+    
+        function updateCriteria(id, isValid) {
+            criteriaElements[id].className = isValid ? 'text-success' : 'text-danger';
+        }
+    
+        function resetCriteria() {
+            for (const id in criteriaElements) {
+                criteriaElements[id].className = 'text-danger';
+            }
+        }
+    
+        function validatePassword() {
+            if (password1.value.length === 0) {
+                resetCriteria();
+                return;
+            }
+    
+            const criteria = {
+                length: password1.value.length >= 8,
+                uppercase: /[A-Z]/.test(password1.value),
+                number: /[0-9]/.test(password1.value),
+                match: password1.value === password2.value,
+                nospaces: !/\s/.test(password1.value)
+            };
+    
+            updateCriteria('length', criteria.length);
+            updateCriteria('uppercase', criteria.uppercase);
+            updateCriteria('number', criteria.number);
+            updateCriteria('match', criteria.match);
+            updateCriteria('nospaces', criteria.nospaces);
+        }
+    
+        password1.addEventListener('input', validatePassword);
+        password2.addEventListener('input', validatePassword);
+    
+        document.querySelectorAll('.toggle-password').forEach(function(toggle) {
+            var input = document.querySelector(toggle.getAttribute('toggle'));
+    
+            function updateEyeIcon() {
+                if (input.value) {
+                    toggle.style.display = 'block';
+                } else {
+                    toggle.style.display = 'none';
+                    input.type = 'password';
+                    toggle.className = 'field-icon icofont icofont-eye'; // Set default to eye icon
+                }
+            }
+    
+            toggle.addEventListener('click', function() {
+                if (input.type === 'password') {
+                    input.type = 'text';
+                    toggle.className = 'field-icon icofont icofont-eye-blocked'; // Change to eye-blocked icon
+                } else {
+                    input.type = 'password';
+                    toggle.className = 'field-icon icofont icofont-eye'; // Change back to eye icon
+                }
+            });
+    
+            input.addEventListener('input', updateEyeIcon);
+            updateEyeIcon(); // Initial call to set correct visibility on load
+        });
+    });
+    
+
+</script>
+
+
+
+{% endblock %}

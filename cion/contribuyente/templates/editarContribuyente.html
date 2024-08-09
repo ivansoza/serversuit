@@ -1,0 +1,1094 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load sass_tags %}
+
+{% block css %}
+<!-- Tus archivos CSS adicionales aquí -->
+{% endblock %}
+
+{% block content %}
+{% include 'general/loader.html' %}
+{% include 'components/alert_messages.html' %}
+
+<div class="modal fade" id="addCalleModal" tabindex="-1" role="dialog" aria-labelledby="addCalleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <h3 style="text-align: center; margin-top: 2px;" class="text text-secondary">Agregar Nueva Calle</h3>
+            <small style="text-align: center;">Ingrese los detalles de la nueva calle y añádala al sistema</small>
+            <div class="modal-body">
+                <form id="addCalleForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="calleName" class="form-label">Nombre de la Calle</label>
+                        <input type="text" class="form-control" id="calleName" placeholder="Ingrese el nombre de la calle" required autocomplete="off" oninput="this.value = this.value.toUpperCase()">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-success-new" onclick="addCalle()">Añadir Calle</button>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <div class="row">
+      {% include 'components/formeditContribuyente.html' %}
+    </div>
+  </div>
+
+
+
+
+
+
+{% endblock %}
+
+
+{% block scriptcontent %}
+<script src="{% static 'assets/js/height-equal.js' %}"></script>
+<script src="{% static 'assets/js/alert.js' %}"></script>
+<script src="{% static 'assets/js/form-wizard/form-wizard.js' %}"></script>
+<script src="{% static 'assets/js/form-wizard/image-upload.js' %}"></script>
+<script src="{% static 'assets/js/height-equal.js' %}"></script>
+<script src="{% static 'assets/js/form-validation-custom.js' %}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+                // ZONA DE INPUTS
+        var tipoPersonaSelect = document.getElementById('id_informacion_contribuyente-tipoPersona');
+        var curpInput = document.getElementById('id_informacion_contribuyente-curp');
+        var razonsocialInput = document.getElementById('id_informacion_contribuyente-razonSocial');
+        var nombreInput = document.getElementById('id_informacion_contribuyente-nombre');
+        var apellidoPInput = document.getElementById('id_informacion_contribuyente-apellidoP');
+        var apellidoMInput = document.getElementById('id_informacion_contribuyente-apellidoM');
+        var nombreMcInput = document.getElementById('id_informacion_contribuyente-nombre_mc');
+        var apellidoPMcInput = document.getElementById('id_informacion_contribuyente-apellidoP_mc');
+        var apellidoMMcInput = document.getElementById('id_informacion_contribuyente-apellidoM_mc');
+        var mcCheckbox = document.getElementById('id_informacion_contribuyente-mc');
+        var emailInput = document.getElementById('id_informacion_contribuyente-email');
+        var telefonoInput = document.getElementById('id_informacion_contribuyente-telefono');
+        const homoclaveInput = document.getElementById("id_informacion_fiscal-homoclave");
+        var rfcInput = document.getElementById('id_informacion_fiscal-rfc');
+        var inputsRequiringBasicValidation = [
+            document.getElementById('id_informacion_contribuyente-razonSocial'),
+            document.getElementById('id_informacion_contribuyente-nombre'),
+            document.getElementById('id_informacion_contribuyente-apellidoP'),
+            document.getElementById('id_informacion_contribuyente-apellidoM'),
+            document.getElementById('id_informacion_contribuyente-nombre_mc'),
+            document.getElementById('id_informacion_contribuyente-apellidoP_mc'),
+            document.getElementById('id_informacion_contribuyente-apellidoM_mc')
+        ];
+        const codigoPostalInput = document.getElementById("codigo_postal");
+        const coloniaSelect = document.getElementById("colonia");
+        const calleSelect = document.getElementById("calle");
+        //ZONA DE CONTAINER
+        var curpContainer = document.getElementById('curp-container');
+        var razonsocialContainer = document.getElementById('razonsocial-container');
+        var nombreContainer = document.getElementById('nombre-container');
+        var apellidopContainer = document.getElementById('apellidop-container');
+        var apellidomContainer = document.getElementById('apellidom-container');
+        var nombreMcContainer = document.getElementById('mcnombre-container');
+        var mcApellidoPContainer = document.getElementById('mcApellidoP-container');
+        var mcApellidoMContainer = document.getElementById('mcApellidoM-container');
+        var mcContainer = document.getElementById('mc-container'); 
+        //ZONA DE BOOLEANOS
+        const submitButton = document.getElementById("submitButton");
+        const form = submitButton.closest('form');
+        var nextStepButton = document.getElementById('nextStepButton');
+        var domicilioTab = document.getElementById('wizard-domicilio-tab');
+
+        //ZONA DE ERRORES
+        const calleErrorDiv = document.getElementById("calle-error");
+        const coloniaErrorDiv = document.getElementById("colonia-error"); 
+
+        //ZONA DE MODELO
+        const tipoPersona = '{{ contribuyente.tipoPersona }}'; 
+        const tieneMC = '{{ contribuyente.mc }}'; 
+        function inicializarDatos() {
+            if (tipoPersona === 'PF') {
+                $('#curp-container').show();
+                $('#nombre-container').show();
+
+                $('#apellidop-container').show();
+                $('#apellidom-container').show();
+                $('#razonsocial-container').hide();
+
+            } else if (tipoPersona === 'PM') {
+                $('#curp-container').hide();
+                $('#nombre-container').hide();
+                $('#apellidop-container').hide();
+                $('#apellidom-container').hide();
+                $('#mc-container').hide();
+                $('#razonsocial-container').show();
+
+            }
+            if (tieneMC === 'True') {
+                $('#mc').show();
+                $('#mcnombre-container').show();
+                $('#mcApellidoP-container').show();
+                $('#mcApellidoM-container').show();
+            } else {
+                $('#mcnombre-container').hide();
+                $('#mcApellidoP-container').hide();
+                $('#mcApellidoM-container').hide();
+                $('#mc').show();
+            }
+        }
+
+        function validateBasicTextInput(input) {
+            if (input.value.trim().length > 0) {
+                input.classList.add('is-valid');
+                input.classList.remove('is-invalid');
+            } else {
+                input.classList.remove('is-valid');
+            }
+        }
+
+        let statusRfc = false;  // Inicializa la bandera en false
+
+        function updateTipoPersonaVisibility() {
+            var tipoPersona = tipoPersonaSelect.value;
+
+            // Manejo de campos para persona física (PF)
+            curpContainer.style.display = tipoPersona === 'PF' ? '' : 'none';
+            nombreContainer.style.display = tipoPersona === 'PF' ? '' : 'none';
+            apellidopContainer.style.display = tipoPersona === 'PF' ? '' : 'none';
+            apellidomContainer.style.display = tipoPersona === 'PF' ? '' : 'none';
+            mcContainer.style.display = tipoPersona === 'PF' ? '' : 'none';
+        
+            if (tipoPersona !== 'PF') {
+                curpInput.value = '';
+                curpInput.classList.remove('is-invalid', 'is-valid');
+                nombreInput.value = '';
+                apellidoPInput.value = '';
+                apellidoMInput.value = '';
+                [nombreInput, apellidoPInput, apellidoMInput].forEach(input => {
+                    input.classList.remove('is-invalid', 'is-valid');
+                });
+            }
+        
+            // Manejo de campos para persona moral (PM)
+            razonsocialContainer.style.display = tipoPersona === 'PM' ? '' : 'none';
+            if (tipoPersona !== 'PM') {
+                razonsocialInput.value = '';
+                razonsocialInput.classList.remove('is-invalid', 'is-valid');
+            }
+        
+            // Manejo del campo RFC
+            if (tipoPersona === 'PM') {
+                if (statusRfc) {  // Solo limpia el RFC si statusRfc es true
+                    rfcInput.value = '';
+                    rfcInput.classList.remove('is-invalid');
+                    rfcInput.classList.remove('is-valid');
+                }
+                statusRfc = true;  // Cambia el estado de la bandera a true después del primer cambio a 'PM'
+
+            }
+            if (tipoPersona === 'PF') {
+                if (statusRfc) {  // Solo limpia el RFC si statusRfc es true
+                    rfcInput.value = '';
+                    rfcInput.classList.remove('is-invalid');
+                    rfcInput.classList.remove('is-valid');
+                }
+                statusRfc = true;  // Cambia el estado de la bandera a true después del primer cambio a 'PM'
+
+            }
+            rfcInput.maxLength = tipoPersona === 'PF' ? 10 : 9;
+        }
+
+        function updateMcVisibility() {
+            var tipoPersona = tipoPersonaSelect.value;
+            var mcChecked = mcCheckbox.checked;
+        
+            nombreMcContainer.style.display = (tipoPersona === 'PF' && mcChecked) ? '' : 'none';
+            mcApellidoPContainer.style.display = (tipoPersona === 'PF' && mcChecked) ? '' : 'none';
+            mcApellidoMContainer.style.display = (tipoPersona === 'PF' && mcChecked) ? '' : 'none';
+        
+            if (tipoPersona !== 'PF' || !mcChecked) {
+                nombreMcInput.value = '';
+                apellidoPMcInput.value = '';
+                apellidoMMcInput.value = '';
+                mcCheckbox.checked = false;
+                [nombreMcInput, apellidoPMcInput, apellidoMMcInput].forEach(input => {
+                    input.classList.remove('is-invalid', 'is-valid');
+                });
+            }
+        }
+        
+        function updateVisibility() {
+            updateTipoPersonaVisibility();
+            updateMcVisibility();
+        }
+
+
+        function toUpperCaseInput(event) {
+            event.target.value = event.target.value.toUpperCase();
+        }
+
+        [curpInput, razonsocialInput, nombreInput, apellidoPInput, apellidoMInput, nombreMcInput,rfcInput, apellidoPMcInput, apellidoMMcInput,homoclaveInput].forEach(input => {
+            input.addEventListener('input', toUpperCaseInput);
+        });
+
+        //VALDACION DE RFC
+        function validateRFC() {
+            var maxLength = rfcInput.maxLength; 
+            var rfcValue = rfcInput.value;
+        
+            if (rfcValue === "") {
+                rfcInput.classList.remove('is-valid', 'is-invalid');
+            } else if (rfcValue.length === maxLength) {
+                rfcInput.classList.add('is-valid');
+                rfcInput.classList.remove('is-invalid');
+            } else {
+                rfcInput.classList.add('is-invalid');
+                rfcInput.classList.remove('is-valid');
+            }
+        }
+
+        //VALIDACION DE RFC
+        function validateCurp() {
+            curpInput.value = curpInput.value.toUpperCase(); 
+        
+            if (curpInput.value === "") {
+        
+                curpInput.classList.remove('is-valid', 'is-invalid');
+            } else if (curpInput.value.length === 18) {
+                curpInput.classList.add('is-valid');
+                curpInput.classList.remove('is-invalid');
+        
+                const rfcInput = document.getElementById('id_informacion_fiscal-rfc');
+                rfcInput.value = curpInput.value.substring(0, 10);
+                rfcInput.classList.add('is-valid');  
+                rfcInput.classList.remove('is-invalid'); 
+            } else {
+                curpInput.classList.add('is-invalid');
+                curpInput.classList.remove('is-valid');
+            }
+        }
+
+        //VALIDACION DE EMAIL 
+        function validateEmail() {
+            var regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (emailInput.value === "") {
+                emailInput.classList.remove('is-valid', 'is-invalid');
+            } else if (regex.test(emailInput.value)) {
+                emailInput.classList.add('is-valid');
+                emailInput.classList.remove('is-invalid');
+            } else {
+                emailInput.classList.add('is-invalid');
+                emailInput.classList.remove('is-valid');
+            }
+        }
+        
+    
+        //VALIDACION DE TELEFONO
+        function validateTelefono() {
+            var numbers = telefonoInput.value.replace(/\D/g, ''); 
+            telefonoInput.value = numbers; 
+            if (numbers.length === 10) {
+                telefonoInput.classList.add('is-valid');
+                telefonoInput.classList.remove('is-invalid');
+            } else if (numbers.length > 0) {
+                telefonoInput.classList.add('is-invalid');
+                telefonoInput.classList.remove('is-valid');
+            } else {
+                telefonoInput.classList.remove('is-valid', 'is-invalid'); 
+            }
+        }
+
+        //VALIDACION HOMOCLAVE
+        function validateHomoclave() {
+            homoclaveInput.value = homoclaveInput.value.toUpperCase();
+            homoclaveInput.classList.remove('is-valid', 'is-invalid');
+            if (homoclaveInput.value.length === 0) {
+            } else if (homoclaveInput.value.length === 3) {
+                homoclaveInput.classList.add('is-valid');
+            } else {
+                homoclaveInput.classList.add('is-invalid');
+            }
+        }
+
+
+        function validateAndSubmit(event) {
+            var isValid = true; // Asumir válido a menos que una verificación falle
+            var errorMessage = []; // Array para guardar mensajes de error
+            var tipoPersona = tipoPersonaSelect.value;
+            var mcChecked = mcCheckbox.checked;
+            [curpInput, nombreInput, apellidoPInput, apellidoMInput, razonsocialInput, nombreMcInput, apellidoPMcInput, apellidoMMcInput, homoclaveInput, rfcInput,codigoPostalInput,calleSelect,coloniaSelect,emailInput, telefonoInput].forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+            var emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; // Regex para la validación de correo electrónico
+        
+            if (rfcInput.value.trim().length !== rfcInput.maxLength) {
+                rfcInput.classList.add('is-invalid');
+                isValid = false;
+                errorMessage.push("RFC debe tener " + rfcInput.maxLength + " caracteres.");
+            }
+    
+            if (emailInput.value !== "") {
+                if (!emailRegex.test(emailInput.value)) {
+                    emailInput.classList.add('is-invalid');
+                    isValid = false;
+                    errorMessage.push("Correo electrónico no es válido.");
+                } else {
+                    emailInput.classList.add('is-valid');
+                }
+            }
+    
+            var numbers = telefonoInput.value.replace(/\D/g, ''); 
+            telefonoInput.value = numbers; 
+            if (numbers !== "" && numbers.length !== 10) {
+                telefonoInput.classList.add('is-invalid');
+                isValid = false;
+                errorMessage.push("El número de teléfono debe tener 10 dígitos.");
+            } else if (numbers.length === 10) {
+                telefonoInput.classList.add('is-valid');
+            }
+        
+            if (tipoPersona === 'PF') {
+                if (curpInput.value.trim().length !== 18) {
+                    curpInput.classList.add('is-invalid');
+                    isValid = false;
+                    errorMessage.push("CURP debe tener 18 caracteres.");
+                }
+                if (!nombreInput.value.trim()) {
+                    nombreInput.classList.add('is-invalid');
+                    isValid = false;
+                    errorMessage.push("El nombre es requerido.");
+                }
+                if (!apellidoPInput.value.trim()) {
+                    apellidoPInput.classList.add('is-invalid');
+                    isValid = false;
+                    errorMessage.push("El apellido paterno es requerido.");
+                }
+                if (!apellidoMInput.value.trim()) {
+                    apellidoMInput.classList.add('is-invalid');
+                    isValid = false;
+                    errorMessage.push("El apellido materno es requerido.");
+                }
+                if (mcChecked) {
+                    if (!nombreMcInput.value.trim()) {
+                        nombreMcInput.classList.add('is-invalid');
+                        isValid = false;
+                        errorMessage.push("Nombre de la persona adicional.");
+                    }
+                    if (!apellidoPMcInput.value.trim()) {
+                        apellidoPMcInput.classList.add('is-invalid');
+                        isValid = false;
+                        errorMessage.push("Apellido paterno de la persona adicional.");
+                    }
+                    if (!apellidoMMcInput.value.trim()) {
+                        apellidoMMcInput.classList.add('is-invalid');
+                        isValid = false;
+                        errorMessage.push("Apellido materno de la persona adicional.");
+                    }
+                }
+            }
+        
+            if (tipoPersona === 'PM') {
+                if (!razonsocialInput.value.trim()) {
+                    razonsocialInput.classList.add('is-invalid');
+                    isValid = false;
+                    errorMessage.push("La razón social es requerida.");
+                }
+            }
+        
+            if (homoclaveInput.value.length === 1 || homoclaveInput.value.length === 2) {
+                homoclaveInput.classList.add('is-invalid');
+                isValid = false;
+                errorMessage.push("Homoclave debe tener 3 caracteres.");
+            }
+            
+            const codigoPostal = codigoPostalInput.value.trim();
+            if (!/^\d{5}$/.test(codigoPostal)) {
+                codigoPostalInput.classList.add('is-invalid');
+                isValid = false;
+                errorMessage.push("El código postal debe tener exactamente 5 dígitos.");
+            }
+    
+    
+            var selectedColonia = coloniaSelect.value;
+            if (selectedColonia === '') {
+                coloniaSelect.classList.add('is-invalid');
+                isValid = false;
+                errorMessage.push("Por favor, seleccione una colonia.");
+            }
+    
+            var selectedCalle = calleSelect.value;
+              if (selectedCalle === '' || selectedCalle === 'new') {
+                  calleSelect.classList.add('is-invalid');
+                  isValid = false;
+                  errorMessage.push("Por favor, seleccione una calle válida.");
+            }
+    
+        
+            if (!isValid) {
+                event.preventDefault(); 
+                showAlert("Errores encontrados: " + errorMessage.join(" "), "danger");
+            }
+        }
+
+
+        function validateAndProceed() {
+            var isValid = true; // Asumir válido a menos que una verificación falle
+            var tipoPersona = tipoPersonaSelect.value;
+            var mcChecked = mcCheckbox.checked;
+            var emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/; // Regex para validación de correo electrónico
+      
+            // Limpiar clases de validación antes de verificar
+            [curpInput, nombreInput, apellidoPInput, apellidoMInput, razonsocialInput, nombreMcInput, apellidoPMcInput, apellidoMMcInput,emailInput,telefonoInput].forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+            // Validar correo electrónico
+            if (emailInput.value === "") {
+                emailInput.classList.remove('is-valid', 'is-invalid');
+            } else if (emailRegex.test(emailInput.value)) {
+                emailInput.classList.add('is-valid');
+                emailInput.classList.remove('is-invalid');
+            } else {
+                emailInput.classList.add('is-invalid');
+                emailInput.classList.remove('is-valid');
+                isValid = false; // Marcar el formulario como inválido
+            }
+            // Validar teléfono
+          // Validar teléfono
+            var numbers = telefonoInput.value.replace(/\D/g, ''); // Eliminar caracteres no numéricos
+            telefonoInput.value = numbers; // Reasignar valor limpio
+            if (numbers === "") {
+                telefonoInput.classList.remove('is-valid', 'is-invalid');
+            } else if (numbers.length === 10) {
+                telefonoInput.classList.add('is-valid');
+                telefonoInput.classList.remove('is-invalid');
+            } else {
+                telefonoInput.classList.add('is-invalid');
+                telefonoInput.classList.remove('is-valid');
+                isValid = false; // Marcar el formulario como inválido
+            }
+        
+            if (tipoPersona === 'PF') {
+                // Validar campos para Persona Física
+                if (curpInput.value.trim().length !== 18 || curpInput.classList.contains('is-invalid')) {
+                    curpInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+                if (!nombreInput.value.trim()) {
+                    nombreInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+                if (!apellidoPInput.value.trim()) {
+                    apellidoPInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+                if (!apellidoMInput.value.trim()) {
+                    apellidoMInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+                
+                if (mcChecked) {
+                    // Validar campos adicionales si 'mc' está marcado
+                    if (!nombreMcInput.value.trim()) {
+                        nombreMcInput.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    if (!apellidoPMcInput.value.trim()) {
+                        apellidoPMcInput.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                    if (!apellidoMMcInput.value.trim()) {
+                        apellidoMMcInput.classList.add('is-invalid');
+                        isValid = false;
+                    }
+                }
+            } else if (tipoPersona === 'PM') {
+                // Validar campo para Persona Moral
+                if (!razonsocialInput.value.trim()) {
+                    razonsocialInput.classList.add('is-invalid');
+                    isValid = false;
+                }
+            }
+        
+            // Si algún campo es inválido, no avanzar y mostrar alerta
+            if (!isValid) {
+                showAlert("Por favor completa todos los campos requeridos correctamente. ", "danger");
+            } else {
+      
+                showNextTab('#wizard-domicilio-tab'); // Función para avanzar al siguiente tab
+                domicilioTab.classList.remove('disabled');
+      
+            }
+        }
+
+        inputsRequiringBasicValidation.forEach(input => {
+            input.addEventListener('input', function() {
+                validateBasicTextInput(input);
+            });
+            validateBasicTextInput(input);
+
+        });
+        inicializarDatos(); 
+        validateEmail();
+        validateTelefono();
+        validateCurp();
+        validateHomoclave();
+        
+        emailInput.addEventListener('input', validateEmail);
+        nextStepButton.addEventListener('click', validateAndProceed);
+
+        curpInput.addEventListener('input', validateCurp);
+        telefonoInput.addEventListener('input', validateTelefono);
+        rfcInput.addEventListener('input', validateRFC);
+        form.addEventListener('submit', validateAndSubmit);
+        homoclaveInput.addEventListener('input', validateHomoclave);
+
+        tipoPersonaSelect.addEventListener('change', updateTipoPersonaVisibility);
+        mcCheckbox.addEventListener('change', updateMcVisibility);
+        updateVisibility();
+        validateRFC();
+
+
+
+
+        function showNextTab(tabId) {
+            var nextTab = new bootstrap.Tab(document.querySelector(tabId));
+            nextTab.show();
+        }
+          
+        function showPreviousTab(tabId) {
+            var prevTab = new bootstrap.Tab(document.querySelector(tabId));
+            prevTab.show();
+        }
+
+
+
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        //ZONA DE INPUTS
+        const codigoPostalInput = document.getElementById("codigo_postal");
+        const estadoInput = document.getElementById("estado");
+        const municipioInput = document.getElementById("municipio");
+        const interiorInput = document.getElementById("id_domicilio-numeroI");
+        const exteriorInput = document.getElementById("id_domicilio-numeroE");
+        const coloniaSelect = document.getElementById("colonia");
+        const calleSelect = document.getElementById("calle");
+
+
+
+
+
+        //ZONA DE ERRORES
+        const postalErrorDiv = document.getElementById("postal-error");
+        const estadoErrorDiv = document.getElementById("estado-error");
+        const municipioErrorDiv = document.getElementById("municipio-error");
+        const coloniaErrorDiv = document.getElementById("colonia-error"); 
+        const calleErrorDiv = document.getElementById("calle-error");
+
+
+        //ZONA CONTAINER
+        const coloniaContainer = document.getElementById("coloniaContainer");
+        const calleContainer = document.getElementById("calleContainer");
+
+
+        const exteriorContainer = document.getElementById("exteriorContainer");
+        const interiorContainer = document.getElementById("interiorContainer");
+
+        //BOTONE
+        const nextStepButton2 = document.getElementById('nextStepButton2');
+        const fiscalTab = document.getElementById('wizard-informacion-fiscal-tab');
+
+
+        const codigoPostalInicial = '{{ contribuyente.cp }}';  
+        codigoPostalInput.value = codigoPostalInicial;  
+        
+     
+        function handlePostalCodeInput(value) {
+            value = value.replace(/\D/g, '').slice(0, 5);
+            clearInputs(); 
+            if (value.length === 5) {
+                fetch(`/postal-code/${value}/`)
+                    .then(response => {
+                        if (!response.ok) throw new Error('No se encontraron datos para el código postal proporcionado');
+                        return response.json();
+                    })
+                    .then(data => {
+                        estadoInput.value = data.estado.toUpperCase();  
+                        municipioInput.value = data.municipio.toUpperCase(); 
+        
+                        codigoPostalInput.classList.remove('is-invalid');
+                        codigoPostalInput.classList.add('is-valid');
+                        updateColoniaAndCalle(data);  
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        handleError(error);
+                        codigoPostalInput.classList.add('is-invalid');
+                    });
+            } else {
+                codigoPostalInput.classList.remove('is-valid');
+                codigoPostalInput.classList.remove('is-invalid');
+            }
+        }
+        
+        codigoPostalInput.addEventListener('input', function(e) {
+            handlePostalCodeInput(e.target.value);
+        });
+        
+        handlePostalCodeInput(codigoPostalInicial);
+        var inicializacionCompletaCalle = false; 
+
+        function clearInputs() {
+            estadoInput.value = '';
+            municipioInput.value = '';
+            document.getElementById("colonia").innerHTML = '<option value="">Seleccione Colonia</option>';
+            document.getElementById("calle").innerHTML = '<option value="">Seleccione Calle</option>';
+            [postalErrorDiv, estadoErrorDiv, municipioErrorDiv].forEach(div => {
+                div.style.display = 'none';
+                div.textContent = '';
+            });
+            [codigoPostalInput, estadoInput, municipioInput].forEach(input => {
+                input.classList.remove('is-invalid');
+            });
+            coloniaContainer.style.display = 'none';
+            calleContainer.style.display = 'none';
+            coloniaSelect.classList.remove('is-invalid');
+            coloniaSelect.classList.remove('is-valid');
+            coloniaErrorDiv.style.display = 'none';
+            calleSelect.classList.remove('is-invalid');
+            calleSelect.classList.remove('is-valid');
+            calleErrorDiv.style.display = 'none';
+            interiorInput.classList.remove('is-valid'); 
+            exteriorInput.classList.remove('is-valid'); 
+            if (inicializacionCompletaCalle) { 
+                $('#id_domicilio-numeroE').val('');
+                $('#id_domicilio-numeroI').val('');
+                exteriorContainer.style.display = 'none'; 
+                interiorContainer.style.display = 'none'; 
+            }
+            inicializacionCompletaCalle = true; 
+        }
+
+
+
+
+        let inicializacionCompleta = false; 
+
+        function updateColoniaAndCalle(data) {
+            const coloniaSelect = document.getElementById("colonia");
+            const calleSelect = document.getElementById("calle");
+            const exteriorContainer = document.getElementById("exteriorContainer");
+            const interiorContainer = document.getElementById("interiorContainer");
+            
+            coloniaSelect.innerHTML = '';
+            
+            const defaultOption = new Option("SELECCIONE UNA COLONIA", "", true, true);
+            defaultOption.disabled = true; 
+            coloniaSelect.appendChild(defaultOption);
+            
+            data.colonias.forEach(colonia => {
+                const option = new Option(colonia.toUpperCase(), colonia.toUpperCase());
+                coloniaSelect.appendChild(option);
+            });
+            
+            calleSelect.innerHTML = '<option value="">Seleccione Calle</option>';
+            
+            coloniaContainer.style.display = '';
+            calleContainer.style.display = '';
+            exteriorContainer.style.display = '';  
+            interiorContainer.style.display = ''; 
+            if (!inicializacionCompleta) {
+                seleccionarColoniaInicial();
+                inicializacionCompleta = true; 
+            }
+        }
+        
+        function seleccionarColoniaInicial() {
+            const coloniaSelect = document.getElementById("colonia");
+            const coloniaInicial = '{{ contribuyente.colonia|upper }}'; 
+        
+            for (const option of coloniaSelect.options) {
+                if (option.text === coloniaInicial) {
+                    coloniaSelect.value = option.value;
+                    coloniaSelect.dispatchEvent(new Event('change')); 
+                    break;
+                }
+            }
+        }
+        
+        function handleError(error) {
+            if (error.message.includes('código postal')) {
+                postalErrorDiv.textContent = error.message;
+                postalErrorDiv.style.display = 'block';
+                codigoPostalInput.classList.add('is-invalid');
+            } else if (error.message.includes('estado')) {
+                estadoErrorDiv.textContent = error.message;
+                estadoErrorDiv.style.display = 'block';
+                estadoInput.classList.add('is-invalid');
+                coloniaContainer.style.display = 'none';
+                calleContainer.style.display = 'none';
+            } else if (error.message.includes('municipio')) {
+                municipioErrorDiv.textContent = error.message;
+                municipioErrorDiv.style.display = 'block';
+                municipioInput.classList.add('is-invalid');
+                coloniaContainer.style.display = 'none';
+                calleContainer.style.display = 'none';
+            }
+        }
+
+        coloniaSelect.addEventListener('change', function() {
+            const coloniaNombre = coloniaSelect.value.toUpperCase();  
+            const municipioNombre = municipioInput.value
+            const estadoNombre = estadoInput.value
+            const coloniaErrorDiv = document.getElementById("colonia-error"); 
+
+            coloniaSelect.classList.remove('is-invalid');
+            coloniaSelect.classList.remove('is-valid');
+            coloniaErrorDiv.style.display = 'none';
+
+            if (coloniaNombre) {
+              fetch(`/predio/api/calles-general/${encodeURIComponent(estadoNombre)}/${encodeURIComponent(municipioNombre)}/${encodeURIComponent(coloniaNombre)}/`)
+              .then(response => {
+                        if (!response.ok) throw new Error('No se pudo cargar las calles para la colonia seleccionada');
+                        return response.json();
+                    })
+                    .then(data => {
+                        updateCalleSelect(data.calles);  
+                        coloniaSelect.classList.add('is-valid'); 
+
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        coloniaSelect.classList.add('is-invalid'); 
+
+                        calleSelect.innerHTML = '<option value="">SELECCIONE UNA CALLE</option>';
+                    });
+            } else {
+                coloniaSelect.classList.add('is-invalid'); 
+
+                calleSelect.innerHTML = '<option value="">SELECCIONE CALLE</option>';
+            }
+        });
+
+        function clearModalInputsAndErrors() {
+            const calleNameInput = document.getElementById("calleName");
+            const calleErrorDiv = document.getElementById("calle-error");
+            const calleSelect = document.getElementById("calle");
+        
+            calleNameInput.value = '';
+        
+            calleErrorDiv.style.display = 'none';
+            calleSelect.classList.remove('is-invalid');
+        }
+
+        let inicializacionCalleCompleta = false;  // Variable para controlar la inicialización de la selección de calle
+
+        function updateCalleSelect(calles) {
+            const calleSelect = document.getElementById("calle");
+            calleSelect.innerHTML = '<option value="">Seleccione Calle</option>'; // Limpiar el selector
+        
+            const newCalleOption = new Option("Agregar nueva calle", "new");
+            calleSelect.appendChild(newCalleOption);
+        
+            calles.forEach(calle => {
+                const option = new Option(calle.nombre, calle.id);
+                calleSelect.appendChild(option);
+            });
+        
+            // Manejar la selección de la opción "Agregar nueva calle"
+            calleSelect.addEventListener('change', function() {
+                calleSelect.classList.remove('is-invalid');
+                calleSelect.classList.remove('is-valid');
+        
+                if (calleSelect.value === "new") {
+                    clearModalInputsAndErrors(); // Limpia el formulario y los errores antes de mostrar el modal
+                    $('#addCalleModal').modal('show'); // Abrir el modal para agregar una nueva calle
+                } else if (calleSelect.value && calleSelect.value !== "") {
+                    calleSelect.classList.add('is-valid');
+                }
+            });
+        
+            if (!inicializacionCalleCompleta) {
+                seleccionarCalleInicial();
+                inicializacionCalleCompleta = true;  // Marcar que la inicialización ha sido completada
+            }
+        }
+        
+        function seleccionarCalleInicial() {
+            const calleSelect = document.getElementById("calle");
+            const calleInicial = '{{ contribuyente.calle|upper }}';  // Asegúrate de que este valor se pasa correctamente
+        
+            for (const option of calleSelect.options) {
+                if (option.text.toUpperCase() === calleInicial) {
+                    calleSelect.value = option.value;
+                    calleSelect.dispatchEvent(new Event('change')); // Opcional: Dispara el evento change si es necesario
+                    break;
+                }
+            }
+        }
+
+        nextStepButton2.addEventListener('click', function(event) {
+            const calleErrorDiv = document.getElementById("calle-error");
+            const coloniaErrorDiv = document.getElementById("colonia-error"); // Asegúrate de tener este elemento en tu HTML para mostrar errores de colonia
+        
+            const codigoPostal = codigoPostalInput.value;  // Usamos la variable global como mencionaste
+            const selectedCalle = calleSelect.value;
+            const selectedColonia = coloniaSelect.value;
+        
+            let isValid = true;  // Variable para controlar la validez del formulario
+        
+            // Limpiar errores previos
+            calleErrorDiv.style.display = 'none';
+            coloniaErrorDiv.style.display = 'none';
+            calleSelect.classList.remove('is-invalid');
+            coloniaSelect.classList.remove('is-invalid');
+            codigoPostalInput.classList.remove('is-invalid');
+        
+            // Validar que se ha seleccionado una calle
+            if (selectedCalle === '' || selectedCalle === 'new') {
+                calleErrorDiv.textContent = 'Por favor, seleccione una calle válida.';
+                calleErrorDiv.style.display = 'block';
+                calleSelect.classList.add('is-invalid');
+                isValid = false; // Marcar el formulario como inválido
+            }
+        
+            // Validar que se ha seleccionado una colonia
+            if (selectedColonia === '') {
+                coloniaErrorDiv.textContent = 'Por favor, seleccione una colonia.';
+                coloniaErrorDiv.style.display = 'block';
+                coloniaSelect.classList.add('is-invalid');
+                isValid = false; // Marcar el formulario como inválido
+            }
+        
+            // Validar que el código postal tenga exactamente 5 dígitos
+            if (!/^\d{5}$/.test(codigoPostal)) {
+                codigoPostalInput.classList.add('is-invalid');
+                isValid = false; // Marcar el formulario como inválido
+            }
+        
+            // Si alguna validación falló, detener el procesamiento adicional
+            if (!isValid) {
+                event.preventDefault(); // Detener el evento de click si hay errores
+                return false;
+            }
+        
+            showNextTab('#wizard-informacion-fiscal-tab'); 
+            fiscalTab.classList.remove('disabled');
+  
+        });
+        function validateAndCapitalizeInput(event) {
+            const input = event.target;
+            input.value = input.value.toUpperCase(); 
+                if (input.value.length > 0) {
+                input.classList.add('is-valid');  
+            } else {
+                input.classList.remove('is-valid'); 
+            }
+        }
+
+        interiorInput.addEventListener('input', validateAndCapitalizeInput);        
+        exteriorInput.addEventListener('input', validateAndCapitalizeInput);
+        function checkInitialInputValue(inputElement) {
+            if (inputElement.value.trim() !== '') {
+                const event = new Event('input');
+                inputElement.dispatchEvent(event);
+            }
+        }
+        checkInitialInputValue(interiorInput);
+        checkInitialInputValue(exteriorInput);
+
+
+    });
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const tipoPersonaField = document.querySelector('select[name="informacion_contribuyente-tipoPersona"]');
+        const personaFisicaFields = document.querySelectorAll('.persona-fisica');
+        const personaMoralFields = document.querySelectorAll('.persona-moral');
+        const rfcField = document.querySelector('input[name="informacion_fiscal-rfc"]');
+        const curpField = document.querySelector('input[name="informacion_contribuyente-curp"]');
+        const emailField = document.querySelector('input[name="informacion_contribuyente-email"]');
+        const telefonoField = document.querySelector('input[name="informacion_contribuyente-telefono"]');
+        const mcField = document.querySelector('input[name="informacion_contribuyente-mc"]');
+        const mcFields = document.querySelectorAll('.mc-fields');
+        const constanciaFiscalField = document.querySelector('input[name="informacion_fiscal-constancia_fiscal"]');
+        const pdfFrame = document.getElementById('pdf-frame');
+        const pdfCloseButton = document.getElementById('pdf-close-button');
+        const pdfUrl = "{{ pdf_url|default_if_none:'' }}"; // Default to empty string if pdf_url is None
+      
+  
+        function toggleMcFields() {
+          if (mcField.checked) {
+            mcFields.forEach(field => field.style.display = 'block');
+          } else {
+            mcFields.forEach(field => field.style.display = 'none');
+          }
+        }
+    
+        function showPDFPreview(file = null) {
+            if (file) {
+                // Verificar que el archivo seleccionado es un PDF
+                if (file.type !== 'application/pdf') {
+                    alert('Solo se permiten archivos PDF.');
+                    file.target.value = ''; // Resetear el input
+                    hidePDF();
+                    return;
+                }
+        
+                // Leer el archivo seleccionado y mostrarlo
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    displayPDF(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // No hay un nuevo archivo seleccionado
+                // Verificar si hay un pdfUrl y mostrarlo
+                if (pdfUrl) {
+                    displayPDF(pdfUrl);
+                } else {
+                    // No hay archivo nuevo ni pdfUrl
+                    hidePDF();
+                }
+            }
+        }
+        
+        function displayPDF(url) {
+            pdfFrame.src = url;
+            pdfFrame.style.display = 'block';
+            pdfCloseButton.style.display = 'block';
+        }
+        
+        function hidePDF() {
+            pdfFrame.style.display = 'none';
+            pdfCloseButton.style.display = 'none';
+        }
+
+        showPDFPreview();
+
+        
+    
+        constanciaFiscalField.addEventListener('change', function(event) {
+            showPDFPreview(event.target.files[0]);
+        });
+        
+        
+        pdfCloseButton.addEventListener('click', function() {
+            pdfFrame.src = '';
+            pdfFrame.style.display = 'none';
+            pdfCloseButton.style.display = 'none';
+        });
+    
+        tipoPersonaField.addEventListener('change', toggleFields);
+        mcField.addEventListener('change', toggleMcFields);
+    
+        if (pdfUrl) {
+            pdfFrame.src = pdfUrl;
+            pdfFrame.style.display = 'block';
+            pdfCloseButton.style.display = 'block';
+        } else {
+            pdfFrame.style.display = 'none';
+            pdfCloseButton.style.display = 'none';
+        }
+      
+        toggleFields(); // Inicializar visibilidad de campos
+        toggleMcFields(); // Inicializar visibilidad de campos MC
+      
+        // Seleccionar todos los campos de texto y aplicar la transformación a mayúsculas, excepto el email
+        const fieldsToUppercase = document.querySelectorAll('input[type="text"], textarea');
+        fieldsToUppercase.forEach(field => {
+          if (field !== emailField) {
+            field.addEventListener('input', function() {
+              this.value = this.value.toUpperCase();
+            });
+          }
+        });
+      
+        // Copiar los primeros 10 caracteres del curp al rfc para personas físicas
+        curpField.addEventListener('input', function() {
+          if (tipoPersonaField.value === 'PF' && this.value.length >= 10) {
+            rfcField.value = this.value.slice(0, 10).toUpperCase();
+          }
+        });
+      
+        // Validar que el campo teléfono solo acepte números
+        telefonoField.addEventListener('input', function() {
+          this.value = this.value.replace(/[^0-9]/g, '');
+        });
+      });
+      
+      function showNextTab(tabId) {
+        var nextTab = new bootstrap.Tab(document.querySelector(tabId));
+        nextTab.show();
+      }
+      
+      function showPreviousTab(tabId) {
+        var prevTab = new bootstrap.Tab(document.querySelector(tabId));
+        prevTab.show();
+      }
+      
+      function submitForm() {
+        var form = document.getElementById('multi-step-form');
+        var formData = new FormData(form);
+        var url = "{% if editing %}{% url 'editar_contribuyente' contribuyente.id %}{% else %}{% url 'registro_contribuyente' %}{% endif %}";
+      
+        fetch(url, {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+          }
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.href = data.redirect_url;  
+          } else {
+            var errorMessages = 'Error al enviar el formulario:';
+            for (var section in data.errors) {
+              if (data.errors.hasOwnProperty(section)) {
+                var sectionErrors = data.errors[section];
+                for (var field in sectionErrors) {
+                  if (sectionErrors.hasOwnProperty(field)) {
+                    var fieldErrors = sectionErrors[field];
+                    fieldErrors.forEach(function(error) {
+                      errorMessages += `\n ${field}`;
+                    });
+                  }
+                }
+              }
+            }
+            showAlert(errorMessages, 'danger');
+          }
+        })
+        .catch(error => {
+          showAlert('Error: ' + error.message, 'danger');
+          console.error('Error:', error);
+        });
+      }
+      
+  
+      function showAlert(message, type) {
+        const alertContainer = document.getElementById('alert-container');
+        alertContainer.innerHTML = `
+          <div class="alert alert-${type} dark alert-dismissible fade show" role="alert" id="alert-message">
+            <i class="fa fa-${type === 'success' ? 'check-square' : 'exclamation-triangle'}"></i>
+            <p><strong>${message}</strong></p>
+            <button class="btn-close" type="button" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        `;
+      
+        // Cerrar la alerta automáticamente después de 5 segundos (5000 milisegundos)
+        setTimeout(function() {
+          const alertMessage = document.getElementById('alert-message');
+          if (alertMessage) {
+            alertMessage.classList.add('alert-message-hide'); // Agregar clase para animación de desaparición
+            setTimeout(function() {
+              alertMessage.remove(); // Eliminar la alerta después de la animación
+            }, 300); // Esperar 300ms después de la transición para eliminarla
+          }
+        }, 3000); // 5000 milisegundos = 5 segundos
+      }
+
+</script>
+{% endblock %}

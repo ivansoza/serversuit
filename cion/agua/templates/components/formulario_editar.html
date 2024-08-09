@@ -1,0 +1,356 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="col-md-12">
+  <div class="card">
+    <div class="card-header pb-0">
+      <h3>Registro</h3>
+      <p class="f-m-light mt-1">Llena los datos y luego procede.</p>
+    </div>
+    <div class="card-body">
+      <div class="vertical-main-wizard">
+        <div class="row g-3">
+          <div class="col-xxl-3 col-xl-4 col-12">
+            <div class="nav flex-column header-vertical-wizard" id="wizard-tab" role="tablist"
+              aria-orientation="vertical">
+              <a class="nav-link active" id="wizard-contact-tab" data-bs-toggle="pill" href="#wizard-contact" role="tab"
+                aria-controls="wizard-contact" aria-selected="true">
+                <div class="vertical-wizard">
+                  <div class="stroke-icon-wizard"><i class="fa fa-user"></i></div>
+                  <div class="vertical-wizard-content">
+                    <h3>Información del contribuyente</h3>
+                    <p>Agrega los detalles sobre el contribuyente</p>
+                  </div>
+                </div>
+              </a>
+              <a class="nav-link" id="wizard-cart-tab" data-bs-toggle="pill" href="#wizard-cart" role="tab"
+                aria-controls="wizard-cart" aria-selected="false">
+                <div class="vertical-wizard">
+                  <div class="stroke-icon-wizard"><i class="fa fa-map-marker"></i></div>
+                  <div class="vertical-wizard-content">
+                    <h3>Información del predio</h3>
+                    <p>Agrega los detalles sobre predio</p>
+                  </div>
+                </div>
+              </a>
+              <a class="nav-link" id="wizard-banking-tab" data-bs-toggle="pill" href="#wizard-banking" role="tab"
+                aria-controls="wizard-banking" aria-selected="false">
+                <div class="vertical-wizard">
+                  <div class="stroke-icon-wizard"><i class="fa fa-tint"></i></div>
+                  <div class="vertical-wizard-content">
+                    <h3>Información de las tomas de agua</h3>
+                    <p>Agrega los detalles sobre las tomas de agua</p>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-xxl-9 col-xl-8 col-12">
+            <form method="post" class="row g-3 needs-validation custom-input" novalidate="">
+              {% csrf_token %}
+              <div class="tab-content" id="wizard-tabContent">
+                <!-- Información del contribuyente -->
+                <div class="tab-pane fade show active" id="wizard-contact" role="tabpanel"
+                  aria-labelledby="wizard-contact-tab">
+                  <div class="col-12">
+                    <label class="form-label" for="consultaRFCorCURP">Consulta<span class="txt-danger">*</span></label>
+                    <div class="input-group mb-3 has-validation">
+                        <input type="text" class="form-control" id="consultaRFCorCURP" placeholder="Ingresa RFC, CURP, nombre o razón social para consultar" required oninput="validateRFC();" maxlength="30">
+                        <button class="btn btn-outline-danger disabled" id="consultarBtn" type="button" disabled>Consultar</button>
+                        <button type="button" class="btn btn-outline-primary ms" data-bs-toggle="modal" data-bs-target="#helpModal">
+                            <i data-feather="info"></i>
+                        </button>
+                        <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                </div>
+                
+                  <div class="row g-3">
+                    <div class="col-xxl-4 col-sm-6">
+                      <label class="form-label" for="validationRFC">RFC<span class="txt-danger">*</span></label>
+                      <div class="input-group mb-3">
+                        {{ form.rfc }}
+                        <div class="valid-feedback">¡Se ve bien!</div>
+                      </div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6">
+                      <label class="form-label" for="validationHomoclave">Homoclave<span
+                          class="txt-danger">*</span></label>
+                      {{ form.homoclave }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6" id="contriCURP">
+                      <label class="form-label" for="validationCurp">CURP<span class="txt-danger">*</span></label>
+                      {{ form.curp }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6" id="nombre">
+                      <label class="form-label" for="validationNombre">Nombre (s)<span
+                          class="txt-danger">*</span></label>
+                      {{ form.nombre }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6" id="apellidoPa">
+                      <label class="form-label" for="validationApellidoP">Apellido Paterno<span
+                          class="txt-danger">*</span></label>
+                      {{ form.ApellidoP }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6" id="apellidoMa">
+                      <label class="form-label" for="validationApellidoM">Apellido Materno<span
+                          class="txt-danger">*</span></label>
+                      {{ form.ApellidoM }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <h4 style="display:none;" id="nombreAdi">Nombre adicional</h4>
+
+                    <div class="col-xxl-4 col-sm-6" style="display:none;" id="nombreMCContainer">
+                      <label class="form-label" for="validationNombreMC">Nombre (s)<span
+                          class="txt-danger">*</span></label>
+                      {{ form.nombre_mc }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6" style="display:none;" id="apellidoPMCContainer">
+                      <label class="form-label" for="validationApellidoPMC">Apellido Paterno <span
+                          class="txt-danger">*</span></label>
+                      {{ form.ApellidoP_mc }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6" style="display:none;" id="apellidoMMCContainer">
+                      <label class="form-label" for="validationApellidoMMC">Apellido Materno <span
+                          class="txt-danger">*</span></label>
+                      {{ form.ApellidoM_mc }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6" style="display:none;" id="contribuyentePersonaMoral">
+                      <label class="form-label" for="validationRazonSocial">Razón Social<span
+                          class="txt-danger">*</span></label>
+                      {{ form.razonSocial }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6" style="display:none;" id="contribuyenteTipoPersona">
+                      <label class="form-label" for="validationTipoPersona">Tipo de persona<span
+                          class="txt-danger">*</span></label>
+                      {{ form.tipoPersona }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+
+                    <div class="col-xxl-4 col-sm-6">
+                      <label class="form-label" for="validationEmail">Correo electrónico<span
+                          class="txt-danger">*</span></label>
+                      {{ form.email }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-xxl-4 col-sm-6">
+                      <label class="form-label" for="validationTelefono">Teléfono<span
+                          class="txt-danger">*</span></label>
+                      {{ form.telefono }}
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-6" style='display:none'>
+                      <label class="form-label" for="validationContribuyente">Contribuyente<span
+                          class="txt-danger">*</span></label>
+                      {{ form.contri }}
+                      <div class="invalid-feedback">Por favor selecciona un contribuyente.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-12 text-end">
+                      <button class="btn btn-success-new" type="button" id="nextStep1">Siguiente</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Información del predio -->
+                <div class="tab-pane fade" id="wizard-cart" role="tabpanel" aria-labelledby="wizard-cart-tab">
+                  <div class="col-12">
+                    <label class="form-label" for="selectPredio">Predio<span class="txt-danger">*</span></label>
+    <div class="input-group mb-3 has-validation">
+      <select class="form-select" id="selectPredios" name="predio" >
+        <option value="" selected disabled>Selecciona un predio</option>
+        {% for option in opciones_predio %}
+          <option value="{{ option.value }}">{{ option.label }}</option>
+        {% endfor %}
+      </select>
+      <button type="button" class="btn btn-outline-primary ms" data-bs-toggle="modal" data-bs-target="#helpModalPredio">
+        <i data-feather="info"></i>
+    </button>
+      <div class="valid-feedback">¡Se ve bien!</div>
+    </div>
+                </div>
+                  <div class="row g-3">
+                    <div class="col-xxl-4">
+                      <label class="form-label" for="validationClaveCatastral">Clave Catastral<span
+                          class="txt-danger">*</span></label>
+                      <div class="input-group mb-3">
+                        {{ form.claveCatastral }}
+                        <div class="invalid-feedback">Por favor ingresa una clave catastral válida.</div>
+                        <div class="valid-feedback">¡Se ve bien!</div>
+                      </div>
+                    </div>
+                    <div class="col-md-4" style='display:none'>
+                      <label class="form-label" for="validationPredio">Predio<span class="txt-danger">*</span></label>
+                      {{ form.predio }}
+                      <div class="invalid-feedback">Por favor selecciona un predio.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationEstado">Estado<span class="txt-danger">*</span></label>
+                      {{ form.estado }}
+                      <div class="invalid-feedback">Por favor ingresa un estado válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationCodigoPostal">Código Postal<span
+                          class="txt-danger">*</span></label>
+                      {{ form.codigo_postal }}
+                      <div class="invalid-feedback">Por favor ingresa un código postal válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationMunicipioP">Municipio<span
+                          class="txt-danger">*</span></label>
+                      {{ form.municipio_predio }}
+                      <div class="invalid-feedback">Por favor ingresa el municipio.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationColonia">Colonia<span class="txt-danger">*</span></label>
+                      {{ form.colonia }}
+                      <div class="invalid-feedback">Por favor selecciona una colonia válida.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationCalle">Calle<span class="txt-danger">*</span></label>
+                      {{ form.calle }}
+                      <div class="invalid-feedback">Por favor selecciona una calle válida.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationNumeroExterior">Número Exterior<span
+                          class="txt-danger">*</span></label>
+                      {{ form.numero_exterior }}
+                      <div class="invalid-feedback">Por favor ingresa un número exterior válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationNumeroInterior">Número Interior</label>
+                      {{ form.numero_interior }}
+                      <div class="invalid-feedback">Por favor ingresa un número interior válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationSuperficieTotal">Superficie Total<span
+                          class="txt-danger">*</span></label>
+                      {{ form.superficie_total }}
+                      <div class="invalid-feedback">Por favor ingresa una superficie total válida.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationSuperficieConstruida">Superficie Construida</label>
+                      {{ form.superficie_construida }}
+                      <div class="invalid-feedback">Por favor ingresa una superficie construida válida.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationUsoPredio">Uso del Predio<span
+                          class="txt-danger">*</span></label>
+                      {{ form.uso_predio }}
+                      <div class="invalid-feedback">Por favor selecciona un uso del predio válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-4">
+                      <label class="form-label" for="validationValorCatastral">Valor Catastral<span
+                          class="txt-danger">*</span></label>
+                      {{ form.valor_catastral }}
+                      <div class="invalid-feedback">Por favor ingresa un valor catastral válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-12 text-end">
+                      <button class="btn btn-secondary-new" type="button" id="previousStep2">Anterior</button>
+                      <button class="btn btn-success-new" type="button" id="nextStep2">Siguiente</button>
+                    </div>
+                  </div>
+                </div>
+
+
+                <!-- Información de las tomas de agua -->
+                <div class="tab-pane fade custom-input" id="wizard-banking" role="tabpanel"
+                  aria-labelledby="wizard-banking-tab">
+                  <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                      <label class="form-label" for="validationNoServicio">No. de servicio<span
+                          class="txt-danger">*</span></label>
+                      {{ form.noServicio }}
+                      <div class="invalid-feedback">Por favor ingresa un número de servicio válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-6">
+                      <label class="form-label" for="validationTipoServicio">Tipo de servicio<span
+                          class="txt-danger">*</span></label>
+                      {{ form.tipoServicio }}
+                      <div class="invalid-feedback">Por favor selecciona un tipo de servicio válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-6" style="display: none;">
+                      <label class="form-label" for="validationMunicipio">Municipio<span
+                          class="txt-danger">*</span></label>
+                      {{ form.municipio }}
+                      <div class="invalid-feedback">Por favor ingresa un número de servicio válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-md-6" style="display: none;">
+                      <label class="form-label" for="validationRegistro">Registro<span
+                          class="txt-danger">*</span></label>
+                      {{ form.registro }}
+                      <div class="invalid-feedback">Por favor ingresa un número de servicio válido.</div>
+                      <div class="valid-feedback">¡Se ve bien!</div>
+                    </div>
+                    <div class="col-12 text-end">
+                      <button class="btn btn-secondary-new" type="button" id="previousStep3">Anterior</button>
+                      <button class="btn btn-success-new" type="submit">Enviar</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+      // Verificar el contenido de los campos y mostrar/ocultar según el caso
+      document.querySelectorAll('.hidden-if-empty').forEach(function(element) {
+          var input = element.querySelector('input, select, textarea');
+          if (input) {
+              if (input.value.trim() === '') {
+                  element.style.display = 'none'; // Oculta el contenedor si el campo está vacío
+              } else {
+                  element.style.display = ''; // Muestra el contenedor si el campo tiene contenido
+              }
+          }
+      });
+  });
+</script>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // Obtener todos los campos de texto que deseas convertir a mayúsculas
+    const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+
+    // Función para convertir texto a mayúsculas
+    const convertirAMayusculas = function (event) {
+      const campo = event.target;
+      campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+    };
+
+    // Agregar evento de escucha a cada campo de texto
+    camposTexto.forEach(function (campo) {
+      campo.addEventListener('input', convertirAMayusculas);
+    });
+  });
+</script>

@@ -1,0 +1,262 @@
+{% load static %}
+{% load sass_tags %}
+
+<!-- Page Sidebar Start-->
+<div class="sidebar-wrapper" data-layout="stroke-svg">
+  <div>
+    <div class="logo-wrapper"><a href="/index">
+      
+      {% if personalizacion.logotipo_url %}
+          <img class="img-fluid" src="{{personalizacion.logotipo_url}}" alt="">
+      {% else %}
+          <img class="img-fluid" src="{% static 'assets/images/logo/logo-nuevo.png' %}" alt="">
+      {% endif %}
+      
+     </a>
+      <div class="back-btn"><i class="fa fa-angle-left"></i></div>
+    </div>
+    <nav class="sidebar-main">
+      <div class="left-arrow" id="left-arrow"><i data-feather="arrow-left"></i></div>
+      <div id="sidebar-menu">
+        <ul class="sidebar-links" id="simple-bar">
+          <li class="back-btn">
+            <div class="mobile-back text-end"><span>Back</span><i class="fa fa-angle-right ps-2" aria-hidden="true"></i>
+            </div>
+          </li>
+          <li class="pin-title sidebar-main-title">
+            <div>
+              <h6>Pinned</h6>
+            </div>
+          </li>
+   
+          <li class="sidebar-list">
+            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+              <svg class="stroke-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#stroke-file"></use>
+              </svg>
+              <svg class="fill-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#fill-file"></use>
+              </svg>
+              <span>Oficialía de partes</span>
+            </a>
+            <ul class="sidebar-submenu custom-scrollbar">
+              <li class="sidebar-head">Oficialía de partes </li>
+              <li class="main-submenu">
+                <a class="d-flex sidebar-menu" href="javascript:void(0)">
+                  <svg class="stroke-icon">
+                    <use href="{% static 'assets/svg/icon-sprite.svg'%}#home"></use>
+                  </svg>
+                  <svg class="fill-icon">
+                    <use href="{% static 'assets/svg/icon-sprite.svg'%}#fill-home"></use>
+                  </svg>
+                  Oficialía de partes
+                  <svg class="arrow">
+                    <use  href="{% static 'assets/svg/icon-sprite.svg'%}#Arrow-right"></use>
+                  </svg>
+                </a>
+                <ul class="submenu-wrapper">
+                  <li><a href=" {% url "inicioODP" %}">Inicio</a></li>
+                  <li><a href=" {% url "registrosODP" %}">Tabla de registros</a></li>
+                  <li><a href=" {% url "formularioODP" %}">Nuevo Registro</a></li>
+                  <li><a href=" {% url "areasODP" %}?filtro=sin_respuesta">Documentación por area</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+
+
+          <li class="sidebar-list {% if sidebar == 'predio' %}active{% endif %}">
+            <a class="sidebar-link sidebar-title {% if sidebar == 'predio' %}active{% endif %}" href="javascript:void(0)">
+              <svg class="stroke-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#stroke-maps"></use>
+              </svg>
+              <svg class="fill-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#fill-maps"></use>
+              </svg>
+              <span>Predial</span>
+            </a>
+            <ul class="sidebar-submenu custom-scrollbar">
+              <li class="sidebar-head">Servicio de Predio</li>
+              <li class="main-submenu ">
+                <a class="d-flex sidebar-menu" href="javascript:void(0)">
+                  <svg class="stroke-icon">
+                    <use href="{% static 'assets/svg/icon-sprite.svg'%}#stroke-button"></use>
+                  </svg>
+                  <svg class="fill-icon">
+                    <use href="{% static 'assets/svg/icon-sprite.svg'%}#fill-home"></use>
+                  </svg>
+                  Opciones
+                  <svg class="arrow">
+                    <use href="{% static 'assets/svg/icon-sprite.svg' %}#Arrow-right"></use>
+                  </svg>
+                </a>
+                <ul class="submenu-wrapper">
+                  <li><a href="{% url "homePredio" %}">Home</a></li>
+                  <li><a href="{% url "registroPredios" %}">Registros No. Predio</a></li>
+                  <li><a href="{% url "formularioPredio" %}">Nuevo No. Predio</a></li>
+                </ul>
+              </li>
+
+            </ul>
+          </li>
+          <li class="sidebar-list {% if sidebar == 'homeagua' %}active{% endif %}">
+            <a class="sidebar-link sidebar-title {% if sidebar == 'homeagua' %}active{% endif %}" href="javascript:void(0)">
+              <svg class="stroke-icon">
+                  <use href="{% static 'assets/svg/icon-sprite.svg' %}#stroke-animation"></use>
+              </svg>
+              <svg class="fill-icon">
+                  <use href="{% static 'assets/svg/icon-sprite.svg' %}#fill-animation"></use>
+              </svg>
+              <span>Agua potable</span>
+          </a>          
+            <ul class="sidebar-submenu custom-scrollbar">
+              <li class="sidebar-head">Servicio de Agua Potable</li>
+              <li class="main-submenu">
+                <a class="d-flex sidebar-menu" href="javascript:void(0)">
+                  <svg class="stroke-icon">
+                    <use href="{% static 'assets/svg/icon-sprite.svg'%}#stroke-button"></use>
+                  </svg>
+                  <svg class="fill-icon">
+                    <use href="{% static 'assets/svg/icon-sprite.svg'%}#fill-home"></use>
+                  </svg>
+                  Opciones
+                  <svg class="arrow">
+                    <use href="{% static 'assets/svg/icon-sprite.svg' %}#Arrow-right"></use>
+                  </svg>
+                </a>
+                <ul class="submenu-wrapper">
+                  <li><a href="{% url "homeAgua" %}">Home</a></li>
+                  <li><a href="{% url "registrosAgua" %}">Registros No. Servicio</a></li>
+                  <li><a href="{% url "formularioAgua" %}">Nuevo No. Servicio</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="sidebar-list {% if sidebar == "ordenpago" %}active{% endif %}">
+            <a class="sidebar-link sidebar-title" href="javascript:void(0)">
+              <svg class="stroke-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#stroke-task"></use>
+              </svg>
+              <svg class="fill-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#fill-task"></use>
+              </svg>
+              <span>Ordenes de pago</span>
+            </a>
+            <ul class="sidebar-submenu custom-scrollbar">
+              <li class="sidebar-head">Ordenes de pago</li>
+
+              <li class="main-submenu">
+                <a class="d-flex sidebar-menu" href="javascript:void(0)">
+                  Opciones
+                  <svg class="arrow">
+                    <use href="{% static 'assets/svg/icon-sprite.svg' %}#Arrow-right"></use>
+                  </svg>
+                </a>
+                <ul class="submenu-wrapper">
+                  <li><a href="{% url 'home_odp' %}">Inicio</a></li>
+                  <li><a href="{% url "create_orden_pago" %}">Crear Orden de Pago</a></li>
+                </ul>
+              </li>
+              <li class="main-submenu">
+                <a class="d-flex sidebar-menu" href="javascript:void(0)">
+                  Adeudos
+                  <svg class="arrow">
+                    <use href="{% static 'assets/svg/icon-sprite.svg' %}#Arrow-right"></use>
+                  </svg>
+                </a>
+                <ul class="submenu-wrapper">
+                  <li><a href="{% url 'busqueda_adeudo' %}">Buscar contribuyente</a></li>
+                  <li><a href="javascript:void(0)">Option 2</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li class="sidebar-list">
+            <a class="sidebar-link sidebar-title" href="javascript:void(0)" disabled>
+              <svg class="stroke-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#Buy"></use>
+              </svg>
+              <svg class="fill-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#fill-Buy"></use>
+              </svg>
+              <span>Caja</span>
+            </a>
+            {% comment %} <ul class="sidebar-submenu custom-scrollbar">
+              <li class="sidebar-head">Caja</li>
+              <li class="main-submenu">
+                <a class="d-flex sidebar-menu" href="javascript:void(0)">
+                  Submenu 1
+                  <svg class="arrow">
+                    <use href="{% static 'assets/svg/icon-sprite.svg' %}#Arrow-right"></use>
+                  </svg>
+                </a>
+                <ul class="submenu-wrapper">
+                  <li><a href="javascript:void(0)">Option 1</a></li>
+                  <li><a href="javascript:void(0)">Option 2</a></li>
+                </ul>
+              </li>
+              <li class="main-submenu">
+                <a class="d-flex sidebar-menu" href="javascript:void(0)">
+                  Submenu 2
+                  <svg class="arrow">
+                    <use href="{% static 'assets/svg/icon-sprite.svg' %}#Arrow-right"></use>
+                  </svg>
+                </a>
+                <ul class="submenu-wrapper">
+                  <li><a href="javascript:void(0)">Option 1</a></li>
+                  <li><a href="javascript:void(0)">Option 2</a></li>
+                </ul>
+              </li>
+            </ul> {% endcomment %}
+          </li>
+          <li class="sidebar-list {% if sidebar == 'home_contribuyente' %}active{% endif %}">
+            <a class="sidebar-link sidebar-title {% if sidebar == 'home_contribuyente' %}active{% endif %}" href="javascript:void(0)">
+              <svg class="stroke-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#stroke-user"></use>
+              </svg>
+              <svg class="fill-icon">
+                <use href="{% static 'assets/svg/icon-sprite.svg' %}#fill-user"></use>
+              </svg>
+              <span>Contribuyente</span>
+            </a>
+            <ul class="sidebar-submenu custom-scrollbar">
+              <li class="sidebar-head">Contribuyente</li>
+              <li class="main-submenu">
+                <a class="d-flex sidebar-menu" href="{% url 'home_ctr' %}">
+                  Inicio
+                  <svg class="arrow">
+                    <use href="{% static 'assets/svg/icon-sprite.svg' %}"></use>
+                  </svg>
+                </a>
+                <ul class="submenu-wrapper">
+                  <li><a href="{% url 'home_ctr' %}">Inicio</a></li>
+                  <li><a href="{% url 'registro_contribuyente' %}">Registrar</a></li>
+                  <li><a href="{% url 'lista_ctr' %}">Contribuyentes</a></li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+
+          
+          
+          <li class="sidebar-list {% if sidebar == 'catalogo' %}active{% endif %}"><a class="sidebar-link sidebar-title {% if sidebar == 'catalogo' %}active{% endif %}" href=" {% url "homeCatalogos" %}">
+            <svg class="stroke-icon">
+              <use href="{% static 'assets/svg/icon-sprite.svg' %}#Perk-Ui"></use>
+            </svg>
+            <svg class="fill-icon">
+              <use href="{% static 'assets/svg/icon-sprite.svg' %}#fill-Perk-Ui"></use>
+            </svg><span>Catalogo</span></a>
+          </li>
+        </ul>
+      </div>
+      <div class="right-arrow" id="right-arrow"><i data-feather="arrow-right"></i></div>
+    </nav>
+  </div>
+</div>
+<!-- Page Sidebar Ends-->
+
+
+<script>
+
+  
+</script>

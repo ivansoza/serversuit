@@ -1,0 +1,388 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <!-- Tarjeta con formulario de búsqueda -->
+            <form id="search-form" method="GET" action="{% url 'buscar_contribuyente' %}">
+
+            <div class="card">
+                <div class="card-body">
+                    Consulta
+                    <div class="input-group mb-3">
+                            <input type="text" id="search-query" class="form-control" name="query" placeholder="Ingresa RFC, CURP, nombre o razón social para consultar" aria-label="Buscar" value="{{ request.GET.query }}">
+                            <button id="search-button" class="btn btn-outline-warning" type="button">Buscar</button>
+                            <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#helpModal">
+                                <i data-feather="info"></i>
+                            </button>
+                            <div class="valid-feedback">¡Se ve bien!</div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Obtener todos los campos de texto que deseas convertir a mayúsculas
+        const camposTexto = document.querySelectorAll('input[type="text"], input[type="email"], textarea');
+
+        // Función para convertir texto a mayúsculas
+        const convertirAMayusculas = function (event) {
+            const campo = event.target;
+            campo.value = campo.value.toUpperCase(); // Convertir a mayúsculas
+        };
+
+        // Agregar evento de escucha a cada campo de texto
+        camposTexto.forEach(function (campo) {
+            campo.addEventListener('input', convertirAMayusculas);
+        });
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        function performSearch() {
+            let query = $('#search-query').val(); // Obtiene el valor de la búsqueda
+    
+            $.ajax({
+                url: '{% url "buscar_contribuyente_deuda" %}', // URL a tu vista de búsqueda
+                data: {
+                    query: query
+                },
+                success: function(data) {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+    
+                    if (data.contribuyentes) {
+                        // Muestra el modal con la lista de contribuyentes
+                        let listHtml = '';
+                        data.contribuyentes.forEach(contribuyente => {
+                            listHtml += `
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                <div class="d-flex flex-column">
+                                    <span><strong>Nombre:</strong> ${contribuyente.nombre_completo}</span>
+                                    <span><strong>RFC:</strong> ${contribuyente.rfc}</span>
+                                    <span><strong>Email:</strong> ${contribuyente.email}</span>
+                                    <span><strong>Teléfono:</strong> ${contribuyente.telefono}</span>
+                                    <span><strong>Dirección:</strong> ${contribuyente.direccion}</span>
+                                </div>
+                                <button type="button" class="btn btn-primary select-btn" data-id="${contribuyente.id}">Seleccionar</button>
+                            </li>
+                            `;
+                        });
+                        $('#contribuyenteList').html(listHtml);
+                        $('#exampleModalCenter1').modal('show'); // Abre el modal
+                    } else {
+                        // Actualiza la tarjeta de datos del usuario con el único resultado
+                        $('#user-card').html(`
+                        <div class="title-container">
+                           <h3 class="card-title titulo2">Datos del contribuyente</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-item user">
+                                <div class="icon-wrapper">
+                                    <i class="icofont icofont-user"></i>
+                                </div>
+                                <h5 id="user-name" class="card-title">
+                                    ${data.nombre_completo}
+                                </h5>
+                            </div>
+                            <div class="info-item id-card">
+                                <div class="icon-wrapper">
+                                    <i class="icofont icofont-id-card"></i>
+                                </div>
+                                <p class="card-text">
+                                    <strong>RFC:</strong> 
+                                    <span id="user-rfc">${data.rfc}</span>
+                                </p>
+                            </div>
+                            <div class="info-item email">
+                                <div class="icon-wrapper">
+                                    <i class="icofont icofont-email"></i>
+                                </div>
+                                <p class="card-text">
+                                    <strong>Correo Electrónico:</strong> 
+                                    <span id="user-email">${data.email}</span>
+                                </p>
+                            </div>
+                            <div class="info-item phone">
+                                <div class="icon-wrapper">
+                                    <i class="icofont icofont-phone"></i>
+                                </div>
+                                <p class="card-text">
+                                    <strong>Teléfono:</strong> 
+                                    <span id="user-phone">${data.telefono}</span>
+                                </p>
+                            </div>
+                            <div class="info-item location">
+                                <div class="icon-wrapper">
+                                    <i class="icofont icofont-location-pin"></i>
+                                </div>
+                                <p class="card-text">
+                                    <strong>Dirección:</strong> 
+                                    <span id="user-address">${data.direccion}</span>
+                                </p>
+                            </div>
+                        </div>
+                        `);
+                        $('#user-card').show(); // Muestra el div de datos del usuario
+    
+                        // Actualiza la tabla con los datos de los predios y servicios
+                        let prediosTableHtml = '';
+                        data.predios.forEach(predio => {
+                            prediosTableHtml += `
+                            <tr>
+                                <td>${predio.clave_catastral}</td>
+                                <td>${predio.colonia}</td>
+                                <td>${predio.calle}</td>
+                                <td>${predio.uso_predio}</td>
+                                <td>${predio.calor_catastral}</td>
+                                <td>
+                                    <button class="btn btn-pill btn-primary btn-info" data-id="${predio.id}" data-type="predio"><i class="icofont icofont-info"></i></button>
+
+                                </td>
+                            </tr>
+                            `;
+                        });
+                        $('#prediosTableBody').html(prediosTableHtml); // Actualiza el tbody de la tabla de predios
+    
+                        let serviciosTableHtml = '';
+                        data.servicios.forEach(servicio => {
+                            serviciosTableHtml += `
+                            <tr>
+                                <td>${servicio.no_servicio}</td>
+                                <td>${servicio.tipo_servicio}</td>
+                                <td>${servicio.fecha_alta}</td>
+                                <td>${servicio.contribuyente}</td>
+                                <td>
+                                    <button class="btn btn-pill btn-primary btn-info" data-id="${servicio.id}" data-type="servicio"><i class="icofont icofont-info"></i></button>
+
+                                </td>
+                            </tr>
+                            `;
+                        });
+                        $('#serviciosTableBody').html(serviciosTableHtml); // Actualiza el tbody de la tabla de servicios
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    showAlert('No se encontró un contribuyente con la información proporcionado, verifique la información o registre un nuevo contribuyente:', 'danger')
+                }
+            });
+        }
+    
+        $('#search-button').click(function(e) {
+            e.preventDefault(); // Evita el envío del formulario tradicional
+            performSearch();
+        });
+    
+        $('#search-query').keydown(function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); // Evita el comportamiento por defecto del Enter en el formulario
+                performSearch();
+            }
+        });
+    
+        $(document).on('click', '.select-btn', function() {
+            let contribuyenteId = $(this).data('id');
+    
+            $.ajax({
+                url: '{% url "buscar_contribuyente_deuda" %}',
+                data: {
+                    query: contribuyenteId
+                },
+                success: function(data) {
+                    $('#exampleModalCenter1').modal('hide');
+                    $('#user-card').html(`
+                    <br>
+                    <h3 style="text-align: center;" class="card-title">Datos del contribuyente</h3>
+                    <div class="card-body">
+                        <div class="info-item user">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-user"></i>
+                            </div>
+                            <h5 id="user-name" class="card-title">
+                                ${data.nombre_completo}
+                            </h5>
+                        </div>
+                        <div class="info-item id-card">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-id-card"></i>
+                            </div>
+                            <p class="card-text">
+                                <strong>RFC:</strong> 
+                                <span id="user-rfc">${data.rfc}</span>
+                            </p>
+                        </div>
+                        <div class="info-item email">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-email"></i>
+                            </div>
+                            <p class="card-text">
+                                <strong>Correo Electrónico:</strong> 
+                                <span id="user-email">${data.email}</span>
+                            </p>
+                        </div>
+                        <div class="info-item phone">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-phone"></i>
+                            </div>
+                            <p class="card-text">
+                                <strong>Teléfono:</strong> 
+                                <span id="user-phone">${data.telefono}</span>
+                            </p>
+                        </div>
+                        <div class="info-item location">
+                            <div class="icon-wrapper">
+                                <i class="icofont icofont-location-pin"></i>
+                            </div>
+                            <p class="card-text">
+                                <strong>Dirección:</strong> 
+                                <span id="user-address">${data.direccion}</span>
+                            </p>
+                        </div>
+                    </div>
+                    `);
+                    $('#user-card').show();
+    
+                    let prediosTableHtml = '';
+                    data.predios.forEach(predio => {
+                        prediosTableHtml += `
+                        <tr>
+                            <td>${predio.no_servicio}</td>
+                            <td>${predio.tipo_servicio}</td>
+                            <td>${predio.fecha_alta}</td>
+                            <td>${predio.clave_catastral}</td>
+                            <td>${predio.contribuyente}</td>
+                            <td>
+                                <button class="btn btn-pill btn-primary btn-info" data-id="${predio.id}" data-type="predio"><i class="icofont icofont-info"></i></button>
+                            </td>
+                        </tr>
+                        `;
+                    });
+                    $('#prediosTableBody').html(prediosTableHtml);
+    
+                    let serviciosTableHtml = '';
+                    data.servicios.forEach(servicio => {
+                        serviciosTableHtml += `
+                        <tr>
+                            <td>${servicio.no_servicio}</td>
+                            <td>${servicio.tipo_servicio}</td>
+                            <td>${servicio.fecha_alta}</td>
+                            <td>${servicio.contribuyente}</td>
+                            <td>
+                                <button class="btn btn-pill btn-primary btn-info" data-id="${servicio.id}" data-type="servicio"><i class="icofont icofont-info"></i></button>
+                            </td>
+                        </tr>
+                        `;
+                    });
+                    $('#serviciosTableBody').html(serviciosTableHtml);
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error:", error);
+                    showAlert('No se encontró un contribuyente con la información proporcionado, verifique la información o registre un nuevo contribuyente:', 'danger')
+                }
+            });
+        });
+    });
+    $(document).on('click', '.btn-info', function() {
+    let id = $(this).data('id');
+    let type = $(this).data('type');
+    
+    window.location.href = `/ordenesPago/info_adeudo/?id=${id}&type=${type}`;
+});
+
+    </script>
+    
+    <script>
+        function showAlert(message, type) {
+          const alertContainer = document.getElementById('alert-container');
+          const registerLink = type === 'danger' ? '<a href="{% url "registro_contribuyente" %}"  style="color: white; text-decoration: underline; margin-left: 10px;">Registrar Contribuyente</a>' : '';
+          alertContainer.innerHTML = `
+            <div class="alert alert-${type} alert-dismissible fade show" role="alert" id="alert-message">
+              <i class="fa fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+              <span>${message}</span>
+              ${registerLink}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          `;
+          
+          // Cerrar la alerta automáticamente después de 10 segundos (10000 milisegundos)
+          setTimeout(function() {
+              const alertMessage = document.getElementById('alert-message');
+              if (alertMessage) {
+                  alertMessage.classList.add('alert-message-hide'); // Agregar clase para animación de desaparición
+                  setTimeout(function() {
+                      alertMessage.remove(); // Eliminar la alerta después de la animación
+                  }, 300); // Esperar 300ms después de la transición para eliminarla
+              }
+          }, 10000);
+      }
+      </script>
+    <script>
+        function validateRFC() {
+          var input = document.getElementById('search-query');
+          var feedback = document.querySelector('.valid-feedback');
+          var btn = document.getElementById('search-button');
+      
+          // Verifica si la longitud del texto es 9 o 10
+          if (input.value.length >= 3 && input.value.length < 9) {
+              // Activa para razón social (longitud entre 3 y 8)
+              input.classList.add('is-valid');
+              input.classList.remove('is-invalid');
+              feedback.style.display = 'block';
+              feedback.innerText = 'Razón social posible. ¡Listo para consultar!';
+              btn.disabled = false;
+              btn.className = "btn btn-outline-primary";
+          }else if (input.value.length === 9) {
+              input.classList.add('is-valid');
+              input.classList.remove('is-invalid');
+              feedback.innerText = 'RFC para persona moral. ¡Listo para consultar!';
+              feedback.style.display = 'block'; // Muestra el mensaje de feedback positivo
+              btn.disabled = false;
+              btn.className = "btn btn-outline-primary"; // Cambia la clase para habilitado
+          } else if (input.value.length === 10) {
+              input.classList.add('is-valid');
+              input.classList.remove('is-invalid');
+              feedback.innerText = 'CURP para persona física. ¡Listo para consultar!';
+              feedback.style.display = 'block'; // Muestra el mensaje de feedback positivo
+              btn.disabled = false;
+              btn.className = "btn btn-outline-primary"; // Cambia la clase para habilitado
+          }else if (input.value.length > 10) {
+                  // Nombres largos
+                  input.classList.add('is-valid');
+                  input.classList.remove('is-invalid');
+                  feedback.style.display = 'block';
+                  feedback.innerText = 'Nombre de persona: ' + input.value + '. ¡Listo para consultar!';
+                  btn.disabled = false;
+                  btn.className = "btn btn-outline-primary";
+          }else {
+              input.classList.remove('is-valid');
+              input.classList.add('is-invalid');
+              feedback.style.display = 'none'; // Oculta el mensaje si no cumple los criterios
+              btn.disabled = true;
+              btn.className = "btn btn-outline-danger disabled"; // Mantiene o cambia la clase para deshabilitado
+          }
+      }
+      
+      </script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function() {
+          var inputRFC = document.getElementById('search-query');
+          inputRFC.oninput = function() {
+            validateRFC();
+            this.value = this.value.toUpperCase();
+          };
+        });
+      </script>
+    
+
+    
+
+

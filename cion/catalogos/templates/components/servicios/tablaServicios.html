@@ -1,0 +1,47 @@
+{% load static %}
+{% load sass_tags %}
+
+<div class="col-sm-12">
+    <div class="card">
+        <div class="card-header pb-0 card-no-border">
+            <h3 class="mb-3">Registro de servicios disponibles en el Municipio</h3>
+        </div>
+        <div class="card-body">
+            <div class="dt-ext table-responsive theme-scrollbar">
+                <table class="display" id="show-hidden-row">
+                    <thead>
+                        <tr>
+                            <th>Clave</th>
+                            <th>Descripción</th>
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Área</th> <!-- Columna para Descuentos -->
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for servicio in registros_servicios %}
+                        <tr>
+                            <td>{{ servicio.clave.codigoServicio }}</td>
+                            <td>{{ servicio.clave.descripcion }}</td>
+                            <td>{{ servicio.concepto }}</td>
+                            <td>{{ servicio.monto }}</td>
+                            <td>{{ servicio.area }}</td>
+                            <td>
+                                <ul class="action">
+                                    <li class="edit">
+                                        <a href="#" data-id="{{ servicio.pk }}">
+                                            <i class="icon-pencil-alt"></i>
+                                        </a>
+                                    </li>
+                                    
+                                </ul>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

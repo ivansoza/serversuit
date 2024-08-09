@@ -1,0 +1,264 @@
+{% load static %}
+{% load sass_tags %}
+<style>
+/* styles.css */
+
+.card {
+    border-radius: 10px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.125rem;
+    margin-bottom: 0;
+}
+.titulo2 {
+  color:white;
+}
+
+.info-item {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 15px;
+    margin-bottom: 15px;
+}
+
+/* Estilos para los iconos y fondos */
+.icon-wrapper {
+    border-radius: 50%;
+    font-size: 1.5rem; /* Tamaño del icono */
+    width: 50px; /* Tamaño del contenedor del icono */
+    height: 50px; /* Tamaño del contenedor del icono */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff; /* Color del icono */
+    background-color: rgba(0, 0, 0, 0.1); /* Fondo difuminado */
+    /* Puedes ajustar la opacidad del color aquí */
+    margin-right: 8px;
+}
+
+.icon-wrapper.uno {
+    background: rgba(40, 167, 69, 0.1); /* Color difuminado para el ícono de ID */
+}
+
+.icon-wrapper.dos {
+    background: rgba(0, 123, 255, 0.1); /* Color difuminado para el ícono de usuario */
+}
+
+.icon-wrapper.tres {
+    background: rgba(220, 53, 69, 0.1); /* Color difuminado para el ícono de dirección */
+}
+
+.icon-wrapper.cuatro {
+    background: rgba(255, 193, 7, 0.1); /* Color difuminado para el ícono de teléfono */
+}
+
+.icon-wrapper.cinco {
+    background: rgba(23, 162, 184, 0.1); /* Color difuminado para el ícono de email */
+}
+
+.icon-wrapper.six {
+    background: rgba(77, 23, 184, 0.119); /* Color difuminado para el ícono de email */
+}
+
+.text-primary {
+    color: #007bff; /* Color sólido del icono primario */
+}
+
+.text-success {
+    color: #28a745; /* Color sólido del icono éxito */
+}
+
+.text-info {
+    color: #17a2b8; /* Color sólido del icono info */
+}
+
+.text-warning {
+    color: #ffc107; /* Color sólido del icono advertencia */
+}
+
+.text-danger {
+    color: #dc3545; /* Color sólido del icono peligro */
+}
+
+.text-p {
+    color: #6c19cb; /* Color sólido del icono peligro */
+}
+
+/* Nuevo estilo para el contenedor del título con fondo */
+.title-container {
+    background-color: var(--sidebar-color) !important;    padding: 15px; /* Espaciado interno */
+    border-radius: 10px 10px 0 0; /* Bordes redondeados en la parte superior */
+    margin-bottom: 15px; /* Espacio debajo del contenedor del título */
+}
+
+.card-content {
+    padding: 15px; /* Espaciado interno */
+    border-radius: 0 0 10px 10px; /* Bordes redondeados en la parte inferior */
+}
+</style>
+
+<!-- Contenedor principal -->
+<div class="container-fluid">
+    {% if predio %}
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card user-card rounded" >
+                    <!-- Contenedor del Título -->
+                    <div class="title-container">
+                        <h3 class="card-title titulo2">Datos del Predio</h3>
+                    </div>
+                    <!-- Contenedor del Contenido -->
+                    <div class="card-content">
+                        <div class="row">
+                            <!-- Columna 1: Información 1 -->
+                            <div class="col-md-3">
+                                <div class="info-item d-flex align-items-center mb-3">
+                                    <div class="icon-wrapper tres">
+                                        <i class="fa fa-file-text-o text-danger"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title mb-1">Clave Catastral:</h6>
+                                        <p class="mb-0">{{ predio.clave_catastral }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Columna 3: Información 3 -->
+                            <div class="col-md-5">
+                                <div class="info-item d-flex align-items-center mb-3">
+                                    <div class="icon-wrapper six">
+                                        <i class="fa fa-map-marker text-p"></i>                                    
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title mb-1">Dirección:</h6>
+                                        <p class="mb-0">{{ predio.calle }}, No. ext: {{ predio.numero_exterior }}, {% if predio.numero_interior %} No. int: {{ predio.numero_interior }}, {% endif %} {{ predio.municipio }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                
+                                <div class="info-item d-flex align-items-center mb-3">
+                                    <div class="icon-wrapper cinco">
+                                        <i class="fa fa-user text-info"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title mb-1">Contribuyente:</h6>
+                                        <p class="mb-0">{{ predio.contribuyente.nombre }} {{ predio.contribuyente.apellidoP }} {{ predio.contribuyente.apellidoM }} {% if predio.contribuyente.mc %} {{ predio.contribuyente.nombre_mc }} {{ predio.contribuyente.apellidoP_mc }} {{ predio.contribuyente.apellidoM_mc }} {% endif %}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card user-card rounded">
+                    <!-- Contenedor del Título -->
+                    <div class="title-container">
+                        <h3 class="card-title titulo2">Monto de adeudo</h3>
+                    </div>
+                    <!-- Contenedor del Contenido -->
+                    <div class="card-content">
+                        <div class="row">
+                            <!-- Columna 1: Información 1 -->
+                            <div class="col-md-12">
+                                <div class="info-item d-flex align-items-center mb-3">
+                                    <div class="icon-wrapper uno">
+                                        <i class="fa fa-dollar  text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h1 class="card-title" style="font-size: 20px;"><strong>{{ total_monto2 }} MXN</strong></h1>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% elif servicio %}
+        <div class="row">
+            <div class="col-md-10">
+                <div class="card user-card rounded">
+                    <!-- Contenedor del Título -->
+                    <div class="title-container">
+                        <h3 class="card-title titulo2">Datos del Servicio de agua potable</h3>
+                    </div>
+                    <!-- Contenedor del Contenido -->
+                    <div class="card-content">
+                        <div class="row">
+                            <!-- Columna 1: Información 1 -->
+                            <div class="col-md-3">
+                                <div class="info-item d-flex align-items-center mb-3">
+                                    <div class="icon-wrapper tres">
+                                        <i class="fa fa-hashtag text-danger"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title mb-1">Número de Servicio:</h6>
+                                        <p class="mb-0">{{ servicio.noServicio }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="info-item d-flex align-items-center mb-3">
+                                    <div class="icon-wrapper cuatro">
+                                        <i class="icofont icofont-engineer text-warning"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title mb-1">Tipo de Servicio:</h6>
+                                        <p class="mb-0">{{ servicio.tipoServicio }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Columna 2: Información 2 -->
+                            
+                            <div class="col-md-6">
+                                <div class="info-item d-flex align-items-center mb-3">
+                                    <div class="icon-wrapper cinco">
+                                        <i class="fa fa-user text-info"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="card-title mb-1">Contribuyente:</h6>
+                                        <p class="mb-0">{{ servicio.contri.nombre }} {{ servicio.contri.apellidoP }} {{ servicio.contri.apellidoM }} {% if servicio.contri.mc %} {{ servicio.contri.nombre_mc }} {{ servicio.contri.apellidoP_mc }} {{ servicio.contri.apellidoM_mc }} {% endif %}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card user-card rounded">
+                    <!-- Contenedor del Título -->
+                    <div class="title-container">
+                        <h3 class="card-title titulo2">Monto de adeudo</h3>
+                    </div>
+                    <!-- Contenedor del Contenido -->
+                    <div class="card-content">
+                        <div class="row">
+                            <!-- Columna 1: Información 1 -->
+                            <div class="col-md-12">
+                                <div class="info-item d-flex align-items-center mb-3">
+                                    <div class="icon-wrapper uno">
+                                        <i class="fa fa-dollar  text-success"></i>
+                                    </div>
+                                    <div>
+                                        <h1 class="card-title" style="font-size: 20px;"><strong>{{ total_monto }} MXN</strong></h1>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
